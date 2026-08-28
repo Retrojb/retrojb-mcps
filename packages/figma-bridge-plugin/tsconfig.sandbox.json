@@ -1,0 +1,11 @@
+{
+  // The Figma sandbox: the `figma` global is available, the DOM is not.
+  // Omitting the DOM library on purpose — `document` and `fetch` do not exist
+  // here, and having them in scope would turn a compile error into a runtime one.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "types": ["@figma/plugin-typings"]
+  },
+  "include": ["src/sandbox", "src/shared"]
+}

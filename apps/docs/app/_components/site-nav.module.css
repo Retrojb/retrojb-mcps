@@ -1,0 +1,55 @@
+.nav {
+  font-size: 0.925rem;
+}
+
+.groupTitle {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+  margin-bottom: 0.5rem;
+}
+
+.group + .group {
+  margin-top: 1.75rem;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.list li + li {
+  margin-top: 0;
+}
+
+.link {
+  display: block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  color: var(--foreground-muted);
+  text-decoration: none;
+  border-left: 2px solid transparent;
+}
+
+.link:hover {
+  color: var(--foreground);
+  background: var(--surface);
+  text-decoration: none;
+}
+
+/*
+ * The current page is marked three ways on purpose: colour, weight, and a
+ * border. Colour alone would fail WCAG 1.4.1.
+ */
+.current {
+  color: var(--foreground);
+  font-weight: 600;
+  background: var(--surface);
+  border-left-color: var(--accent);
+}

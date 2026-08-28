@@ -1,0 +1,11 @@
+{
+  // The plugin iframe: a real DOM with WebSocket and fetch, but no `figma`
+  // global. Excluding the Figma typings here is what makes an accidental
+  // `figma.` reference in UI code fail the build instead of failing in Figma.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["src/ui", "src/shared"]
+}

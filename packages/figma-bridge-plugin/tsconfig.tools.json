@@ -1,0 +1,11 @@
+{
+  // Build script, mock harness, and tests. Node, not a plugin context.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["build.mjs", "tools", "tests"]
+}

@@ -1,0 +1,115 @@
+/*
+ * The skip link (WCAG 2.4.1).
+ *
+ * Positioned offscreen rather than hidden with `display: none`, so it stays in
+ * the tab order and is the first thing a keyboard user reaches.
+ */
+.skipLink {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom-right-radius: var(--radius);
+  transform: translateY(-120%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+  color: var(--background);
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100svh;
+  grid-template-rows: auto 1fr auto;
+}
+
+.masthead {
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+}
+
+.mastheadInner {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  max-width: 84rem;
+  margin: 0 auto;
+  padding: 1rem 1.5rem;
+}
+
+.wordmark {
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.wordmark:hover {
+  color: var(--foreground);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.tagline {
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 3rem;
+  max-width: 84rem;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 2.5rem;
+}
+
+.main {
+  min-width: 0;
+}
+
+.footer {
+  border-top: 1px solid var(--border);
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+}
+
+.footerInner {
+  max-width: 84rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.footerInner p {
+  max-width: none;
+}
+
+@media (max-width: 60rem) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .sidebar {
+    position: static;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+}

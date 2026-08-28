@@ -1,0 +1,251 @@
+.intro {
+  font-size: 1.125rem;
+  color: var(--foreground-muted);
+  max-width: var(--measure);
+  margin-top: 0.75rem;
+}
+
+.section {
+  margin-top: 3rem;
+}
+
+.section > * + * {
+  margin-top: 1rem;
+}
+
+.section > h2 + * {
+  margin-top: 0.75rem;
+}
+
+/* --- Criterion reference list ------------------------------------------- */
+
+.criteria {
+  list-style: none;
+  padding: 0;
+  margin: 1.25rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: var(--measure);
+}
+
+.criteria li + li {
+  margin-top: 0;
+}
+
+.criterion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.925rem;
+}
+
+.criterionId {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/*
+ * The level is conveyed by text, not by colour. A coloured badge alone would
+ * fail WCAG 1.4.1.
+ */
+.level {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  color: var(--foreground);
+  white-space: nowrap;
+}
+
+.criterionName {
+  color: var(--foreground-muted);
+}
+
+/* --- Callouts ------------------------------------------------------------ */
+
+.callout {
+  max-width: var(--measure);
+  margin-top: 1.5rem;
+  padding: 1rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-strong);
+  border-radius: var(--radius);
+}
+
+.callout > * + * {
+  margin-top: 0.5rem;
+}
+
+.callout p,
+.callout ul,
+.callout ol {
+  max-width: none;
+}
+
+.calloutLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+}
+
+.calloutWarn {
+  border-left-color: var(--danger);
+}
+
+.calloutTip {
+  border-left-color: var(--success);
+}
+
+/* --- Do / don't comparison ---------------------------------------------- */
+
+.compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pane {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  min-width: 0;
+}
+
+.paneHeading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/*
+ * "Avoid" and "Do" are spelled out rather than signalled with red and green
+ * fills, so the distinction survives greyscale and colour blindness (1.4.1).
+ */
+.paneAvoid .paneHeading {
+  color: var(--danger);
+}
+
+.paneDo .paneHeading {
+  color: var(--success);
+}
+
+.pane pre {
+  border: none;
+  border-radius: 0;
+  background: var(--surface-raised);
+}
+
+.paneNote {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+  border-top: 1px solid var(--border);
+  max-width: none;
+}
+
+/* --- Figures / tables --------------------------------------------------- */
+
+.tableWrap {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.tableWrap table {
+  font-variant-numeric: tabular-nums;
+}
+
+.tableWrap th,
+.tableWrap td {
+  white-space: nowrap;
+}
+
+.tableWrap td:last-child,
+.tableWrap th:last-child {
+  white-space: normal;
+}
+
+.tableWrap tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- Contrast demonstration swatches ------------------------------------ */
+
+.swatch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7.5rem;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.verdictPass::before {
+  content: "Pass — ";
+  font-weight: 700;
+}
+
+.verdictFail::before {
+  content: "Fail — ";
+  font-weight: 700;
+}
+
+.verdictPass {
+  color: var(--success);
+}
+
+.verdictFail {
+  color: var(--danger);
+}
+
+/* --- Checklist ---------------------------------------------------------- */
+
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.25rem;
+  max-width: var(--measure);
+}
+
+.checklist li {
+  position: relative;
+  padding-left: 1.75rem;
+}
+
+.checklist li + li {
+  margin-top: 0.6rem;
+}
+
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid var(--border-strong);
+  border-radius: 3px;
+}

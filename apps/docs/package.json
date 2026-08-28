@@ -1,5 +1,5 @@
 {
-  "name": "docs",
+  "name": "@retrojb/docs",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -8,13 +8,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
-    "check-types": "next typegen && tsc --noEmit"
+    "check-types": "next typegen && tsc --noEmit",
+    "check:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@repo/ui": "*",
     "next": "16.3.2",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "@retrojb/wcag-a11y-scanner": "*"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",

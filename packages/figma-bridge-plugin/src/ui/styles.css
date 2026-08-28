@@ -1,0 +1,471 @@
+/*
+ * Plugin window styles.
+ *
+ * Figma renders the UI in a bare iframe with no stylesheet of its own, so this
+ * covers everything including the reset. Colours follow Figma's own light/dark
+ * surfaces so the window does not fight the app around it.
+ */
+
+:root {
+  color-scheme: light;
+
+  --bg: #ffffff;
+  --surface: #f5f5f5;
+  --surface-raised: #ffffff;
+  --border: #e6e6e6;
+  --border-strong: #767676;
+
+  --text: #1e1e1e;
+  --text-muted: #5c5c5c;
+
+  --accent: #0d99ff;
+  --ok: #14733f;
+  --warn: #9a5b00;
+  --danger: #b3261e;
+
+  --radius: 6px;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --bg: #2c2c2c;
+    --surface: #383838;
+    --surface-raised: #333333;
+    --border: #444444;
+    --border-strong: #8c8c8c;
+
+    --text: #ffffff;
+    --text-muted: #b3b3b3;
+
+    --accent: #7cc4ff;
+    --ok: #6bd39a;
+    --warn: #ffc86b;
+    --danger: #ff9d95;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* A single visible focus indicator, per WCAG 2.4.7. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-radius: 3px;
+}
+
+@supports selector(:focus-visible) {
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+.app {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  height: 100vh;
+}
+
+/* --- Header ------------------------------------------------------------- */
+
+.header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.statusBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.statusLine {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/*
+ * The dot is decoration. Every status is also spelled out in the adjacent text,
+ * so the meaning survives greyscale and colour blindness (WCAG 1.4.1).
+ */
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: var(--text-muted);
+}
+
+.dot[data-status="connected"] {
+  background: var(--ok);
+}
+.dot[data-status="searching"],
+.dot[data-status="connecting"],
+.dot[data-status="reconnecting"] {
+  background: var(--warn);
+}
+.dot[data-status="error"] {
+  background: var(--danger);
+}
+.dot[data-status="paused"],
+.dot[data-status="idle"] {
+  background: var(--text-muted);
+}
+
+.statusDetail {
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.headerActions {
+  display: flex;
+  gap: 6px;
+  flex: none;
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+button {
+  font: inherit;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  button.primary {
+    color: #10243a;
+  }
+}
+
+button.ghost {
+  border-color: transparent;
+  background: transparent;
+  color: var(--text-muted);
+  padding: 3px 6px;
+}
+
+button.ghost:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--text);
+}
+
+/* --- Tabs --------------------------------------------------------------- */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  border: none;
+  background: none;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  padding: 7px 8px;
+}
+
+.tab[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+}
+
+.tab:hover {
+  background: none;
+  color: var(--text);
+}
+
+/* --- Panels ------------------------------------------------------------- */
+
+.panel {
+  overflow-y: auto;
+  padding: 10px 12px;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.section + .section {
+  margin-top: 16px;
+}
+
+.empty {
+  color: var(--text-muted);
+  padding: 12px 0;
+}
+
+/* --- Connection list ---------------------------------------------------- */
+
+.connList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.conn {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 8px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.connPort {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+
+.connMeta {
+  color: var(--text-muted);
+  font-size: 10px;
+  margin-left: auto;
+  text-align: right;
+}
+
+/* --- Selection ---------------------------------------------------------- */
+
+.nodeList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.node {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.node[data-highlighted="true"] {
+  border-color: var(--accent);
+}
+
+.nodeHead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+}
+
+.nodeName {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 1px 4px;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  color: var(--text-muted);
+  flex: none;
+}
+
+.nodeBody {
+  padding: 0 8px 8px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  font-size: 10px;
+}
+
+.nodeBody dt {
+  color: var(--text-muted);
+}
+
+.nodeBody dd {
+  font-family: var(--mono);
+  overflow-wrap: anywhere;
+}
+
+.nodePath {
+  color: var(--text-muted);
+  font-size: 10px;
+  padding: 0 8px 6px;
+  overflow-wrap: anywhere;
+}
+
+/* --- Activity log ------------------------------------------------------- */
+
+.log {
+  list-style: none;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1px;
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.logRow {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 6px;
+  padding: 3px 4px;
+  border-radius: 3px;
+  align-items: baseline;
+}
+
+.logRow[data-level="warn"] {
+  color: var(--warn);
+}
+.logRow[data-level="error"] {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 10%, transparent);
+}
+.logRow[data-level="debug"] {
+  color: var(--text-muted);
+}
+
+.logTime {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.logScope {
+  font-weight: 700;
+}
+
+/* --- Settings ----------------------------------------------------------- */
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 0;
+}
+
+.field label {
+  flex: 1;
+  min-width: 0;
+}
+
+.field select,
+.field input[type="number"] {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  padding: 4px 6px;
+  width: 96px;
+}
+
+.field input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 10px;
+  margin-top: 2px;
+}
+
+.warnBox {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--warn);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+/* --- Footer ------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.footerSpacer {
+  flex: 1;
+}
+
+/* Screen-reader-only text that stays in the accessibility tree. */
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

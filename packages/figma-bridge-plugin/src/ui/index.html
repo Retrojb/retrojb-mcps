@@ -1,0 +1,31 @@
+<!doctype html>
+<!--
+  Shell for the plugin window.
+
+  Figma loads a single self-contained HTML file, so the build inlines the
+  stylesheet and the script into the two placeholder tokens below. There is no
+  network fetch and no external asset at load time.
+
+  The tokens are wrapped in comment syntax so they are inert if this file is ever
+  opened directly, and each must appear exactly once — build.mjs fails the build
+  otherwise.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Retro MCP Bridge</title>
+    <style>
+      /*<<BRIDGE_STYLES>>*/
+    </style>
+  </head>
+  <body>
+    <!--
+      `main` rather than a bare div: the plugin window is its own document, so it
+      needs a main landmark for assistive technology to find the content.
+    -->
+    <main class="app" id="app"></main>
+    <script>
+      /*<<BRIDGE_SCRIPT>>*/
+    </script>
+  </body>
+</html>
