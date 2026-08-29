@@ -1,8 +1,16 @@
 import type { TimerHandle } from "./types.js";
 import { clearTimer, setTimer } from "./host-timers.js";
 
-interface Pending<T> {
-  readonly resolve: (value: T) => void;
+/**
+ * One awaited request.
+ *
+ * The payload type is erased to `unknown` rather than carried as a type
+ * parameter: the registry is heterogeneous, holding requests with different
+ * result types in one map, so there is no single `T` it could be generic over.
+ * Each caller re-applies its own type through {@link RequestRegistry.register}.
+ */
+interface Pending {
+  readonly resolve: (value: unknown) => void;
   readonly reject: (reason: Error) => void;
   readonly label: string;
   readonly timer: TimerHandle;
@@ -25,7 +33,7 @@ export interface RequestRegistryOptions {
  * forever, which in a plugin UI shows up as a button that never stops spinning.
  */
 export class RequestRegistry {
-  private readonly pending = new Map<string, Pending<never>>();
+  private readonly pending = new Map<string, Pending>();
   private readonly defaultTimeoutMs: number;
   private readonly idPrefix: string;
   private counter = 0;
@@ -70,12 +78,16 @@ export class RequestRegistry {
       }, timeoutMs ?? this.defaultTimeoutMs);
 
       this.pending.set(id, {
-        resolve,
+        // Widening `(value: T) => void` to `(value: unknown) => void` is not
+        // sound in general, and this is the one place the registry takes
+        // responsibility for it: `register` is the only writer, and it always
+        // stores a resolver whose `T` matches the promise it hands back.
+        resolve: resolve as (value: unknown) => void,
         reject,
         label,
         timer,
         createdAt: Date.now(),
-      } as unknown as Pending<never>);
+      });
     });
   }
 
@@ -92,7 +104,7 @@ export class RequestRegistry {
 
     clearTimer(entry.timer);
     this.pending.delete(id);
-    (entry.resolve as (value: unknown) => void)(value);
+    entry.resolve(value);
     return true;
   }
 

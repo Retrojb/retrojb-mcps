@@ -95,9 +95,9 @@ Criterion text is paraphrased for clarity. The normative source is
 Worth being blunt about, because an accessibility tool that overstates itself is
 worse than no tool.
 
-The audit is **static analysis of markup**. It does not execute JavaScript, apply
-stylesheets, or observe focus behaviour, so it sees the initial HTML rather than
-what a user encounters.
+The audit is **static analysis of markup**. It does not execute JavaScript,
+apply stylesheets, or observe focus behaviour, so it sees the initial HTML
+rather than what a user encounters.
 
 - **Contrast coverage is partial.** Only colours written into inline `style`
   attributes are measured. Anything from a stylesheet, a class, or a custom

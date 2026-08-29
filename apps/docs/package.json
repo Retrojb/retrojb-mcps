@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/docs",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
   "scripts": {
@@ -12,19 +12,18 @@
     "check:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
-    "@repo/ui": "*",
     "next": "16.3.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "@retrojb/wcag-a11y-scanner": "*"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@retrojb/eslint-config": "*",
+    "@retrojb/typescript-config": "*",
     "@types/node": "26.3.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
     "eslint": "10.9.1",
-    "typescript": "7.0.2"
+    "typescript": "6.0.3"
   }
 }

@@ -25,8 +25,9 @@ the Desktop Bridge that ships with the harness. See
 - **Displays the current selection.** Type, size, position, nesting path,
   component linkage, and lock state for everything you have selected, updated
   live.
-- **Highlights the node it is referencing.** When a harness command names a node,
-  the plugin outlines it on the canvas so you can see what the agent is touching.
+- **Highlights the node it is referencing.** When a harness command names a
+  node, the plugin outlines it on the canvas so you can see what the agent is
+  touching.
 
 ## Setup
 
@@ -82,7 +83,8 @@ run `HIGHLIGHT_NODES` with a real node id to watch the outline appear.
 
 ## Architecture
 
-A Figma plugin runs in two isolated contexts, and neither can do the other's job:
+A Figma plugin runs in two isolated contexts, and neither can do the other's
+job:
 
 | Context | File      | Has                       | Lacks           |
 | ------- | --------- | ------------------------- | --------------- |
@@ -111,7 +113,8 @@ Three tsconfigs enforce that, and a test asserts it against the built output.
 ### Discovery
 
 Ports are probed over HTTP `/health` before any WebSocket is opened, and only
-dialled if the response looks like a harness (`{status: "ok", version, clients}`).
+dialled if the response looks like a harness
+(`{status: "ok", version, clients}`).
 
 This ordering is not incidental. `new WebSocket()` against a closed port logs an
 uncatchable console error, so scanning ten ports every three seconds by dialling
@@ -124,9 +127,9 @@ is prompt without polling forever at full speed.
 
 ### Multiple harnesses
 
-Each harness instance binds its own port, and one runs per AI client tab in normal
-use. The plugin connects to **all** of them — a plugin attached to only the first
-leaves the others unable to reach Figma. Events are broadcast to every
+Each harness instance binds its own port, and one runs per AI client tab in
+normal use. The plugin connects to **all** of them — a plugin attached to only
+the first leaves the others unable to reach Figma. Events are broadcast to every
 connection; command replies go back only to the socket that asked, because the
 harness rejects a reply arriving on a socket belonging to a different file.
 
@@ -159,35 +162,36 @@ Two behaviours worth knowing:
 
 - Outlines are axis-aligned, because `absoluteBoundingBox` is. A rotated node
   gets a box around it rather than a rotated outline.
-- A node on another page is **reported, not chased**. Switching your page because
-  an agent touched something elsewhere is more disruptive than telling you about
-  it, so the Activity tab notes it instead.
+- A node on another page is **reported, not chased**. Switching your page
+  because an agent touched something elsewhere is more disruptive than telling
+  you about it, so the Activity tab notes it instead.
 
 ## Change monitoring
 
 The harness wants a `DOCUMENT_CHANGE` event stream. Figma offers two ways to
-produce one, with very different costs, and the plugin defaults to the cheap one.
+produce one, with very different costs, and the plugin defaults to the cheap
+one.
 
 **`current-page`** (default) — `nodechange` on the page you are viewing, plus
 global `stylechange`. Starts instantly on any file size. Edits made on _other_
 pages are not reported.
 
 **`full-document`** (opt-in, in Settings) — `documentchange` across every page.
-Complete, but it requires `figma.loadAllPagesAsync()` first, which Figma warns can
-take tens of seconds on a large file and can hit a memory limit.
+Complete, but it requires `figma.loadAllPagesAsync()` first, which Figma warns
+can take tens of seconds on a large file and can hit a memory limit.
 
-Figma's own guidance is to prefer the granular events for exactly this reason. If
-the full load fails, the plugin falls back to `current-page` and says so in the
-Activity tab rather than silently monitoring nothing.
+Figma's own guidance is to prefer the granular events for exactly this reason.
+If the full load fails, the plugin falls back to `current-page` and says so in
+the Activity tab rather than silently monitoring nothing.
 
 One subtlety worth knowing if you touch this code: `nodechange` is bound to a
 specific `PageNode`, so switching pages stops the events unless the subscription
-is moved. The plugin re-points it on `currentpagechange`; without that, monitoring
-would look healthy while reporting nothing.
+is moved. The plugin re-points it on `currentpagechange`; without that,
+monitoring would look healthy while reporting nothing.
 
-`GET_LOCAL_COMPONENTS` is the one command that needs a full load regardless, since
-`figma.root.findAllWithCriteria` searches the whole document. It pays that cost
-lazily on first call and memoises it.
+`GET_LOCAL_COMPONENTS` is the one command that needs a full load regardless,
+since `figma.root.findAllWithCriteria` searches the whole document. It pays that
+cost lazily on first call and memoises it.
 
 ## Command coverage
 
@@ -207,10 +211,10 @@ its methods:
 | `GET_VARIABLES_DATA` / `REFRESH_VARIABLES`               | Variables and collections                              |
 | `EXECUTE_CODE`                                           | Run arbitrary code in the sandbox                      |
 
-`EXECUTE_CODE` is the significant one: the harness routes most of its write tools
-through it, so a large share of harness functionality works even though the named
-method is not implemented here. Anything genuinely unimplemented returns an error
-listing what is available, rather than failing silently.
+`EXECUTE_CODE` is the significant one: the harness routes most of its write
+tools through it, so a large share of harness functionality works even though
+the named method is not implemented here. Anything genuinely unimplemented
+returns an error listing what is available, rather than failing silently.
 
 If you need the full named-method surface, use the harness's own bundled Desktop
 Bridge. This plugin exists for the parts that one does not do: visible

@@ -100,7 +100,7 @@ export class NodeHighlighter {
    * Runs before the first highlight. Without it a crash during a highlight
    * leaves a stray rectangle in the user's file with no way to know what it was.
    */
-  async sweepOrphans(): Promise<number> {
+  sweepOrphans(): number {
     let removed = 0;
 
     // Only the current page: loading every page to sweep would be slow on large

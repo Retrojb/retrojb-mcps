@@ -1,4 +1,8 @@
-import { config } from "@repo/eslint-config/base";
+import { nodeConfig } from "@retrojb/eslint-config/node";
 
-/** @type {import("eslint").Linter.Config[]} */
-export default config;
+/**
+ * An MCP server running on Node.
+ *
+ * @type {import("eslint").Linter.Config[]}
+ */
+export default nodeConfig;

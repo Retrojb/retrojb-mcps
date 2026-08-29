@@ -1,6 +1,6 @@
 import {
   Backoff,
-  Diagnostics,
+  type Diagnostics,
   errorMessage,
   Poller,
   type ConnectionStatus,

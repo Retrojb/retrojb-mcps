@@ -1,18 +1,38 @@
 {
   "name": "@retrojb/retro-mcps",
+  "description": "mono repos for retrojb mcp tooling",
+  "version": "0.0.0",
+  "keywords": [
+    "mcp",
+    "ai"
+  ],
+  "homepage": "https://github.com/Retrojb/retrojb-mcps",
+  "bugs": {
+    "url": "https://github.com/Retrojb/retrojb-mcps",
+    "email": "jbaltes89@gmail.com"
+  },
+  "repository": {
+    "type": "github",
+    "url": "git+https://github.com/Retrojb/retrojb-mcps"
+  },
   "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
     "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "lint": "turbo run lint",
+    "check-types": "turbo run check-types",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "changeset": "changeset",
+    "changeset:status": "changeset status --verbose",
+    "changeset:version": "changeset version && npm install --package-lock-only"
   },
   "devDependencies": {
+    "@changesets/cli": "3.0.1",
     "prettier": "3.9.6",
-    "turbo": "^2.10.12",
-    "typescript": "7.0.2"
+    "turbo": "~2.10.12",
+    "typescript": "6.0.3"
   },
   "engines": {
     "node": ">=24"

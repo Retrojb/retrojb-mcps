@@ -17,14 +17,15 @@ The pieces here are the parts that are the same whatever the host is.
 
 ## Host requirements
 
-Deliberately dependency-free, with no DOM and no Node types. This code has to run
-in a Figma plugin sandbox, a plugin iframe, and a test process without change.
+Deliberately dependency-free, with no DOM and no Node types. This code has to
+run in a Figma plugin sandbox, a plugin iframe, and a test process without
+change.
 
 The one host capability it needs — `setTimeout` and `clearTimeout` — is declared
 explicitly in `src/host-timers.ts` rather than pulled in via the `DOM` or `node`
 type libraries. Two reasons: those libraries would also supply `document`,
-`window`, and `process`, none of which exist in a Figma sandbox, so having them in
-scope turns a compile error into a runtime one. And declaring them as globals
+`window`, and `process`, none of which exist in a Figma sandbox, so having them
+in scope turns a compile error into a runtime one. And declaring them as globals
 would collide with `lib.dom.d.ts` in consumers that legitimately do have a DOM.
 
 ## Scope

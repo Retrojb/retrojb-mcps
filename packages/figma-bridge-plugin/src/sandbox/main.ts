@@ -178,10 +178,12 @@ function installConsoleCapture(): void {
   const levels = ["log", "info", "warn", "error"] as const;
 
   for (const level of levels) {
-    const original = console[level] as (...args: unknown[]) => void;
+    // Bound immediately. Pulling a method off `console` and calling it later
+    // loses its receiver, and some hosts implement these as methods that need it.
+    const original: (...args: unknown[]) => void = console[level].bind(console);
 
     console[level] = (...args: unknown[]): void => {
-      original.apply(console, args);
+      original(...args);
 
       try {
         post({
@@ -216,7 +218,9 @@ function safeStringify(value: unknown): string {
 
 async function loadSettings(): Promise<BridgeSettings> {
   try {
-    const stored = await figma.clientStorage.getAsync(SETTINGS_KEY);
+    // `getAsync` is typed `any`; narrowing it here keeps the `any` from spreading
+    // into every field read below.
+    const stored: unknown = await figma.clientStorage.getAsync(SETTINGS_KEY);
     if (typeof stored !== "object" || stored === null) return DEFAULT_SETTINGS;
 
     const candidate = stored as Partial<BridgeSettings>;
@@ -416,7 +420,7 @@ async function start(): Promise<void> {
     title: "Retro MCP Bridge",
   });
 
-  const swept = await highlighter.sweepOrphans();
+  const swept = highlighter.sweepOrphans();
   if (swept > 0) {
     report(
       "info",

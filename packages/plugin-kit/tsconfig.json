@@ -1,5 +1,5 @@
 {
-  "extends": "@repo/typescript-config/base.json",
+  "extends": "@retrojb/typescript-config/base.json",
   "compilerOptions": {
     // No DOM and no @types/node: this code runs inside a Figma plugin sandbox
     // and a plugin iframe, so it must not reach for host-specific globals.

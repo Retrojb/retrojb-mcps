@@ -1,4 +1,4 @@
-import { HTMLElement } from "node-html-parser";
+import { HTMLElement, NodeType } from "node-html-parser";
 import { checkContrast } from "../color/contrast.js";
 import { ColorParseError } from "../color/parse.js";
 import type { Finding } from "../wcag/types.js";
@@ -82,7 +82,7 @@ function isBoldWeight(value: string): boolean {
 /** Text nodes directly inside an element, ignoring descendants. */
 function ownText(element: HTMLElement): string {
   return element.childNodes
-    .filter((node) => node.nodeType === 3)
+    .filter((node) => node.nodeType === NodeType.TEXT_NODE)
     .map((node) => node.text)
     .join(" ")
     .replace(/\s+/g, " ")

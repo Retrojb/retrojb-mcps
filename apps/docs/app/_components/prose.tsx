@@ -183,8 +183,11 @@ export function Checklist({
 }): React.ReactElement {
   return (
     <ul className={styles.checklist}>
+      {/*
+       * Index keys are safe here: the list is static content defined at the call
+       * site, never reordered, filtered, or appended to.
+       */}
       {items.map((item, index) => (
-        // eslint-disable-next-line react/no-array-index-key -- static content
         <li key={index}>{item}</li>
       ))}
     </ul>

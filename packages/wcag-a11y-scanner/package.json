@@ -1,10 +1,19 @@
 {
   "name": "@retrojb/wcag-a11y-scanner",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "MCP server that applies WCAG 2 guidelines for color contrast, screen reader support, and keyboard/tab navigation.",
   "type": "module",
   "private": true,
   "license": "MIT",
+  "homepage": "https://github.com/Retrojb/retrojb-mcps",
+  "bugs": {
+    "url": "https://github.com/Retrojb/retrojb-mcps",
+    "email": "jbaltes89@gmail.com"
+  },
+  "repository": {
+    "type": "github",
+    "url": "git+https://github.com/Retrojb/retrojb-mcps"
+  },
   "keywords": [
     "mcp",
     "accessibility",
@@ -17,10 +26,6 @@
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./server": "./dist/server.js"
-  },
   "files": [
     "dist"
   ],
@@ -38,13 +43,17 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@retrojb/eslint-config": "*",
+    "@retrojb/typescript-config": "*",
     "@types/node": "26.3.0",
     "eslint": "10.9.1",
-    "typescript": "7.0.2"
+    "typescript": "6.0.3"
   },
   "engines": {
     "node": ">=20"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./server": "./dist/server.js"
   }
 }

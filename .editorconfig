@@ -1,0 +1,33 @@
+# EditorConfig governs what your editor types; Prettier governs what lands in the
+# commit. These are kept deliberately in agreement so the two never fight.
+#
+# The previous version of this file put `indent_style` outside any section, which
+# is not valid EditorConfig — every tool silently ignored it. If you do want tabs,
+# change `indent_style` below AND `useTabs` in prettier.config.mjs, then run
+# `npm run format`. Changing only one of them will make each save flip the file.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 80
+
+[*.md]
+# Trailing whitespace is a hard line break in Markdown, so it cannot be trimmed.
+trim_trailing_whitespace = false
+
+[*.{json,jsonc}]
+max_line_length = 100
+
+[package.json]
+max_line_length = 100
+
+[*.{yml,yaml}]
+indent_size = 2
+
+[Makefile]
+indent_style = tab

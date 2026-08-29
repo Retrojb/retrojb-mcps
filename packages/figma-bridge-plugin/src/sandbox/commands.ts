@@ -7,8 +7,14 @@ import {
 } from "./selection.js";
 import { toSerializable } from "./serialize.js";
 
-/** Signature every command handler shares. */
-type Handler = (params: Record<string, unknown>) => Promise<unknown>;
+/**
+ * Signature every command handler shares.
+ *
+ * Returns `unknown` rather than `Promise<unknown>` so handlers that do no async
+ * work need not be declared `async` just to satisfy the type. The dispatcher
+ * awaits the result either way, and awaiting a plain value is a no-op.
+ */
+type Handler = (params: Record<string, unknown>) => unknown;
 
 export interface CommandContext {
   readonly highlighter: NodeHighlighter;
@@ -85,7 +91,7 @@ async function resolveSceneNode(id: string): Promise<SceneNode> {
   if (node.type === "DOCUMENT" || node.type === "PAGE") {
     throw new CommandError(`Node "${id}" is a ${node.type}, not a scene node`);
   }
-  return node as SceneNode;
+  return node;
 }
 
 // -----------------------------------------------------------------------------
@@ -132,7 +138,7 @@ export function createCommandRegistry(
 ): Map<string, Handler> {
   const handlers = new Map<string, Handler>();
 
-  handlers.set("GET_FILE_INFO", async () => ({ fileInfo: currentFileInfo() }));
+  handlers.set("GET_FILE_INFO", () => ({ fileInfo: currentFileInfo() }));
 
   handlers.set("GET_SELECTION", async () => {
     const selection = figma.currentPage.selection;
@@ -194,7 +200,7 @@ export function createCommandRegistry(
     return outcome;
   });
 
-  handlers.set("CLEAR_HIGHLIGHT", async () => {
+  handlers.set("CLEAR_HIGHLIGHT", () => {
     context.highlighter.clear();
     return { cleared: true };
   });
@@ -352,8 +358,10 @@ async function executeCode(code: string, timeoutMs: number): Promise<unknown> {
 
   let pending: Promise<unknown>;
   try {
-    // eslint-disable-next-line no-eval -- see the note above; the function
-    // constructors are unavailable in Figma's sandbox.
+    // Figma's sandbox blocks the Function constructors but permits eval, so this
+    // is the only way to run harness-supplied code. Gated by the user-facing
+    // EXECUTE_CODE toggle; see the note on this function.
+    // eslint-disable-next-line no-eval -- no alternative in this sandbox
     pending = eval(wrapped) as Promise<unknown>;
   } catch (error) {
     throw new CommandError(
