@@ -17,7 +17,8 @@
     "check-types": "tsc --noEmit -p tsconfig.sandbox.json && tsc --noEmit -p tsconfig.ui.json && tsc --noEmit -p tsconfig.tools.json",
     "lint": "eslint . --max-warnings 0",
     "test": "node --test tests/*.test.mjs",
-    "mock-server": "node tools/mock-mcp-server.mjs"
+    "mock-server": "node tools/mock-mcp-server.mjs",
+    "xpublish": "npm run publish"
   },
   "devDependencies": {
     "@figma/plugin-typings": "1.136.0",
