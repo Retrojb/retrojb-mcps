@@ -2,6 +2,7 @@ import { HTMLElement, NodeType } from "node-html-parser";
 import { checkContrast } from "../color/contrast.js";
 import { ColorParseError } from "../color/parse.js";
 import type { Finding } from "../wcag/types.js";
+import { truncate } from "@retrojb/workspace-tools";
 import {
   inlineStyle,
   isInAccessibilityTree,
@@ -327,8 +328,4 @@ export function colorContrastCaveats(root: HTMLElement): Finding[] {
   }
 
   return caveats;
-}
-
-function truncate(text: string, max: number): string {
-  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }

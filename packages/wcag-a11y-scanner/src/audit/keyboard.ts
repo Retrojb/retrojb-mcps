@@ -1,5 +1,6 @@
 import type { HTMLElement } from "node-html-parser";
 import type { Finding } from "../wcag/types.js";
+import { truncate } from "@retrojb/workspace-tools";
 import {
   accessibleName,
   attrOf,
@@ -267,12 +268,12 @@ function checkFocusVisibility(root: HTMLElement): Finding[] {
           impact: replaced ? "minor" : "critical",
           criteria: replaced ? ["2.4.7", "1.4.11"] : ["2.4.7"],
           message: replaced
-            ? `"${truncate(selector, 80)}" removes the default outline but declares a replacement indicator. Confirm the replacement is clearly visible and clears 3:1 contrast against its background.`
-            : `"${truncate(selector, 80)}" removes the focus outline with no replacement, leaving keyboard users unable to see where they are on the page.`,
+            ? `"${truncate(selector, 80, { collapse: true })}" removes the default outline but declares a replacement indicator. Confirm the replacement is clearly visible and clears 3:1 contrast against its background.`
+            : `"${truncate(selector, 80, { collapse: true })}" removes the focus outline with no replacement, leaving keyboard users unable to see where they are on the page.`,
           remediation: replaced
             ? 'Verify the replacement in a browser at both light and dark surfaces, and check its contrast with check_color_contrast using contentType "ui-component".'
             : "Keep the browser default, or set an explicit indicator on :focus-visible — for example outline: 2px solid currentColor with outline-offset: 2px.",
-          snippet: `${truncate(selector, 80)} { ${truncate(body.trim(), 80)} }`,
+          snippet: `${truncate(selector, 80, { collapse: true })} { ${truncate(body.trim(), 80, { collapse: true })} }`,
           needsReview: replaced,
         }),
       );
@@ -590,9 +591,4 @@ function checkDialogs(root: HTMLElement): Finding[] {
   }
 
   return findings;
-}
-
-function truncate(text: string, max: number): string {
-  const collapsed = text.replace(/\s+/g, " ").trim();
-  return collapsed.length > max ? `${collapsed.slice(0, max - 1)}…` : collapsed;
 }

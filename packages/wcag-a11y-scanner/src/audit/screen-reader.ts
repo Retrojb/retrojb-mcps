@@ -1,5 +1,6 @@
 import type { HTMLElement } from "node-html-parser";
 import type { Finding } from "../wcag/types.js";
+import { truncate } from "@retrojb/workspace-tools";
 import {
   accessibleName,
   attrOf,
@@ -842,8 +843,4 @@ function checkFrames(root: HTMLElement): Finding[] {
   }
 
   return findings;
-}
-
-function truncate(text: string, max: number): string {
-  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
 }

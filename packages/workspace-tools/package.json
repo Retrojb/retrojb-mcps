@@ -1,0 +1,36 @@
+{
+  "name": "@retrojb/workspace-tools",
+  "version": "0.0.0",
+  "description": "Shared utilities plus a CLI for validating, cleaning, and scaffolding this monorepo.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "bin": {
+    "retro": "./dist/cli/main.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch --preserveWatchOutput",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit",
+    "test": "node --test tests/*.test.mjs",
+    "doctor": "node dist/cli/main.js doctor",
+    "clean": "node dist/cli/main.js clean"
+  },
+  "devDependencies": {
+    "@retrojb/eslint-config": "*",
+    "@retrojb/typescript-config": "*",
+    "@types/node": "26.3.0",
+    "eslint": "10.9.1",
+    "typescript": "6.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
