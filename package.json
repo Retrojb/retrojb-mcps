@@ -15,18 +15,20 @@
     "type": "github",
     "url": "git+https://github.com/Retrojb/retrojb-mcps"
   },
-  "private": true,
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
     "lint": "turbo run lint",
+    "start:docs": "npm run start --workspace=@retrojb/docs",
     "check-types": "turbo run check-types",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "changeset": "changeset",
     "changeset:status": "changeset status --verbose",
-    "changeset:version": "changeset version && npm install --package-lock-only"
+    "changeset:version": "changeset version && npm install --package-lock-only",
+    "clean": "npm run clean --workspace=@retrojb/workspace-tools",
+    "doctor": "npm run doctor --workspace=@retrojb/workspace-tools"
   },
   "devDependencies": {
     "@changesets/cli": "3.0.1",
