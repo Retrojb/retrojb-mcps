@@ -1,0 +1,69 @@
+{
+  "name": "@retrojb/kiro-figma-bridge",
+  "version": "0.0.0",
+  "description": "Connects an IDE AI agent (Kiro, Claude Code, Cursor, Codex) to live Figma content: a publishable Figma plugin plus a local WebSocket bridge exposed to the agent over MCP, authenticated with a pairing code derived from FIGMA_ACCESS_TOKEN.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "homepage": "https://github.com/Retrojb/retrojb-mcps",
+  "bugs": {
+    "url": "https://github.com/Retrojb/retrojb-mcps",
+    "email": "jbaltes89@gmail.com"
+  },
+  "repository": {
+    "type": "github",
+    "url": "git+https://github.com/Retrojb/retrojb-mcps"
+  },
+  "keywords": [
+    "figma",
+    "figma-plugin",
+    "mcp",
+    "bridge",
+    "kiro",
+    "websocket"
+  ],
+  "bin": {
+    "kiro-figma-bridge": "./dist/server/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./server": "./dist/server/mcp.js",
+    "./protocol": "./dist/shared/protocol.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && node build.mjs",
+    "build:plugin": "node build.mjs",
+    "dev": "node build.mjs --watch",
+    "start": "node dist/server/bin.js",
+    "pair:code": "node dist/server/bin.js --print-pair-code",
+    "inspect": "npx @modelcontextprotocol/inspector node dist/server/bin.js",
+    "lint": "eslint . --max-warnings 0",
+    "check-types": "tsc --noEmit && tsc --noEmit -p tsconfig.sandbox.json && tsc --noEmit -p tsconfig.ui.json",
+    "test": "node --test tests/*.test.mjs",
+    "xpublish": "npm run publish"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "@retrojb/plugin-kit": "*",
+    "ws": "8.21.3",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "1.136.0",
+    "@retrojb/eslint-config": "*",
+    "@retrojb/typescript-config": "*",
+    "@types/node": "26.3.0",
+    "@types/ws": "8.18.1",
+    "esbuild": "0.28.2",
+    "eslint": "10.9.1",
+    "typescript": "6.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

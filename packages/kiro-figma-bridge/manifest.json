@@ -1,0 +1,36 @@
+{
+  "name": "Kiro Figma Bridge",
+  "id": "kiro-figma-bridge",
+  "api": "1.0.0",
+  "main": "./dist/figma-plugin/code.js",
+  "ui": "./dist/figma-plugin/ui.html",
+  "editorType": ["figma", "dev"],
+  "capabilities": ["inspect"],
+  "permissions": ["currentuser"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "http://localhost:9770",
+      "http://localhost:9771",
+      "http://localhost:9772",
+      "http://localhost:9773",
+      "http://localhost:9774",
+      "http://localhost:9775",
+      "http://localhost:9776",
+      "http://localhost:9777",
+      "http://localhost:9778",
+      "http://localhost:9779",
+      "ws://localhost:9770",
+      "ws://localhost:9771",
+      "ws://localhost:9772",
+      "ws://localhost:9773",
+      "ws://localhost:9774",
+      "ws://localhost:9775",
+      "ws://localhost:9776",
+      "ws://localhost:9777",
+      "ws://localhost:9778",
+      "ws://localhost:9779"
+    ],
+    "reasoning": "Talks only to the Kiro Figma Bridge server running on your own machine, which relays requests from the AI agent in your editor. Ports 9770-9779 are scanned so several editors can each run their own bridge at once. No data is sent to any remote host: there are no non-localhost domains in this list."
+  }
+}

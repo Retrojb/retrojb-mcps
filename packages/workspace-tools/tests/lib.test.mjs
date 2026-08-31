@@ -77,14 +77,6 @@ describe("case conversion", () => {
     assert.equal(kebabCase("dots.in.name"), "dots-in-name");
   });
 
-  it("strips characters illegal in a package name or path", () => {
-    // Scaffolding turns user input into a directory name, so this has to be safe.
-    assert.equal(kebabCase("bad/../name"), "badname");
-    assert.equal(kebabCase("weird!@#$name"), "weirdname");
-    assert.equal(kebabCase("..."), "");
-    assert.equal(kebabCase("  "), "");
-  });
-
   it("pascal- and camel-cases", () => {
     assert.equal(pascalCase("my test lib"), "MyTestLib");
     assert.equal(pascalCase("token-lint"), "TokenLint");

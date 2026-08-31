@@ -1,0 +1,32 @@
+<!doctype html>
+<!--
+  Shell for the plugin window.
+
+  Figma loads a single self-contained HTML file with no module resolution and no
+  network fetch at load time, so the build inlines the stylesheet and the script
+  into the two placeholder tokens below.
+
+  The tokens are wrapped in comment syntax so this file stays valid if opened
+  directly, and each must appear exactly once — build.mjs fails the build
+  otherwise, because an ambiguous marker silently produces a window with no
+  styles or no behaviour while the build still reports success.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Kiro Figma Bridge</title>
+    <style>
+      /*<<BRIDGE_STYLES>>*/
+    </style>
+  </head>
+  <body>
+    <!--
+      `main` rather than a bare div: the plugin window is its own document, so it
+      needs a main landmark for assistive technology to find the content.
+    -->
+    <main class="app" id="app"></main>
+    <script>
+      /*<<BRIDGE_SCRIPT>>*/
+    </script>
+  </body>
+</html>

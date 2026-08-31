@@ -1,0 +1,23 @@
+{
+  "extends": "@retrojb/typescript-config/base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node"],
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true
+  },
+  // The server half only. `src/sandbox` and `src/ui` are checked by their own
+  // configs and are never compiled by tsc — esbuild bundles them, because they
+  // run in the Figma sandbox and the plugin iframe rather than on Node.
+  //
+  // `src/shared/protocol.ts` and `src/shared/hmac.ts` are deliberately free of
+  // both Node and DOM globals so all three contexts can compile the same files.
+  "include": ["src/index.ts", "src/server", "src/shared/protocol.ts", "src/shared/hmac.ts"],
+  "exclude": ["node_modules", "dist"]
+}

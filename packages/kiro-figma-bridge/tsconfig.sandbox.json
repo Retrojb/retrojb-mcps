@@ -1,0 +1,14 @@
+{
+  // The Figma sandbox: the `figma` global, no DOM, no Node.
+  //
+  // Naming no `DOM` lib is the point of a separate config. It turns "used
+  // `fetch` in the sandbox" — which throws at runtime inside Figma, with a
+  // message that does not obviously say why — into a compile error.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020"],
+    "types": ["@figma/plugin-typings"]
+  },
+  "include": ["src/sandbox", "src/shared"],
+  "exclude": ["node_modules", "dist"]
+}

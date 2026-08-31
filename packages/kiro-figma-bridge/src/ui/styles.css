@@ -1,0 +1,473 @@
+/*
+ * Plugin window styles.
+ *
+ * Built on Figma's own theme variables (`--figma-color-*`), which the editor
+ * injects because the manifest sets `themeColors: true`. Using them rather than
+ * fixed colours means the window follows light and dark mode without this file
+ * knowing which is active. Each has a fallback for the case where the variable is
+ * missing, which happens in older Figma builds and when the HTML is opened
+ * outside Figma while developing.
+ */
+
+:root {
+  --bg: var(--figma-color-bg, #ffffff);
+  --bg-secondary: var(--figma-color-bg-secondary, #f5f5f5);
+  --bg-hover: var(--figma-color-bg-hover, #ebebeb);
+  --border: var(--figma-color-border, #e6e6e6);
+  --text: var(--figma-color-text, #1e1e1e);
+  --text-secondary: var(--figma-color-text-secondary, #5f5f5f);
+  --brand: var(--figma-color-bg-brand, #6b5cfa);
+  --brand-text: var(--figma-color-text-onbrand, #ffffff);
+  --danger: var(--figma-color-text-danger, #b3261e);
+  --warning: var(--figma-color-text-warning, #8a5300);
+  --success: var(--figma-color-icon-success, #17803d);
+
+  --radius: 6px;
+  --gap: 12px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/*
+ * A visible focus ring everywhere, on every interactive element.
+ *
+ * Not `:focus-visible` alone: the tab list uses programmatic `.focus()` for
+ * arrow-key navigation, and some browsers do not treat that as "visible" focus,
+ * which would move focus invisibly.
+ */
+:where(button, input, select, a):focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------- header */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--gap);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header__status {
+  margin: 0;
+  font-weight: 600;
+}
+
+.header__meta,
+.header__actions {
+  margin: 0;
+}
+
+.header__actions {
+  display: flex;
+  gap: 6px;
+}
+
+.header__meta {
+  color: var(--text-secondary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--text-secondary);
+}
+
+.dot--good {
+  background: var(--success);
+}
+
+.dot--bad {
+  background: var(--danger);
+}
+
+.dot--pending {
+  background: var(--warning);
+}
+
+.dot--neutral {
+  background: var(--text-secondary);
+}
+
+/* ---------------------------------------------------------------- tabs */
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 var(--gap);
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  padding: 8px 10px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--text-secondary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab:hover {
+  color: var(--text);
+}
+
+.tab--active {
+  border-bottom-color: var(--brand);
+  color: var(--text);
+  font-weight: 600;
+}
+
+.panel {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--gap);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+/* ---------------------------------------------------------------- blocks */
+
+.section__title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+}
+
+.hint,
+.empty {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.hint--small {
+  font-size: 11px;
+}
+
+.empty {
+  padding: 16px 0;
+  text-align: center;
+}
+
+.notice {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  border-left: 3px solid var(--text-secondary);
+  background: var(--bg-secondary);
+}
+
+.notice--warn {
+  border-left-color: var(--warning);
+  color: var(--warning);
+}
+
+.notice--bad {
+  border-left-color: var(--danger);
+  color: var(--danger);
+}
+
+.notice--info {
+  border-left-color: var(--brand);
+}
+
+/* ---------------------------------------------------------------- forms */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field--inline {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.field--inline .hint {
+  grid-column: 2;
+}
+
+.field__label {
+  font-weight: 500;
+}
+
+.field__label--inline {
+  font-weight: 400;
+}
+
+.field__input {
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+
+#pair-code {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.field__checkbox {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--brand);
+}
+
+.button {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--bg-hover);
+}
+
+.button--primary {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: var(--brand-text);
+  font-weight: 600;
+}
+
+.button--primary:hover {
+  filter: brightness(1.08);
+  background: var(--brand);
+}
+
+.button--ghost {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+/* ---------------------------------------------------------------- lists */
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.list__item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
+}
+
+.list__button {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.list__button:hover {
+  background: var(--bg-hover);
+}
+
+.list__item:not(:has(.list__button)) {
+  padding: 8px 10px;
+}
+
+.list__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.list__title {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.list__meta,
+.list__id,
+.list__error {
+  margin: 2px 0 0;
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.list__id {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 10px;
+}
+
+.list__error {
+  color: var(--danger);
+}
+
+.definitions {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 10px;
+  margin: 0;
+}
+
+.definitions dt {
+  color: var(--text-secondary);
+}
+
+.definitions dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  flex: 0 0 auto;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: 10px;
+  text-transform: lowercase;
+}
+
+.badge--connected {
+  background: var(--success);
+  color: #ffffff;
+}
+
+.badge--rejected,
+.badge--failed,
+.badge--needs-pairing {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.badge--connecting,
+.badge--authenticating,
+.badge--retrying {
+  background: var(--warning);
+  color: #ffffff;
+}
+
+/* ---------------------------------------------------------------- log */
+
+.log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.log__item {
+  padding: 6px 8px;
+  border-left: 2px solid var(--border);
+  background: var(--bg-secondary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.log__item--warn {
+  border-left-color: var(--warning);
+}
+
+.log__item--error {
+  border-left-color: var(--danger);
+}
+
+.log__head {
+  display: flex;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 10px;
+}
+
+.log__time,
+.log__scope {
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+
+.log__message {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.log__item--error .log__message {
+  color: var(--danger);
+}
+
+/* ---------------------------------------------------------------- footer */
+
+.footer {
+  padding: 8px var(--gap);
+  border-top: 1px solid var(--border);
+}
+
+.footer__text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 10px;
+}

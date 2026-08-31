@@ -1,0 +1,15 @@
+{
+  // The plugin iframe: a real DOM and `WebSocket`, no `figma` global.
+  //
+  // `types: []` rather than the default is load-bearing: without it TypeScript
+  // pulls in every @types package in the workspace, `@figma/plugin-typings`
+  // included, and the UI would type-check against a `figma` global that does not
+  // exist at runtime in this context.
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": []
+  },
+  "include": ["src/ui", "src/shared"],
+  "exclude": ["node_modules", "dist"]
+}

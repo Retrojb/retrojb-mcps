@@ -1,0 +1,20 @@
+{
+  "extends": "@retrojb/typescript-config/base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitOverride": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    // esbuild resolves the workspace dependency from source at build time, so
+    // TypeScript is pointed at the same source rather than at built .d.ts files.
+    // Keeps `check-types` meaningful before anything has been built.
+    "paths": {
+      "@retrojb/plugin-kit": ["../plugin-kit/src/index.ts"]
+    }
+  }
+}
