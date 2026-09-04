@@ -9,12 +9,22 @@ import { defineConfig } from "tsup";
  * is written and the other two land after, so they survive.
  */
 export default defineConfig({
-  // Every source file, not a single bundled entry. See `bundle` below.
+  /*
+   * Every source file, not a single bundled entry. See `bundle` below.
+   *
+   * The component globs are recursive and cover `.ts` as well as `.tsx`, because
+   * a component is a directory — `Button/Button.tsx` beside its `styles.ts`,
+   * `types.ts` and `index.ts` — rather than a single file. A single-level
+   * `src/components/*.tsx` matches none of those, and the failure is quiet: tsup
+   * reports success, `tsc` still emits the declarations, so `dist` type-checks
+   * while `dist/index.js` imports JavaScript that was never written. Add a
+   * nesting level to the tree and this list is what has to keep up.
+   */
   entry: [
     "src/index.ts",
-    "src/variants.ts",
     "src/lib/*.ts",
-    "src/components/*.tsx",
+    "src/components/**/*.ts",
+    "src/components/**/*.tsx",
   ],
 
   // ESM only. Every consumer in this repo is `"type": "module"`, and shipping a
@@ -30,8 +40,9 @@ export default defineConfig({
    * link() from the server" in a server component, which is where the documented
    * `<NextLink className={link()}>` usage lives and is the default rendering
    * environment in App Router. Emitting a file per module keeps the directive on
-   * `components/*.tsx` where it belongs and leaves `variants.ts` callable
-   * anywhere. esbuild preserves top-level directives when it is not bundling.
+   * `<Component>.tsx` where it belongs and leaves the `styles.ts` beside it
+   * callable anywhere. esbuild preserves top-level directives when it is not
+   * bundling.
    *
    * It also means Next.js sends only the components an app actually imports to
    * the client, rather than all three plus tailwind-variants.
@@ -69,9 +80,9 @@ export default defineConfig({
   external: ["react", "react-dom"],
 
   // No `banner` with `"use client"`. A banner applies to every output file, which
-  // would put the directive on `variants.ts` too and reintroduce exactly the
-  // problem `bundle: false` is here to avoid. The three component modules carry
-  // the directive in their own source instead.
+  // would put the directive on the `styles.ts` modules too and reintroduce
+  // exactly the problem `bundle: false` is here to avoid. The three component
+  // modules carry the directive in their own source instead.
 
   onSuccess: "npm run build:types && npm run build:css",
 });

@@ -1,0 +1,120 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Interactions/Button/Accessibility" />
+
+# Button Accessibility
+
+Extracted from `packages/ui/src/components/interactions/Button/styles.ts`, where
+each of these decisions is made once for every intent rather than left to the
+call site. Ratios are the measured output of
+`npm run check:contrast --workspace=@retrojb/docs`, which runs the same engine
+as `@retrojb/wcag-a11y-scanner` over the shipped palette.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                 |
+| --------------------------------- | ----- | ------------------------------------------------------------------------------------------ |
+| 1.4.1 Use of Color                | A     | Disabled and hover states change cursor and fill, never colour alone                       |
+| 1.4.3 Contrast (Minimum)          | AA    | Every intent's label clears 4.5:1 on its own fill, in both themes                          |
+| 1.4.11 Non-text Contrast          | AA    | `secondary` draws `border-border-strong` at 4.26:1, so its boundary is perceivable         |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition under `prefers-reduced-motion` |
+| 2.4.7 Focus Visible               | AA    | One 2px `outline` indicator, shared by all four intents                                    |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset clears the minimum indicator area                          |
+| 2.5.8 Target Size (Minimum)       | AA    | All three sizes are at least 32px tall, above the 24px floor                               |
+| 2.5.5 Target Size (Enhanced)      | AAA   | `lg` only — see the note under [Target size](#target-size)                                 |
+| 4.1.2 Name, Role, Value           | A     | Native `<button>`, and `text` is a required prop so the accessible name cannot be omitted  |
+
+### Focus
+
+The indicator is deliberately uniform across intents, so focus looks the same
+everywhere in the system:
+
+```
+outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus
+```
+
+Three choices worth knowing:
+
+- **`focus-visible`, not `focus`.** The ring appears for keyboard and
+  programmatic focus and stays away on mouse click.
+- **`outline`, not a `ring` box-shadow.** Outlines survive forced-colors mode;
+  box-shadows are dropped entirely there, which would leave a Windows High
+  Contrast user with no focus indicator at all.
+- **2px plus a 2px offset.** The offset is what lifts the indicator clear of the
+  fill so it is visible against both the button and the page behind it.
+
+### Target size
+
+Heights are 32px (`sm`), 40px (`md`) and 48px (`lg`).
+
+All three clear the 24px minimum in **2.5.8 (AA)**. Only `lg` at 48px clears the
+44px enhanced target in **2.5.5 (AAA)** — `md` at 40px is 4px short. Reach for
+`lg` when a touch target has to meet AAA.
+
+### Disabled
+
+Contrast intentionally drops below 4.5:1 when disabled, which 1.4.3 permits for
+inactive controls. Two things compensate, and both are needed:
+
+- `disabled:opacity-60` dims the control, and `disabled:cursor-not-allowed`
+  changes the pointer — so the state is not signalled by colour alone (1.4.1).
+- The native `disabled` attribute takes the button out of the tab order and is
+  what assistive technology announces. No `aria-disabled` is set, so a disabled
+  button is genuinely unreachable rather than focusable-but-inert.
+
+## Colors
+
+Measured against the default palette in `packages/ui/src/styles/tokens.css`.
+Every pairing below is gated in CI.
+
+### Label on fill (needs 4.5:1)
+
+| Intent      | Pairing                             |  Light |    Dark |
+| ----------- | ----------------------------------- | -----: | ------: |
+| `primary`   | `--accent-foreground` on `--accent` | 5.98:1 |  8.81:1 |
+| `primary`   | hover, on `--accent-hover`          | 9.82:1 | 11.64:1 |
+| `secondary` | `--foreground` on `--surface`       | 16.6:1 | 15.34:1 |
+| `ghost`     | `--accent-text` on `--background`   | 5.98:1 |  8.81:1 |
+| `danger`    | `--danger-foreground` on `--danger` | 6.53:1 |  9.74:1 |
+
+`primary` flips its label colour between themes rather than keeping it white.
+The dark-mode accent is a light blue, so white-on-accent would measure 1.9:1 and
+fail 1.4.3 outright; dark text on it measures 8.81:1.
+
+### Boundaries and focus ring (needs 3:1)
+
+| Pairing                                           |  Light |   Dark |
+| ------------------------------------------------- | -----: | -----: |
+| `--border-strong` on `--background` (`secondary`) | 4.26:1 | 4.17:1 |
+| `--accent` on `--background` (`primary` edge)     | 5.98:1 | 8.81:1 |
+| `--focus-ring` on `--background`                  | 5.98:1 | 8.81:1 |
+
+`secondary` uses `border-border-strong` rather than `border-border`. Only
+`--border-strong` clears 1.4.11, and the boundary is what makes an unfilled
+button readable as a button at all — so the stronger token is not a style
+preference here.
+
+## Aria
+
+The component sets **no** `aria-*` attributes, and that is the intent: it
+renders a native `<button>`, so role, focusability and disabled state come from
+the element.
+
+| Concern         | How it is handled                                                                                                                               |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accessible name | The required `text` prop. Typed as `string`, so a nameless button will not compile (4.1.2)                                                      |
+| Role            | Implicit from `<button>`                                                                                                                        |
+| Disabled state  | Native `disabled`, announced and removed from the tab order                                                                                     |
+| Everything else | `IButtonProps` extends `ComponentPropsWithRef<"button">`, so `aria-pressed`, `aria-expanded`, `aria-controls` and friends pass straight through |
+
+### `type` defaults to `"button"`
+
+The HTML default is `"submit"`. A button dropped inside a form to open a dialog
+would submit that form instead — a change of context the user did not request.
+Pass `type="submit"` explicitly when submitting is the intent.
+
+### Naming a button that has no visible text
+
+`text` is a required `string`, so an icon-only button is not expressible through
+it. Supply an `aria-label` and pass an icon as a child of a plain `<button>`
+styled with the exported `buttonStyle()`, rather than passing an empty `text`.

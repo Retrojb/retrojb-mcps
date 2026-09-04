@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import NextLink from "next/link";
-import { Button, Input, Link, link } from "@retrojb/ui";
+import { Button, Input, Link, linkStyle } from "@retrojb/ui";
 import { Callout, Intro, Section } from "../_components/prose";
 import styles from "./demo.module.css";
 
@@ -38,22 +38,23 @@ export default function ComponentsPage(): React.ReactElement {
 
       <Section id="button" title="Button">
         <p>
-          Four intents and three sizes. Heights are 32, 40 and 48 pixels; the
-          two larger ones clear the 44 pixel AAA target size in 2.5.5.
+          Four intents and three sizes. Heights are 32, 40 and 48 pixels. All
+          three clear the 24 pixel minimum target size in 2.5.8; only the
+          largest reaches the 44 pixel AAA target in 2.5.5.
         </p>
 
         <div className={styles.row}>
-          <Button intent="primary">Primary</Button>
-          <Button intent="secondary">Secondary</Button>
-          <Button intent="ghost">Ghost</Button>
-          <Button intent="danger">Delete</Button>
-          <Button disabled>Disabled</Button>
+          <Button intent="primary" text="Primary" />
+          <Button intent="secondary" text="Secondary" />
+          <Button intent="ghost" text="Ghost" />
+          <Button intent="danger" text="Delete" />
+          <Button disabled text="Disabled" />
         </div>
 
         <div className={styles.row}>
-          <Button size="sm">Small</Button>
-          <Button size="md">Medium</Button>
-          <Button size="lg">Large</Button>
+          <Button size="sm" text="Small" />
+          <Button size="md" text="Medium" />
+          <Button size="lg" text="Large" />
         </div>
 
         <Callout variant="tip" label="Tip">
@@ -97,9 +98,9 @@ export default function ComponentsPage(): React.ReactElement {
 
         <p>
           <code>Link</code> renders a plain <code>&lt;a&gt;</code>. For
-          client-side routing, put the exported <code>link()</code> variant on
-          the router&apos;s own component instead:{" "}
-          <NextLink href="/" className={link()}>
+          client-side routing, put the exported <code>linkStyle()</code> variant
+          on the router&apos;s own component instead:{" "}
+          <NextLink href="/" className={linkStyle()}>
             back to the introduction
           </NextLink>
           .

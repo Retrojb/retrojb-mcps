@@ -6,6 +6,39 @@ variant API, `tsup` for the build.
 
 Three components so far: `Button`, `Link`, `Input`.
 
+## Structure
+
+A component is a directory, not a file. `Button` is the template:
+
+```
+src/components/
+  interactions/Button/
+    Button.tsx    the React layer, and the only file with "use client"
+    styles.ts     the tv() definition — buttonStyle, ButtonVariants
+    types.ts      the props interface — IButtonProps
+    index.ts      the barrel
+  navigation/Link/
+  forms/Input/
+```
+
+Four files rather than one because of the `"use client"` boundary described
+under [Server and client components](#server-and-client-components): the
+directive has to sit on the React module alone, or the variant function stops
+being callable from server code. `types.ts` is separate from `styles.ts` because
+the props interface extends the variant props, so keeping them apart is what
+stops that from being a cycle.
+
+Two conventions worth knowing before adding a fourth component:
+
+- `styles.ts` imports `tv` from `../../../lib/tv.js`, not from
+  `tailwind-variants` directly. The local instance is configured with the
+  `radius` scale; the bare one is not, and the symptom of getting this wrong is
+  `<Button className="rounded-full">` quietly not rounding. See `lib/tv.ts`.
+- Relative imports carry an explicit `.js` extension, and nothing imports a
+  directory. `tsc` is set to `NodeNext` resolution here specifically so both
+  rules are enforced at compile time rather than discovered by whoever next runs
+  Storybook.
+
 ## Usage
 
 Import the stylesheet once, at the app's entry point. It is not imported from
@@ -22,23 +55,29 @@ Then use the components:
 ```tsx
 import { Button, Input, Link } from "@retrojb/ui";
 
-<Button intent="primary" size="md">Save</Button>
+<Button intent="primary" size="md" text="Save" />
 <Link href="/docs">Read the docs</Link>
 <Input label="Email" type="email" description="We never share it." />
 ```
 
-Every component also exports its variant function, for styling an element this
-package does not own:
+`Button` takes its label as a `text` prop rather than children. `Link` and
+`Input` take children and a `label` respectively.
+
+Every component also exports its variant function — `buttonStyle`, `linkStyle`,
+`inputStyle` — for styling an element this package does not own:
 
 ```tsx
 import NextLink from "next/link";
-import { link } from "@retrojb/ui";
+import { linkStyle } from "@retrojb/ui";
 
 // Client-side routing, library styling.
-<NextLink href="/docs" className={link({ intent: "standalone" })}>
+<NextLink href="/docs" className={linkStyle({ intent: "standalone" })}>
   Docs
 </NextLink>;
 ```
+
+`inputStyle` is a slot function: `inputStyle().control()` for the element,
+`.root()`, `.label()`, `.description()` and `.error()` for the markup around it.
 
 ## Theming
 
@@ -82,6 +121,7 @@ call site:
 - `Link intent="inline"` is underlined and cannot be talked out of it. A link
   distinguished from body text by colour alone fails 1.4.1 at this palette's
   contrast.
+
 - `Link external` sets `target`/`rel` and appends a visually hidden "(opens in a
   new tab)" to the accessible name (3.2.5).
 - One focus indicator across all three components: a 2px `outline` with a 2px
@@ -112,17 +152,22 @@ as opacity.
 
 The three components are client modules — `Input` calls `useId`. The variant
 functions are not, and the split is deliberate: `"use client"` marks everything
-a module exports as client-only, so had `link()` lived next to `Link` it could
-not be called from a server component, which is the default in App Router and
-where the `<NextLink className={link()}>` example above normally sits.
+a module exports as client-only, so had `linkStyle()` lived in `Link.tsx` it
+could not be called from a server component, which is the default in App Router
+and where the `<NextLink className={linkStyle()}>` example above normally sits.
 
-So `variants.ts` holds the class-name logic with no directive, and
-`components/*.tsx` hold the React layer with one. Both are re-exported from the
-package root, so this works from a server component:
+So each component directory splits in two: `styles.ts` holds the class-name
+logic with no directive, `<Name>.tsx` holds the React layer with one. Both are
+re-exported through the directory's `index.ts` and then from the package root,
+so this works from a server component:
 
 ```tsx
-import { link } from "@retrojb/ui"; // fine on the server
+import { linkStyle } from "@retrojb/ui"; // fine on the server
 ```
+
+A barrel does not collapse the boundary — `index.ts` carries no directive of its
+own, and importing a client module from server code is allowed; it is _calling_
+an export of one that is not.
 
 ## Notes on the build
 
@@ -131,6 +176,14 @@ A bundle would be a single module with a single directive, which is what would
 collapse the boundary described above; esbuild preserves per-file directives
 when it is not bundling. It also means Next.js ships only the components an app
 actually imports to the client.
+
+Because there is no bundle, the `entry` list in `tsup.config.ts` has to name
+every source file, and its component globs are recursive for that reason. A
+single-level glob matches nothing inside `components/<group>/<Name>/`, and the
+failure is quiet in a way worth knowing about: tsup reports success and `tsc`
+still emits the declarations, so the package type-checks while `dist/index.js`
+imports JavaScript that was never written. It surfaces as
+`Failed to resolve import` in the consuming app, not as a build error here.
 
 Declarations come from `tsc --emitDeclarationOnly` rather than tsup's `dts`
 step, which injects a `baseUrl` that TypeScript 6 rejects outright. The

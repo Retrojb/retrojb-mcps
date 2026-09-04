@@ -1,42 +1,9 @@
 "use client";
 
-import {
-  useId,
-  type ComponentPropsWithRef,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { useId, type ReactElement } from "react";
 
-import { input, type InputVariants } from "../variants.js";
-
-export interface InputProps
-  extends
-    Omit<ComponentPropsWithRef<"input">, "size">,
-    Omit<InputVariants, "invalid"> {
-  /**
-   * The visible label. Required, deliberately.
-   *
-   * An input with no label is the single most common WCAG failure there is
-   * (4.1.2, and 3.3.2 for the missing instruction). Making this a required prop
-   * means the type checker catches it, rather than an audit catching it later.
-   * Use `labelHidden` when the design has no room for visible label text — the
-   * label still exists for assistive technology.
-   */
-  readonly label: ReactNode;
-
-  /** Helper text, wired to the input with `aria-describedby`. */
-  readonly description?: ReactNode;
-
-  /**
-   * The validation message. Presence switches the control into its invalid
-   * state and sets `aria-invalid`, so there is no way to show the styling
-   * without announcing it.
-   */
-  readonly error?: ReactNode;
-
-  /** Wrapper class. `className` goes to the input itself. */
-  readonly rootClassName?: string;
-}
+import { inputStyle } from "./styles.js";
+import type { IInputProps } from "./types.js";
 
 /**
  * A labelled text input, with description and error text already wired up.
@@ -47,7 +14,7 @@ export interface InputProps
  * ids that match between server and client render, which hand-written ones do
  * not once a component appears more than once on a page.
  */
-export function Input({
+const Input = ({
   label,
   description,
   error,
@@ -59,7 +26,7 @@ export function Input({
   required,
   "aria-describedby": ariaDescribedBy,
   ...props
-}: InputProps): ReactElement {
+}: IInputProps): ReactElement => {
   const generatedId = useId();
   const inputId = id ?? `${generatedId}-input`;
   const descriptionId = `${generatedId}-description`;
@@ -67,7 +34,7 @@ export function Input({
 
   const invalid = error != null && error !== false;
 
-  const slots = input({ size, invalid, labelHidden });
+  const slots = inputStyle({ size, invalid, labelHidden });
 
   /*
    * Both messages are announced, and a caller-supplied `aria-describedby` is
@@ -120,4 +87,6 @@ export function Input({
       ) : null}
     </div>
   );
-}
+};
+
+export { Input };

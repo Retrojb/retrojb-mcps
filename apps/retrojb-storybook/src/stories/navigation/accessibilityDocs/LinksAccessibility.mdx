@@ -1,0 +1,133 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Navigation/Link/Accessibility" />
+
+# Link Accessibility
+
+Extracted from `packages/ui/src/components/navigation/Link/styles.ts` and its
+`types.ts`. Ratios are the measured output of
+`npm run check:contrast --workspace=@retrojb/docs`.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                            |
+| --------------------------------- | ----- | ------------------------------------------------------------------------------------- |
+| 1.4.1 Use of Color                | A     | `inline` and `muted` are underlined; hover thickens the underline as well as shifting hue |
+| 1.4.3 Contrast (Minimum)          | AA    | Every intent clears 4.5:1 on both `--background` and `--surface`                       |
+| 1.4.11 Non-text Contrast          | AA    | Focus ring clears 3:1 in both themes                                                  |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition                            |
+| 2.4.7 Focus Visible               | AA    | Same 2px `outline` indicator as `Button`                                              |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset                                                        |
+| 3.2.5 Change on Request           | AAA   | `external` announces the new tab before the user activates the link                    |
+| 4.1.2 Name, Role, Value           | A     | Native `<a>`; name comes from children, plus the appended external warning             |
+
+### The underline on `inline` is not optional
+
+This is the single load-bearing decision in the component. 1.4.1 allows a link
+inside a block of text to be distinguished by colour alone **only** if the link
+colour and the surrounding body text reach 3:1. This palette does not:
+
+| Pairing                             | Light  | Dark   | Needs |
+| ----------------------------------- | -----: | -----: | ----: |
+| `--accent-text` vs `--foreground`   | 2.97:1 | 1.88:1 |  3:1  |
+| `--foreground-muted` vs `--foreground` | 2.76:1 | 1.93:1 |  3:1  |
+
+Light mode misses by 0.03, dark mode by a wide margin. The underline is what
+makes `inline` conformant, so it lives in the variant and there is no prop to
+turn it off.
+
+`standalone` drops the underline legitimately: 1.4.1 does not apply when the link
+is not embedded in a block of text — nav items, cards, links styled as buttons.
+Use it only where nothing is ambiguous.
+
+### Hover is not colour-only either
+
+`inline` moves `decoration-[0.08em]` to `decoration-[0.14em]` on hover alongside
+the colour change, so the hover state has a non-colour signal of its own.
+
+### Focus
+
+Identical to `Button` by design — `focus-visible:outline-2
+focus-visible:outline-focus` with `outline-offset-2` — so a keyboard user sees
+one indicator across the whole system. `rounded-sm` keeps the outline from
+clipping square against inline text.
+
+## Colors
+
+### Link text (needs 4.5:1)
+
+| Intent       | Pairing                                  |  Light |    Dark |
+| ------------ | ---------------------------------------- | -----: | ------: |
+| `inline`     | `--accent-text` on `--background`        | 5.98:1 |  8.81:1 |
+| `inline`     | `--accent-text` on `--surface`           | 5.58:1 |  8.14:1 |
+| `inline`     | hover, `--accent-hover` on `--background` | 9.82:1 | 11.64:1 |
+| `standalone` | `--foreground` on `--background`         | 17.8:1 |  16.6:1 |
+| `muted`      | `--foreground-muted` on `--background`   | 6.43:1 |  8.59:1 |
+| `muted`      | `--foreground-muted` on `--surface`      |    6:1 |  7.93:1 |
+
+### Focus ring (needs 3:1)
+
+| Pairing                          |  Light |   Dark |
+| -------------------------------- | -----: | -----: |
+| `--focus-ring` on `--background` | 5.98:1 | 8.81:1 |
+| `--focus-ring` on `--surface`    | 5.58:1 | 8.14:1 |
+
+## Aria
+
+The component renders a native `<a>` and sets no `aria-*` attributes directly.
+The one accessibility feature it does add is a hidden extension to the accessible
+name.
+
+| Concern         | How it is handled                                                                     |
+| --------------- | ------------------------------------------------------------------------------------- |
+| Accessible name | Children, plus the appended external warning when `external` is set                   |
+| Role            | Implicit from `<a>` — but only when `href` is present; see the note below              |
+| New tab warning | `external` appends a `sr-only` span to the name (3.2.5)                               |
+| Everything else | `ILinkProps` extends `ComponentPropsWithRef<"a">`, so `aria-current`, `aria-label` and the rest pass through |
+
+### `external`
+
+Setting `external` does three things:
+
+```tsx
+<Link href="https://www.w3.org/WAI/WCAG22/quickref/" external>
+  WCAG quick reference
+</Link>
+```
+
+1. `target="_blank"`.
+2. `rel="noreferrer noopener"` — `noreferrer` implies `noopener` in current
+   browsers but not older ones, and naming both costs nothing.
+3. Appends a visually hidden `(opens in a new tab)` to the accessible name.
+
+The third is the accessibility-relevant one. 3.2.5 asks that a change of context
+be initiated by the user or announced first, and a tab opening with no warning is
+neither for a screen reader or magnifier user. `sr-only` rather than `hidden`
+keeps the text in the accessibility tree while removing it visually.
+
+Override `externalLabel` to translate the warning.
+
+`target` and `rel` are only **defaulted**, never forced — an explicit value on
+the call site wins, so `external` stays a convenience rather than a constraint.
+
+### `href` and the link role
+
+`ILinkProps` extends the intrinsic `<a>` props, where `href` is optional. An
+`<a>` with no `href` is not exposed as a link and is not focusable. Always pass
+`href`; if the target is not a URL, the element you want is a `<button>`.
+
+### Router links keep the same rules
+
+`Link` renders a plain `<a>`, which in Next.js means a full page load. For
+client-side routing, put the exported `linkStyle()` on the router's own
+component — it is callable from a server component, and it carries the mandatory
+underline with it:
+
+```tsx
+import NextLink from "next/link";
+import { linkStyle } from "@retrojb/ui";
+
+<NextLink href="/docs" className={linkStyle({ intent: "standalone" })}>
+  Docs
+</NextLink>;
+```

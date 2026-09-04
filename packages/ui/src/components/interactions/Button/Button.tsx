@@ -1,11 +1,9 @@
 "use client";
 
-import { type ComponentPropsWithRef, type ReactElement } from "react";
+import { type ReactElement } from "react";
 
-import { button, type ButtonVariants } from "../variants.js";
-
-export interface ButtonProps
-  extends ComponentPropsWithRef<"button">, ButtonVariants {}
+import { buttonStyle } from "./styles.js";
+import type { IButtonProps } from "./types.js";
 
 /**
  * A button.
@@ -15,19 +13,24 @@ export interface ButtonProps
  * that only shows up once the button is reused somewhere with a form around it.
  * Pass `type="submit"` explicitly when submitting is what you want.
  */
-export function Button({
+const Button = ({
   className,
+  text,
   intent,
   size,
   fullWidth,
   type = "button",
   ...props
-}: ButtonProps): ReactElement {
+}: IButtonProps): ReactElement => {
   return (
     <button
       type={type}
-      className={button({ intent, size, fullWidth, className })}
+      className={buttonStyle({ intent, size, fullWidth, className })}
       {...props}
-    />
+    >
+      {text}
+    </button>
   );
-}
+};
+
+export { Button };

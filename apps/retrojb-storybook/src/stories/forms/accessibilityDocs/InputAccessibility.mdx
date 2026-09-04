@@ -1,0 +1,177 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/Input/Accessibility" />
+
+# Input Accessibility
+
+Extracted from `packages/ui/src/components/forms/Input/styles.ts`, plus the
+wiring in `Input.tsx` and the prop contract in `types.ts`. Ratios are the
+measured output of `npm run check:contrast --workspace=@retrojb/docs`.
+
+This is the component with the most accessibility decided for you: the label is
+a required prop, and the invalid state cannot be styled without also being
+announced.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                   |
+| --------------------------------- | ----- | -------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | `htmlFor` / `id` and `aria-describedby` are generated from `useId`, never hand-written        |
+| 1.4.1 Use of Color                | A     | An invalid field changes its border **and** shows a message **and** sets `aria-invalid`       |
+| 1.4.3 Contrast (Minimum)          | AA    | Value, placeholder, label, description and error text all clear 4.5:1 in both themes          |
+| 1.4.11 Non-text Contrast          | AA    | Both border states clear 3:1 — the boundary is what identifies the control                    |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition                                   |
+| 2.4.7 Focus Visible               | AA    | Same 2px `outline` as `Button` and `Link`, plus a border colour change                        |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset                                                               |
+| 2.5.8 Target Size (Minimum)       | AA    | Control heights are 32/40/48px, all above the 24px floor                                      |
+| 2.5.5 Target Size (Enhanced)      | AAA   | `lg` only — 48px. `md` at 40px is 4px short of 44px                                           |
+| 3.3.1 Error Identification        | A     | `error` sets `aria-invalid` and renders the message, associated by `aria-describedby`         |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `description` carries instructions                                 |
+| 4.1.2 Name, Role, Value           | A     | Native `<input>`; accessible name always comes from the associated `<label>`                   |
+
+### The label is required, by the type checker
+
+An unlabelled input is the most common WCAG failure there is. `label` is a
+required prop on `IInputProps`, so the omission is a compile error rather than
+something an audit finds later.
+
+When the design has no room for visible label text, use `labelHidden` — never an
+empty label and never a placeholder standing in for one:
+
+```tsx
+<Input label="Search docs" labelHidden placeholder="Search docs…" />
+```
+
+`labelHidden` applies `sr-only`. The label is visually gone but still in the
+accessibility tree and still the input's accessible name. `hidden` or
+`display: none` would remove it from both, which is the trap this variant exists
+to avoid.
+
+### The invalid state cannot drift from what is announced
+
+There is no `invalid` prop. Passing `error` is the only way to get the invalid
+styling, and the same condition drives all three signals:
+
+```tsx
+<Input
+  label="Workspace slug"
+  defaultValue="retro mcps"
+  error="Use lowercase letters, numbers and hyphens only."
+/>
+```
+
+- `border-danger` on the control
+- the message rendered in `--danger`
+- `aria-invalid` on the input
+
+So the visual state and the announced state cannot disagree — and because the
+border changes too, the error is conveyed by more than red text (1.4.1).
+
+### Focus
+
+`focus-visible:outline-2 focus-visible:outline-focus` with `outline-offset-2`,
+matching `Button` and `Link`. The valid state also carries
+`focus-visible:border-accent`, so the border colour shifts on focus as well —
+focus is never signalled by the ring alone.
+
+### Target size
+
+Control heights match `Button` exactly (32/40/48px) so an input and a button line
+up when they sit side by side in a row. The same AAA caveat applies: only `lg`
+reaches the 44px enhanced target in 2.5.5.
+
+### Disabled
+
+`disabled:opacity-60` with `disabled:cursor-not-allowed`, on the native
+`disabled` attribute — dimmed, cursor-changed, and out of the tab order.
+
+## Colors
+
+The control sits on `--surface-raised`, not `--background`, so its pairings are
+measured against that.
+
+### Text (needs 4.5:1)
+
+| Role        | Pairing                                        |  Light |   Dark |
+| ----------- | ---------------------------------------------- | -----: | -----: |
+| Value       | `--foreground` on `--surface-raised`           | 17.8:1 | 14.3:1 |
+| Placeholder | `--foreground-muted` on `--surface-raised`     | 6.43:1 | 7.39:1 |
+| Label       | `--foreground` on `--background`               | 17.8:1 | 16.6:1 |
+| Description | `--foreground-muted` on `--background`         | 6.43:1 | 8.59:1 |
+| Error       | `--danger` on `--background`                   | 6.53:1 | 9.74:1 |
+
+The placeholder clears 4.5:1, but it is still not a label — it disappears on
+input and is not a reliable accessible name. That is why `label` is required.
+
+### Borders and focus ring (needs 3:1)
+
+| State           | Pairing                                     |  Light |   Dark |
+| --------------- | ------------------------------------------- | -----: | -----: |
+| Valid           | `--border-strong` on `--surface-raised`     | 4.26:1 | 3.59:1 |
+| Invalid         | `--danger` on `--surface-raised`            | 6.53:1 | 8.38:1 |
+| Focus ring      | `--focus-ring` on `--background`            | 5.98:1 | 8.81:1 |
+
+1.4.11 applies to the input's boundary because the boundary is what identifies
+the control. `border-border-strong` is used rather than `border-border` for that
+reason — `--border` is for decorative rules and is never the sole indicator of a
+control.
+
+## Aria
+
+Everything below is wired by the component from `useId`-generated ids, so the
+relationships are correct without the caller doing anything. `useId` matters
+specifically because it produces ids that match between the server and client
+render, which hand-written ones stop doing as soon as a field appears twice on a
+page.
+
+| Attribute                    | Set when                          | Value                                              |
+| ---------------------------- | --------------------------------- | -------------------------------------------------- |
+| `id` on the input            | Always                            | The `id` prop, or a generated `…-input`             |
+| `htmlFor` on the label       | Always                            | Matches the input's `id`                           |
+| `aria-invalid`               | `error` is present                | `true`, otherwise the attribute is omitted          |
+| `aria-describedby`           | `error` or `description` present  | Error id first, then description id                |
+
+### Announcement order is deliberate
+
+`aria-describedby` lists the error before the description, so a screen reader
+reads the problem before the helper text:
+
+```
+aria-describedby="…-error …-description"
+```
+
+### A caller's `aria-describedby` is preserved, not replaced
+
+Any `aria-describedby` you pass is appended to the generated ids rather than
+overwriting them. Dropping it would silently break a tooltip or hint the app had
+already associated with the field.
+
+### The required marker is hidden from assistive technology
+
+`required` sets the native attribute, which is what assistive technology
+announces. The visible `*` is therefore decorative and carries `aria-hidden`, to
+avoid the "label star" double-announcement:
+
+```tsx
+<Input label="Email" type="email" required description="Used for sign-in." />
+```
+
+### `size` is the variant, not the HTML attribute
+
+`IInputProps` omits the intrinsic `size` attribute so the name can carry the
+`sm | md | lg` variant. Use `maxLength` if you need to constrain input length.
+
+### Styling a control this component does not own
+
+`inputStyle()` is a slot function and is callable from a server component. Use it
+when a `<textarea>` or `<select>` has to sit in the same form and match — but the
+aria wiring above is then yours to reproduce:
+
+```tsx
+const slots = inputStyle({ size: "md" });
+
+<div className={slots.root()}>
+  <label className={slots.label()} htmlFor="bio">Bio</label>
+  <textarea id="bio" className={slots.control()} />
+</div>;
+```

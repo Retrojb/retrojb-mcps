@@ -32,10 +32,14 @@
 @import "./theme.css";
 
 /*
- * Only this package's components are scanned. `source(none)` on the utilities
- * import would be the alternative; naming the sources explicitly means a build
- * run from any working directory produces byte-identical CSS, which is what
- * makes the turbo cache trustworthy here.
+ * The sources to scan for class names.
+ *
+ * `.ts` as well as `.tsx` under `components/`, because the class strings live in
+ * each component's `styles.ts` — the `.tsx` files hold almost none. Automatic
+ * detection happens to find them anyway, but only because the CLI runs from this
+ * package root; naming them means a build from any working directory produces
+ * byte-identical CSS, which is what makes the turbo cache trustworthy here.
  */
 @source "../components/**/*.tsx";
+@source "../components/**/*.ts";
 @source "../lib/**/*.ts";
