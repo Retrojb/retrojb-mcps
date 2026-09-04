@@ -1,0 +1,41 @@
+/*
+ * Compilation entry for `dist/styles.css`.
+ *
+ * Deliberately no preflight. Tailwind's reset is global and opinionated — it
+ * would land in every consuming app and fight the reset the app already has.
+ * `apps/docs` has its own, and a component library has no business resetting
+ * someone else's `<h1>`. Pulling `theme.css` and `utilities.css` in separately
+ * rather than `@import "tailwindcss"` is what leaves preflight out.
+ *
+ * The two imports are layered differently on purpose, and it is the load-bearing
+ * decision in this file. Unlayered CSS beats layered CSS outright, whatever the
+ * specificity, so:
+ *
+ *   - Tokens go in `@layer theme`. An app's own `:root { --accent: ... }` is
+ *     unlayered and therefore wins, which is what makes retheming work.
+ *   - Utilities stay unlayered. A component library gets dropped into apps that
+ *     style bare elements globally — `apps/docs` has `a { color: ...;
+ *     text-decoration: underline }` in its reset. With utilities in
+ *     `@layer utilities` that rule would beat `.no-underline` and
+ *     `<Link intent="standalone">` would render blue and underlined anyway.
+ *     Unlayered, `.no-underline` at (0,1,0) outranks `a` at (0,0,1) and the
+ *     component wins, while an app class targeting the same property still
+ *     overrides by source order.
+ */
+
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+
+@import "./tokens.css";
+@import "./theme.css";
+
+/*
+ * Only this package's components are scanned. `source(none)` on the utilities
+ * import would be the alternative; naming the sources explicitly means a build
+ * run from any working directory produces byte-identical CSS, which is what
+ * makes the turbo cache trustworthy here.
+ */
+@source "../components/**/*.tsx";
+@source "../lib/**/*.ts";

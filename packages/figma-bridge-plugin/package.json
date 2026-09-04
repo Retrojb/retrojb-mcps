@@ -12,7 +12,7 @@
     "bridge"
   ],
   "scripts": {
-    "build": "node build.mjs",
+    "build": "tsup",
     "dev": "node build.mjs --watch",
     "check-types": "tsc --noEmit -p tsconfig.sandbox.json && tsc --noEmit -p tsconfig.ui.json && tsc --noEmit -p tsconfig.tools.json",
     "lint": "eslint . --max-warnings 0",

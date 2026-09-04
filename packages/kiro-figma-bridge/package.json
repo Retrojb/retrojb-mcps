@@ -36,7 +36,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc && node build.mjs",
+    "build": "tsup",
     "build:plugin": "node build.mjs",
     "dev": "node build.mjs --watch",
     "start": "node dist/server/bin.js",

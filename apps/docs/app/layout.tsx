@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Shell } from "./_components/shell";
+// Before globals.css so this app's token layer, which is unlayered and therefore
+// wins over the package's layered defaults, is the one that takes effect.
+import "@retrojb/ui/styles.css";
 import "./globals.css";
 
 const geistSans = localFont({

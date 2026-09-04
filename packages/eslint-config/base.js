@@ -44,7 +44,20 @@ export const config = [
         projectService: {
           // Config files and scripts sit outside every tsconfig's `include`.
           // Without this they fail to lint at all rather than linting untyped.
-          allowDefaultProject: ["*.js", "*.mjs", "*.cjs"],
+          //
+          // `tsup.config.ts` is named explicitly because it is the one TypeScript
+          // file in a package that is deliberately not in `include`: the build
+          // configs live beside `src`, not in it, so adding them to `include`
+          // would drag them into `rootDir` and have tsc try to emit them. Before
+          // this entry, every package with a tsup config failed to lint at all
+          // with "was not found by the project service".
+          allowDefaultProject: [
+            "*.js",
+            "*.mjs",
+            "*.cjs",
+            "tsup.config.ts",
+            "*.config.ts",
+          ],
         },
       },
     },

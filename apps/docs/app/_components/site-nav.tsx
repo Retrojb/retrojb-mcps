@@ -17,7 +17,10 @@ interface NavGroup {
 const NAV: readonly NavGroup[] = [
   {
     title: "Overview",
-    items: [{ href: "/", label: "Introduction" }],
+    items: [
+      { href: "/", label: "Introduction" },
+      { href: "/components", label: "Components" },
+    ],
   },
   {
     title: "WCAG 2 basics",

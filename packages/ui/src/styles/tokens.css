@@ -1,0 +1,91 @@
+/*
+ * The default palette, as plain custom properties.
+ *
+ * These are the same values, with the same measured ratios, as the token layer
+ * in `apps/docs/app/globals.css` — which is checked against WCAG 1.4.3 and
+ * 1.4.11 by `npm run check:contrast` in that workspace, using the engine from
+ * `@retrojb/wcag-a11y-scanner`. If you change a colour here, run that check.
+ *
+ * Everything lives in `@layer theme` on purpose. Unlayered CSS beats layered CSS
+ * in the cascade regardless of specificity, so an app that declares
+ * `:root { --accent: ... }` in its own stylesheet retints every component in
+ * this package without needing `!important` or a higher-specificity selector.
+ * That is the intended way to retheme: override the tokens, not the utilities.
+ */
+
+@layer theme {
+  :root {
+    color-scheme: light;
+
+    --background: #ffffff;
+    --surface: #f6f7f9;
+    --surface-raised: #ffffff;
+
+    /* 17.8:1 on --background */
+    --foreground: #16181a;
+    /* 6.43:1 on --background — clears AA for body text */
+    --foreground-muted: #5a5f66;
+
+    /* 4.26:1 on --background — clears 1.4.11 for control boundaries */
+    --border-strong: #767b82;
+    /* Decorative rules only; never the sole indicator of a control */
+    --border: #d9dde2;
+
+    --accent: #0b5cd5;
+    --accent-hover: #093f92;
+    /* 5.98:1 against --accent — white text on a filled accent button */
+    --accent-foreground: #ffffff;
+    /* 5.98:1 on --background */
+    --accent-text: #0b5cd5;
+
+    /* 6.53:1 on --background */
+    --danger: #b3261e;
+    /* 6.53:1 against --danger */
+    --danger-foreground: #ffffff;
+    /* 6.53:1 on --background */
+    --success: #1a6b3c;
+
+    --focus-ring: #0b5cd5;
+
+    --radius: 8px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+
+      --background: #0b0d0f;
+      --surface: #14171a;
+      --surface-raised: #1a1e22;
+
+      /* 16.6:1 on --background */
+      --foreground: #ecedee;
+      /* 8.59:1 on --background */
+      --foreground-muted: #a6adb5;
+
+      /* 4.17:1 on --background */
+      --border-strong: #6e757d;
+      --border: #272c31;
+
+      --accent: #7cb0ff;
+      --accent-hover: #a8caff;
+      /*
+       * Dark, not white. The dark-mode accent is a light blue, so a filled
+       * button flips to dark text — 8.81:1 against --accent. Leaving this white
+       * would give 1.9:1 and fail 1.4.3 outright.
+       */
+      --accent-foreground: #0b0d0f;
+      /* 8.81:1 on --background */
+      --accent-text: #7cb0ff;
+
+      /* 9.74:1 on --background */
+      --danger: #ff9d95;
+      /* 9.74:1 against --danger */
+      --danger-foreground: #0b0d0f;
+      /* 10.57:1 on --background */
+      --success: #6bd39a;
+
+      --focus-ring: #7cb0ff;
+    }
+  }
+}

@@ -1,0 +1,47 @@
+/*
+ * Registers the palette with Tailwind so `bg-accent`, `text-foreground-muted`,
+ * `border-border-strong` and friends exist as real utilities.
+ *
+ * Every value is `var(--token, fallback)` rather than a literal. That
+ * indirection is the whole point:
+ *
+ *   - Utilities compile to `var(--color-accent)`, which resolves through to
+ *     `var(--accent)` at paint time. An app can therefore change `--accent` in
+ *     a media query, a `[data-theme]` block, or from JavaScript, and every
+ *     component follows without recompiling this package.
+ *   - The fallback keeps `dist/styles.css` self-sufficient. Import it into an
+ *     app with no token layer of its own and the components still render with
+ *     the verified palette.
+ *
+ * `static` so all of these are emitted even when no utility in this package
+ * happens to reference one. Consuming apps read them directly.
+ *
+ * Exported as `@retrojb/ui/theme.css` for apps that run their own Tailwind build
+ * and want the same tokens available in their own markup.
+ */
+
+@theme static {
+  --color-background: var(--background, #ffffff);
+  --color-surface: var(--surface, #f6f7f9);
+  --color-surface-raised: var(--surface-raised, #ffffff);
+
+  --color-foreground: var(--foreground, #16181a);
+  --color-foreground-muted: var(--foreground-muted, #5a5f66);
+
+  --color-border: var(--border, #d9dde2);
+  --color-border-strong: var(--border-strong, #767b82);
+
+  --color-accent: var(--accent, #0b5cd5);
+  --color-accent-hover: var(--accent-hover, #093f92);
+  --color-accent-foreground: var(--accent-foreground, #ffffff);
+  --color-accent-text: var(--accent-text, #0b5cd5);
+
+  --color-danger: var(--danger, #b3261e);
+  --color-danger-foreground: var(--danger-foreground, #ffffff);
+  --color-success: var(--success, #1a6b3c);
+
+  --color-focus: var(--focus-ring, #0b5cd5);
+
+  /* `rounded-control` — one radius for every interactive surface. */
+  --radius-control: var(--radius, 8px);
+}

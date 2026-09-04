@@ -21,6 +21,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "start:docs": "npm run start --workspace=@retrojb/docs",
+    "start:storybook": "npm run storybook --workspace=@retrojb/retrojb-storybook",
     "check-types": "turbo run check-types",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -32,7 +33,9 @@
   },
   "devDependencies": {
     "@changesets/cli": "3.0.1",
+    "@esbuild/darwin-arm64": "^0.28.2",
     "prettier": "3.9.6",
+    "tsup": "^8.5.1",
     "turbo": "~2.10.12",
     "typescript": "6.0.3"
   },
