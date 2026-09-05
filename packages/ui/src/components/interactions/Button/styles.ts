@@ -10,7 +10,7 @@
  * it callable from anywhere while the React layer stays client-side.
  */
 
-import { tv, type VariantProps } from "../../../lib/tv.js";
+import { tv, type VariantProps } from "../../../lib/tv";
 
 const buttonStyle = tv({
   base: [

@@ -9,7 +9,7 @@
  * surrounding markup.
  */
 
-import { tv, type VariantProps } from "../../../lib/tv.js";
+import { tv, type VariantProps } from "../../../lib/tv";
 
 const inputStyle = tv({
   slots: {

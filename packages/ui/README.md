@@ -4,7 +4,7 @@ Shared React primitives for the apps in this repo. Tailwind CSS v4 for the
 styling engine, [`tailwind-variants`](https://www.tailwind-variants.org) for the
 variant API, `tsup` for the build.
 
-Three components so far: `Button`, `Link`, `Input`.
+Four components so far: `Button`, `Link`, `Input`, `Table`.
 
 ## Structure
 
@@ -19,7 +19,19 @@ src/components/
     index.ts      the barrel
   navigation/Link/
   forms/Input/
+  data/Table/
+    Table.tsx     the root, plus the Table.Head / Table.Cell namespace
+    parts.tsx     the composable parts
+    context.ts    the instance and shared variants, shared with the parts
+    styles.ts     tableStyle, TableVariants
+    types.ts      ITableProps and one interface per part
+    index.ts      the barrel
 ```
+
+`Table` is the one component that is more than four files. Everything extra is
+there because it is composite: `parts.tsx` holds the seven subcomponents,
+`context.ts` is how they reach the table instance without every caller passing
+it down by hand. The rules below still apply to all of them.
 
 Four files rather than one because of the `"use client"` boundary described
 under [Server and client components](#server-and-client-components): the
@@ -63,8 +75,78 @@ import { Button, Input, Link } from "@retrojb/ui";
 `Button` takes its label as a `text` prop rather than children. `Link` and
 `Input` take children and a `label` respectively.
 
+### Table
+
+`Table` renders a TanStack Table v9 instance. It does not build one — which
+features a table registers, where its sorting state lives, whether filtering
+happens here or on a server are all decisions TanStack models well and a wrapper
+can only obscure. `@tanstack/react-table` is a **peer** dependency for the same
+reason the instance is a prop: its type crosses this boundary, and two copies in
+one tree means two structurally identical types that TypeScript will not accept
+for each other.
+
+```tsx
+import { Table } from "@retrojb/ui";
+import { tableFeatures, useTable } from "@tanstack/react-table";
+
+const features = tableFeatures({}); // module scope: it has to be stable
+
+const Invoices = ({ data }: { data: Invoice[] }) => {
+  const table = useTable({ features, columns, data });
+
+  return <Table table={table} caption="Open invoices" striped />;
+};
+```
+
+That renders the head, the body, and the foot when a column defines a `footer`.
+
+When a column needs a checkbox or a row needs a click handler, compose the
+parts. Each one renders its children when given any and generates itself from
+the instance when not, so mixing the two is normal:
+
+```tsx
+<Table table={table} caption="Open invoices">
+  <Table.Head />
+
+  <Table.Body>
+    {table.getRowModel().rows.map((row) => (
+      <Table.Row key={row.id} selected={row.getIsSelected()}>
+        {row.getVisibleCells().map((cell) => (
+          <Table.Cell key={cell.id} cell={cell} />
+        ))}
+      </Table.Row>
+    ))}
+  </Table.Body>
+</Table>
+```
+
+The parts are `Table.Head`, `Table.Body`, `Table.Foot`, `Table.Row`,
+`Table.HeaderCell`, `Table.Cell` and `Table.Empty`, also exported flat as
+`TableHead` and friends for when one has to be passed somewhere or wrapped.
+
+`caption` is required — see [Accessibility](#accessibility). Variants are
+`size`, `bordered`, `striped`, `stickyHeader` and `captionHidden` on the table,
+`align` on a cell and `selected` on a row. `align` is also read from the column
+definition, which is the only way a generated cell can know about it:
+
+```ts
+const features = tableFeatures({
+  columnMeta: {} as { align?: "start" | "center" | "end" },
+});
+
+helper.accessor("amount", { header: "Amount", meta: { align: "end" } });
+```
+
+The component is generic over v9's `TFeatures`, so it cannot know at compile
+time which features a caller registered — it checks at runtime instead, because
+v9 puts feature methods on the shared prototypes. A table with
+`rowSortingFeature` gets sort buttons and `aria-sort`; the same component with
+the same columns and no sorting feature renders plain header text.
+
+### Variant functions
+
 Every component also exports its variant function — `buttonStyle`, `linkStyle`,
-`inputStyle` — for styling an element this package does not own:
+`inputStyle`, `tableStyle` — for styling an element this package does not own:
 
 ```tsx
 import NextLink from "next/link";
@@ -78,6 +160,9 @@ import { linkStyle } from "@retrojb/ui";
 
 `inputStyle` is a slot function: `inputStyle().control()` for the element,
 `.root()`, `.label()`, `.description()` and `.error()` for the markup around it.
+`tableStyle` is the same, with a slot per element — `.root()`, `.table()`,
+`.caption()`, `.headerCell()`, `.cell()` and the rest — for a small static table
+with no TanStack instance behind it.
 
 ## Theming
 
@@ -124,7 +209,19 @@ call site:
 
 - `Link external` sets `target`/`rel` and appends a visually hidden "(opens in a
   new tab)" to the accessible name (3.2.5).
-- One focus indicator across all three components: a 2px `outline` with a 2px
+- `Table` takes a **required** `caption`, for the same reason `Input` requires a
+  `label`: a table without one has no accessible name. `captionHidden` covers
+  designs with no room for the text.
+- `Table` wraps itself in a focusable `role="region"` named by that caption. A
+  horizontally scrolling container that is not focusable cannot be scrolled
+  without a pointer (2.1.1), and a table wide enough to scroll is the normal
+  case.
+- `Table` sorting is a real `<button>` filling the whole header cell, with
+  `aria-sort` on the `<th>` and a glyph for the direction, so the state is both
+  announced and drawn (1.4.1, 4.1.2). `scope` follows how many columns a cell
+  actually covers, and uneven column trees merge with `rowSpan` rather than
+  rendering blank placeholder cells.
+- One focus indicator across all four components: a 2px `outline` with a 2px
   offset on `:focus-visible` (2.4.7, 2.4.13). An `outline` rather than a `ring`
   box-shadow, because outlines survive forced-colors mode.
 - Contrast ratios for every token pair are recorded in `src/styles/tokens.css`,
@@ -134,8 +231,12 @@ call site:
   `@retrojb/wcag-a11y-scanner`. If you change a colour, run it.
 
 Colour is never the only signal for a state: the invalid input changes its
-border as well as showing a message, and disabled controls change cursor as well
-as opacity.
+border as well as showing a message, disabled controls change cursor as well as
+opacity, and a sorted column shows a glyph as well as `aria-sort`. A selected
+table row is the one case the package cannot close on its own — ARIA has no
+`aria-selected` for a row inside a `table`, only inside a `grid` — so a
+selectable table needs a checkbox in one of its cells, and `Table`'s tint is
+documented as insufficient without one.
 
 ## Scripts
 
@@ -150,11 +251,12 @@ as opacity.
 
 ## Server and client components
 
-The three components are client modules — `Input` calls `useId`. The variant
-functions are not, and the split is deliberate: `"use client"` marks everything
-a module exports as client-only, so had `linkStyle()` lived in `Link.tsx` it
-could not be called from a server component, which is the default in App Router
-and where the `<NextLink className={linkStyle()}>` example above normally sits.
+All four components are client modules — `Input` and `Table` call `useId`, and
+`Table` also holds a context. The variant functions are not, and the split is
+deliberate: `"use client"` marks everything a module exports as client-only, so
+had `linkStyle()` lived in `Link.tsx` it could not be called from a server
+component, which is the default in App Router and where the
+`<NextLink className={linkStyle()}>` example above normally sits.
 
 So each component directory splits in two: `styles.ts` holds the class-name
 logic with no directive, `<Name>.tsx` holds the React layer with one. Both are

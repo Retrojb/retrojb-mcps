@@ -2,8 +2,8 @@
 
 import { type ReactElement } from "react";
 
-import { buttonStyle } from "./styles.js";
-import type { IButtonProps } from "./types.js";
+import { buttonStyle } from "./styles";
+import type { IButtonProps } from "./types";
 
 /**
  * A button.

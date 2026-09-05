@@ -84,5 +84,17 @@ export default defineConfig({
   // exactly the problem `bundle: false` is here to avoid. The three component
   // modules carry the directive in their own source instead.
 
-  onSuccess: "npm run build:types && npm run build:css",
+  /*
+   * `build:specifiers` runs third, and it has to be third.
+   *
+   * Source imports are extensionless — `./styles`, not `./styles.js` — which
+   * `dist` cannot be, being ESM. Neither of the two compilers closes that gap:
+   * esbuild copies specifiers through untouched when `bundle` is false, and
+   * `tsc` does not rewrite them either. `tsc-alias` does, by resolving each one
+   * against the files on disk, so it can only run once both the `.js` and the
+   * `.d.ts` are there to be read and rewritten. See `packages/ui/tsconfig.json`
+   * for the resolution settings this pairs with.
+   */
+  onSuccess:
+    "npm run build:types && npm run build:specifiers && npm run build:css",
 });

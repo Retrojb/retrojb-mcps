@@ -1,3 +1,3 @@
-export { Input } from "./Input.js";
-export type { IInputProps } from "./types.js";
-export { inputStyle, type InputVariants } from "./styles.js";
+export { Input } from "./Input";
+export type { IInputProps } from "./types";
+export { inputStyle, type InputVariants } from "./styles";

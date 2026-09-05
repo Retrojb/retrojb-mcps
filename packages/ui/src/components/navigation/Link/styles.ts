@@ -21,7 +21,7 @@
  * above throw.
  */
 
-import { tv, type VariantProps } from "../../../lib/tv.js";
+import { tv, type VariantProps } from "../../../lib/tv";
 
 const linkStyle = tv({
   base: [

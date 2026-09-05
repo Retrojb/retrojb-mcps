@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef } from "react";
 
-import type { LinkVariants } from "./styles.js";
+import type { LinkVariants } from "./styles";
 
 interface ILinkProps extends ComponentPropsWithRef<"a">, LinkVariants {
   /**

@@ -2,8 +2,8 @@
 
 import { type ReactElement } from "react";
 
-import { linkStyle } from "./styles.js";
-import type { ILinkProps } from "./types.js";
+import { linkStyle } from "./styles";
+import type { ILinkProps } from "./types";
 
 /**
  * A text link.

@@ -2,8 +2,8 @@
 
 import { useId, type ReactElement } from "react";
 
-import { inputStyle } from "./styles.js";
-import type { IInputProps } from "./types.js";
+import { inputStyle } from "./styles";
+import type { IInputProps } from "./types";
 
 /**
  * A labelled text input, with description and error text already wired up.

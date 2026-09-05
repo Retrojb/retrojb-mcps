@@ -1,17 +1,18 @@
 /*
  * Registers the palette with Tailwind so `bg-accent`, `text-foreground-muted`,
- * `border-border-strong` and friends exist as real utilities.
+ * `border-border-strong`, `bg-primary-8` and friends exist as real utilities.
  *
  * Every value is `var(--token, fallback)` rather than a literal. That
  * indirection is the whole point:
  *
  *   - Utilities compile to `var(--color-accent)`, which resolves through to
- *     `var(--accent)` at paint time. An app can therefore change `--accent` in
- *     a media query, a `[data-theme]` block, or from JavaScript, and every
- *     component follows without recompiling this package.
- *   - The fallback keeps `dist/styles.css` self-sufficient. Import it into an
- *     app with no token layer of its own and the components still render with
- *     the verified palette.
+ *     `var(--accent)` and then to `var(--primary-8)` at paint time. An app can
+ *     therefore change `--primary-8` in a media query, a `[data-theme]` block, or
+ *     from JavaScript, and every component follows without recompiling this
+ *     package.
+ *   - The fallback keeps `dist/styles.css` self-sufficient. Import it into an app
+ *     with no token layer of its own and the components still render with the
+ *     verified palette.
  *
  * `static` so all of these are emitted even when no utility in this package
  * happens to reference one. Consuming apps read them directly.
@@ -21,27 +22,88 @@
  */
 
 @theme static {
-  --color-background: var(--background, #ffffff);
+  /*
+   * The three ramps.
+   *
+   * Exposed as utilities as well as custom properties because an app composing its
+   * own layouts needs `bg-neutral-1` and `text-primary-9` without reaching for
+   * arbitrary values. The step index is a role, not a lightness — see the contract
+   * table in `tokens.css` — so `bg-primary-7` is the solid fill in both themes.
+   *
+   * Fallbacks are the light-theme values. An app that overrides the ramp gets a
+   * dark theme for free, because the semantic tokens below resolve through these.
+   */
+  --color-primary-0: var(--primary-0, #fefdff);
+  --color-primary-1: var(--primary-1, #faf4fe);
+  --color-primary-2: var(--primary-2, #f4e7fe);
+  --color-primary-3: var(--primary-3, #ebd6fd);
+  --color-primary-4: var(--primary-4, #dfbff6);
+  --color-primary-5: var(--primary-5, #956fb1);
+  --color-primary-6: var(--primary-6, #845ea0);
+  --color-primary-7: var(--primary-7, #795293);
+  --color-primary-8: var(--primary-8, #5b3673);
+  --color-primary-9: var(--primary-9, #2f1141);
+
+  --color-secondary-0: var(--secondary-0, #fafffa);
+  --color-secondary-1: var(--secondary-1, #e4fee3);
+  --color-secondary-2: var(--secondary-2, #c8fec7);
+  --color-secondary-3: var(--secondary-3, #9dff9e);
+  --color-secondary-4: var(--secondary-4, #8fe78f);
+  --color-secondary-5: var(--secondary-5, #219a2f);
+  --color-secondary-6: var(--secondary-6, #1b8628);
+  --color-secondary-7: var(--secondary-7, #177923);
+  --color-secondary-8: var(--secondary-8, #0d5917);
+  --color-secondary-9: var(--secondary-9, #001d01);
+
+  --color-neutral-0: var(--neutral-0, #d1d1d1);
+  --color-neutral-1: var(--neutral-1, #c8c4c8);
+  --color-neutral-2: var(--neutral-2, #bfbabf);
+  --color-neutral-3: var(--neutral-3, #b5b1b5);
+  --color-neutral-4: var(--neutral-4, #a19da1);
+  --color-neutral-5: var(--neutral-5, #625e63);
+  --color-neutral-6: var(--neutral-6, #534e53);
+  --color-neutral-7: var(--neutral-7, #484449);
+  --color-neutral-8: var(--neutral-8, #2d2c2d);
+  --color-neutral-9: var(--neutral-9, #070507);
+
+  /*
+   * The semantic layer the components actually use.
+   *
+   * Fallbacks name the ramp step each one resolves to, so the chain stays legible
+   * from here: `bg-accent` -> `--color-accent` -> `--accent` -> `--primary-8`.
+   */
+  --color-background: var(--background, #d1d1d1);
   --color-surface: var(--surface, #f6f7f9);
   --color-surface-raised: var(--surface-raised, #ffffff);
 
-  --color-foreground: var(--foreground, #16181a);
-  --color-foreground-muted: var(--foreground-muted, #5a5f66);
+  /* --neutral-9 / --neutral-7 */
+  --color-foreground: var(--foreground, #070507);
+  --color-foreground-muted: var(--foreground-muted, #484449);
 
-  --color-border: var(--border, #d9dde2);
-  --color-border-strong: var(--border-strong, #767b82);
+  /* --neutral-4 / --neutral-5 */
+  --color-border: var(--border, #a19da1);
+  --color-border-strong: var(--border-strong, #625e63);
 
-  --color-accent: var(--accent, #0b5cd5);
-  --color-accent-hover: var(--accent-hover, #093f92);
-  --color-accent-foreground: var(--accent-foreground, #ffffff);
-  --color-accent-text: var(--accent-text, #0b5cd5);
+  /* --primary-8 / --primary-9 / --primary-0 / --primary-9 */
+  --color-accent: var(--accent, #5b3673);
+  --color-accent-hover: var(--accent-hover, #2f1141);
+  --color-accent-foreground: var(--accent-foreground, #fefdff);
+  --color-accent-text: var(--accent-text, #2f1141);
 
-  --color-danger: var(--danger, #b3261e);
-  --color-danger-foreground: var(--danger-foreground, #ffffff);
-  --color-success: var(--success, #1a6b3c);
+  --color-danger: var(--danger, #900204);
+  --color-danger-foreground: var(--danger-foreground, #fefdff);
+  --color-success: var(--success, #005028);
 
-  --color-focus: var(--focus-ring, #0b5cd5);
+  /* --primary-8 */
+  --color-focus: var(--focus-ring, #5b3673);
 
-  /* `rounded-control` — one radius for every interactive surface. */
-  --radius-control: var(--radius, 8px);
+  /*
+   * `rounded-control` — one radius for every interactive surface.
+   *
+   * Reads `--radius-sm` rather than `--radius`. The token layer now ships a radius
+   * scale (`--radius-none` through `--radius-circle`) and no longer defines a bare
+   * `--radius`, so the old reference resolved to nothing and every control silently
+   * fell back to the 8px literal. `--radius-sm` is that same 8px, named.
+   */
+  --radius-control: var(--radius-sm, 8px);
 }

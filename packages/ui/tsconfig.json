@@ -2,15 +2,31 @@
   "extends": "@retrojb/typescript-config/react-library.json",
   "compilerOptions": {
     /*
-     * `NodeNext` from the base config, deliberately not `bundler`.
+     * `Bundler` resolution, overriding `NodeNext` from the base config, so source
+     * can say `./styles` rather than `./styles.js`.
      *
-     * Under `bundler` resolution both `./styles` and `./components/x/Button` — a
-     * directory — type-check clean, then emit as written and fail to resolve in
-     * the consuming bundler, which is a runtime error found by whoever runs
-     * Storybook rather than a compile error found here. `NodeNext` requires the
-     * explicit `.js` specifier that the emitted ESM actually needs, so the
-     * mistake is caught by `check-types`.
+     * The extension is not optional in the *output* — `dist` is `"type":
+     * "module"`, so its relative specifiers have to be fully specified or a
+     * consumer that honours ESM resolution (Node, and webpack's
+     * `fullySpecified` for ESM) cannot resolve them. Neither compiler here
+     * rewrites specifiers: esbuild copies them verbatim when `bundle` is off,
+     * and `tsc` never rewrites them at all. So `tsc-alias` runs last and
+     * resolves every relative specifier in `dist` against what was actually
+     * written to disk — `./styles` becomes `./styles.js`, and the directory
+     * `./components/x/Button` becomes `./components/x/Button/index.js` — across
+     * the `.js` from tsup and the `.d.ts` from tsc alike. See the `tsc-alias`
+     * key at the bottom of this file and `onSuccess` in `tsup.config.ts`.
+     *
+     * What the old `NodeNext` arrangement bought was that a specifier which
+     * cannot resolve is a `check-types` failure rather than a runtime error for
+     * whoever runs Storybook. That still holds: under `Bundler` a specifier
+     * pointing at nothing is TS2307 all the same. `Bundler` is more permissive
+     * only about *how* a real file may be named, which is the part being
+     * rewritten on the way out.
      */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
 
     // A browser library: DOM, no Node. Naming the two @types packages this code
@@ -32,5 +48,13 @@
   // `check-types`. `tsup.config.ts` stays out of `include` deliberately: it sits
   // beside `src` rather than in it, so including it would break `rootDir`.
   "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+
+  // Read by `tsc-alias`, not by `tsc`. `resolveFullPaths` is the whole reason it
+  // is in the build: without it the tool only rewrites `paths` aliases, of which
+  // this package has none. It takes `outDir` and `rootDir` from the options
+  // above, so `dist` is not named twice.
+  "tsc-alias": {
+    "resolveFullPaths": true
+  }
 }

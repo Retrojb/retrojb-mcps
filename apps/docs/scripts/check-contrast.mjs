@@ -87,6 +87,21 @@ function pairings(theme) {
     ],
     ["focus ring on page", theme.focusRing, theme.background, "ui-component"],
     ["focus ring on surface", theme.focusRing, theme.surface, "ui-component"],
+    /*
+     * `Table` puts a focus ring on two things that sit on `--surface-raised`
+     * rather than on the page or on `--surface`: its scroll container, which is
+     * focusable so a wide table can be scrolled from the keyboard, and the sort
+     * button inside each header cell. The other pairings the table introduces are
+     * already here under other names — its header text is `secondary button
+     * label`, its caption is `input placeholder`, its sort hover is `link on
+     * surface`, its header rule is `input border on page`. This one was not.
+     */
+    [
+      "focus ring on raised",
+      theme.focusRing,
+      theme.surfaceRaised,
+      "ui-component",
+    ],
 
     // Pairings introduced by the @retrojb/ui primitives.
     ["primary button label", theme.accentForeground, theme.accent, "text"],

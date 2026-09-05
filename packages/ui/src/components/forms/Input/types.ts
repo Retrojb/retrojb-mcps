@@ -1,6 +1,6 @@
 import type { ComponentPropsWithRef, ReactNode } from "react";
 
-import type { InputVariants } from "./styles.js";
+import type { InputVariants } from "./styles";
 
 interface IInputProps
   extends

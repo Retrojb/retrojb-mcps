@@ -1,7 +1,7 @@
 {
   "name": "@retrojb/ui",
   "version": "0.0.0",
-  "description": "Shared React primitives: Tailwind-styled Button, Link and Input with typed variants.",
+  "description": "Shared React primitives: Tailwind-styled Button, Link, Input and a composable TanStack Table with typed variants.",
   "type": "module",
   "private": true,
   "license": "MIT",
@@ -23,6 +23,7 @@
     "build": "tsup",
     "build:css": "tailwindcss --input src/styles/index.css --output dist/styles.css",
     "build:types": "tsc --emitDeclarationOnly",
+    "build:specifiers": "tsc-alias",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit"
@@ -32,6 +33,7 @@
     "tailwind-variants": "3.3.1"
   },
   "peerDependencies": {
+    "@tanstack/react-table": "9.2.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
@@ -39,12 +41,14 @@
     "@retrojb/eslint-config": "*",
     "@retrojb/typescript-config": "*",
     "@tailwindcss/cli": "4.3.3",
+    "@tanstack/react-table": "9.2.4",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
     "eslint": "10.9.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwindcss": "4.3.3",
+    "tsc-alias": "1.9.4",
     "typescript": "6.0.3"
   },
   "engines": {
