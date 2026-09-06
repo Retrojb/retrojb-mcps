@@ -14,7 +14,7 @@
   color: var(--background);
   font-weight: 600;
   text-decoration: none;
-  border-bottom-right-radius: var(--radius);
+  border-bottom-right-radius: var(--radius-sm);
   transform: translateY(-120%);
 }
 

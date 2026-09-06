@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { tableStyle } from "@retrojb/ui";
 import { getCriterion } from "@retrojb/wcag-a11y-scanner";
 import styles from "./prose.module.css";
 
@@ -157,7 +158,40 @@ export function Compare({
   );
 }
 
-/** A horizontally scrollable table wrapper with a caption. */
+/**
+ * Turns a caption into a stable id, so the scroll region below can be labelled
+ * without a hook. `useId` would work but only in a client component, and none of
+ * this needs to be one.
+ */
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/**
+ * A scrollable table figure, framed by the component library.
+ *
+ * `tableStyle()` rather than the `Table` component, and that is the right end of
+ * the library's API for this. `Table` renders a TanStack instance — columns, a row
+ * model, registered features — which is a great deal of ceremony for a figure
+ * whose four rows are written out by hand in the page. The slot function is the
+ * documented escape hatch for exactly this case: it carries no `"use client"`, so
+ * it is callable from a server component, and it returns the same classes the real
+ * `Table` uses, which are already present in `@retrojb/ui/styles.css`.
+ *
+ * The cells stay unclassed. Their padding and rules come from the `@layer base`
+ * `th, td` selectors in `globals.css`, which exist for precisely this — a table
+ * written as markup in a page. What the library contributes is the frame: the
+ * scroll container, `border-collapse`, the caption, and the focusable region.
+ *
+ * That last part is a fix rather than a refactor. The hand-rolled wrapper this
+ * replaces was `overflow-x: auto` with no way to reach it from the keyboard, so a
+ * table wider than its column could not be scrolled without a pointer (WCAG
+ * 2.1.1). `role="region"` with `tabindex="0"` and a name taken from the caption is
+ * what the library's `Table` does, and the reasoning transfers unchanged.
+ */
 export function TableFigure({
   caption,
   children,
@@ -165,10 +199,20 @@ export function TableFigure({
   caption: string;
   children: ReactNode;
 }): React.ReactElement {
+  const slots = tableStyle({ size: "sm" });
+  const captionId = `figure-${slugify(caption)}`;
+
   return (
-    <div className={styles.tableWrap}>
-      <table>
-        <caption>{caption}</caption>
+    <div
+      role="region"
+      aria-labelledby={captionId}
+      tabIndex={0}
+      className={slots.root({ class: styles.figure })}
+    >
+      <table className={slots.table()}>
+        <caption id={captionId} className={slots.caption()}>
+          {caption}
+        </caption>
         {children}
       </table>
     </div>

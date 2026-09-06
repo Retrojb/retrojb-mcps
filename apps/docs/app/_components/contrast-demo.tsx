@@ -1,5 +1,5 @@
 import { checkContrast, type ContentType } from "@retrojb/wcag-a11y-scanner";
-import { proseStyles as styles } from "./prose";
+import { proseStyles as styles, TableFigure } from "./prose";
 
 export interface ContrastExample {
   readonly foreground: string;
@@ -53,91 +53,88 @@ export function ContrastDemo({
   });
 
   return (
-    <div className={styles.tableWrap}>
-      <table>
-        <caption>{caption}</caption>
-        <thead>
-          <tr>
-            <th scope="col">Pairing</th>
-            <th scope="col">
-              Sample
-              <span className="visuallyHidden">
-                {" "}
-                — visual only; the verdict is in the columns that follow
+    <TableFigure caption={caption}>
+      <thead>
+        <tr>
+          <th scope="col">Pairing</th>
+          <th scope="col">
+            Sample
+            <span className="sr-only">
+              {" "}
+              — visual only; the verdict is in the columns that follow
+            </span>
+          </th>
+          <th scope="col">Colours</th>
+          <th scope="col">Ratio</th>
+          <th scope="col">AA</th>
+          <th scope="col">AAA</th>
+          <th scope="col">What it means</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(({ example, result, aa, aaa }) => (
+          <tr
+            key={`${example.foreground}-${example.background}-${example.label}`}
+          >
+            <th scope="row">{example.label}</th>
+            <td>
+              {/*
+               * Decorative: a rendering of the pairing this row describes.
+               * Hidden from assistive technology because every fact about it
+               * is already stated as text in the same row, which is what makes
+               * a deliberately-failing sample acceptable here.
+               */}
+              <span
+                aria-hidden="true"
+                className={styles.swatch}
+                style={{
+                  color: result.foreground.hex,
+                  background: result.background.hex,
+                  fontSize: example.fontSizePx
+                    ? `${example.fontSizePx}px`
+                    : undefined,
+                  fontWeight: example.bold ? 700 : undefined,
+                }}
+              >
+                Aa
               </span>
-            </th>
-            <th scope="col">Colours</th>
-            <th scope="col">Ratio</th>
-            <th scope="col">AA</th>
-            <th scope="col">AAA</th>
-            <th scope="col">What it means</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map(({ example, result, aa, aaa }) => (
-            <tr
-              key={`${example.foreground}-${example.background}-${example.label}`}
-            >
-              <th scope="row">{example.label}</th>
-              <td>
-                {/*
-                 * Decorative: a rendering of the pairing this row describes.
-                 * Hidden from assistive technology because every fact about it
-                 * is already stated as text in the same row, which is what makes
-                 * a deliberately-failing sample acceptable here.
-                 */}
+            </td>
+            <td>
+              <code>{result.foreground.hex}</code> on{" "}
+              <code>{result.background.hex}</code>
+            </td>
+            <td>{result.ratio}:1</td>
+            <td>
+              {aa ? (
                 <span
-                  aria-hidden="true"
-                  className={styles.swatch}
-                  style={{
-                    color: result.foreground.hex,
-                    background: result.background.hex,
-                    fontSize: example.fontSizePx
-                      ? `${example.fontSizePx}px`
-                      : undefined,
-                    fontWeight: example.bold ? 700 : undefined,
-                  }}
+                  className={
+                    aa.passes ? styles.verdictPass : styles.verdictFail
+                  }
                 >
-                  Aa
+                  {aa.requiredRatio}:1 needed
                 </span>
-              </td>
-              <td>
-                <code>{result.foreground.hex}</code> on{" "}
-                <code>{result.background.hex}</code>
-              </td>
-              <td>{result.ratio}:1</td>
-              <td>
-                {aa ? (
-                  <span
-                    className={
-                      aa.passes ? styles.verdictPass : styles.verdictFail
-                    }
-                  >
-                    {aa.requiredRatio}:1 needed
-                  </span>
-                ) : (
-                  "n/a"
-                )}
-              </td>
-              <td>
-                {aaa ? (
-                  <span
-                    className={
-                      aaa.passes ? styles.verdictPass : styles.verdictFail
-                    }
-                  >
-                    {aaa.requiredRatio}:1 needed
-                  </span>
-                ) : (
-                  "Not defined"
-                )}
-              </td>
-              <td>{describe(example, result.ratio, aa?.passes ?? false)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+              ) : (
+                "n/a"
+              )}
+            </td>
+            <td>
+              {aaa ? (
+                <span
+                  className={
+                    aaa.passes ? styles.verdictPass : styles.verdictFail
+                  }
+                >
+                  {aaa.requiredRatio}:1 needed
+                </span>
+              ) : (
+                "Not defined"
+              )}
+            </td>
+            <td>{describe(example, result.ratio, aa?.passes ?? false)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </TableFigure>
   );
 }
 

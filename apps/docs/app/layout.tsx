@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Shell } from "./_components/shell";
-// Before globals.css so this app's token layer, which is unlayered and therefore
-// wins over the package's layered defaults, is the one that takes effect.
+/*
+ * Order matters, though not for the reason it used to.
+ *
+ * This import brings the token values and the components' own compiled utilities.
+ * `globals.css` then runs this app's Tailwind build and imports the library's
+ * `theme.css` for the mapping, so `bg-accent` here resolves through to the same
+ * `--accent` the components read. It no longer restates the palette, so there is
+ * nothing left to win a cascade fight over — but the values still have to be
+ * declared before the mapping that reads them.
+ */
 import "@retrojb/ui/styles.css";
 import "./globals.css";
 

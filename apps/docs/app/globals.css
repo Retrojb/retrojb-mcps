@@ -1,254 +1,265 @@
 /*
  * Base styles for the docs site.
  *
- * The palette here is checked against WCAG 1.4.3 and 1.4.11 by
- * `npm run check:contrast` in this workspace, using the same engine the
- * wcag-a11y-scanner MCP server uses. If you change a colour, run it.
+ *
+ * WHERE THE PALETTE COMES FROM
+ *
+ * Not from here, any more. This file used to restate all fifteen colour tokens as
+ * hex literals with their measured ratios beside them, and because those
+ * declarations were unlayered they beat the `@layer theme` defaults shipping in
+ * `@retrojb/ui`. That was deliberate at the time and it is what made the docs site
+ * the authority on its own palette.
+ *
+ * It also meant two copies of the same palette, and the copies drifted: the
+ * library's tokens moved to a purple ramp and this file kept the blue, so
+ * `npm run check:contrast` went on passing against values no component rendered.
+ * A regression in the library was invisible from here for exactly that reason.
+ *
+ * So the tokens now come from one place. `layout.tsx` imports
+ * `@retrojb/ui/styles.css` before this file; that stylesheet carries the token
+ * values in `@layer theme`, and nothing here overrides them. To retheme the docs
+ * site, change the ramps in `packages/ui/src/styles/tokens.css` — and
+ * `check:contrast` reads that same file, so it cannot drift again.
+ *
+ *
+ * WHAT TAILWIND IS DOING HERE
+ *
+ * This app now runs its own Tailwind build (see `postcss.config.mjs`), so utility
+ * classes written in this app's JSX have rules behind them. Previously they did
+ * not: `@retrojb/ui/styles.css` only emits the utilities its own components use,
+ * because its `@source` globs scan the package and never a consumer.
+ *
+ * The entry mirrors the library's `src/styles/index.css`, and for the same
+ * reasons:
+ *
+ *   - No preflight. This file has its own reset a few lines down, and Tailwind's
+ *     would be a second, differently-opinionated one layered underneath it.
+ *     Importing `tailwindcss/theme.css` and `tailwindcss/utilities.css` separately
+ *     rather than `@import "tailwindcss"` is what leaves preflight out.
+ *   - Theme in `@layer theme`, utilities unlayered. Unlayered CSS beats layered
+ *     CSS whatever the specificity, which is what lets a `text-foreground-muted`
+ *     in this app win over the `p { }` rule below without a specificity fight.
+ *
+ * That last point is also the fix for a hazard this file used to carry. The
+ * element selectors below were unlayered, so they applied inside `@retrojb/ui`
+ * components too — this file's `th, td { padding; border-bottom }` was landing on
+ * every cell of the library's `Table`. They are in `@layer base` now, so any
+ * component's own utilities beat them.
  */
 
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+
+/*
+ * The token-to-utility mapping from the library, so `bg-accent`,
+ * `text-foreground-muted` and `border-border-strong` mean the same thing in this
+ * app as they do inside the components. Values are not imported — those arrive
+ * with `@retrojb/ui/styles.css` in `layout.tsx`.
+ */
+@import "@retrojb/ui/theme.css";
+
+@source "./**/*.tsx";
+
+/*
+ * Three tokens the site needs and the library does not ship.
+ *
+ * `--code-background` is derived rather than fixed: `--neutral-1` is one step off
+ * the page in both themes — slightly darker in light, slightly lighter in dark —
+ * which is exactly what a code block wants, and it follows the ramp if the ramp
+ * moves.
+ *
+ * `--measure` is a line-length limit, not a colour, and belongs to prose rather
+ * than to the design system.
+ */
 :root {
-  color-scheme: light;
-
-  --background: #ffffff;
-  --surface: #f6f7f9;
-  --surface-raised: #ffffff;
-
-  /* 17.8:1 on --background */
-  --foreground: #16181a;
-  /* 6.43:1 on --background — clears AA for body text */
-  --foreground-muted: #5a5f66;
-
-  /* 4.26:1 on --background — clears 1.4.11 for control boundaries */
-  --border-strong: #767b82;
-  /* Decorative rules only; never the sole indicator of a control */
-  --border: #d9dde2;
-
-  --accent: #0b5cd5;
-  --accent-hover: #093f92;
-  /* 5.98:1 on --background */
-  --accent-text: #0b5cd5;
-
-  /* 6.53:1 on --background */
-  --danger: #b3261e;
-  /* 6.53:1 on --background */
-  --success: #1a6b3c;
-
-  --code-background: #f2f4f7;
-
-  --focus-ring: #0b5cd5;
-
-  --radius: 8px;
+  --code-background: var(--neutral-1);
   --measure: 68ch;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
 
-    --background: #0b0d0f;
-    --surface: #14171a;
-    --surface-raised: #1a1e22;
+  html {
+    /* Lets the skip-link target clear any sticky chrome (WCAG 2.4.11). */
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
 
-    /* 16.6:1 on --background */
-    --foreground: #ecedee;
-    /* 8.59:1 on --background */
-    --foreground-muted: #a6adb5;
+  body {
+    min-height: 100svh;
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--foreground);
+    background: var(--background);
+    text-rendering: optimizeLegibility;
+  }
 
-    /* 4.17:1 on --background */
-    --border-strong: #6e757d;
-    --border: #272c31;
+  /*
+   * A single, consistent focus indicator (WCAG 2.4.7).
+   *
+   * :focus-visible rather than :focus so the ring appears for keyboard and
+   * programmatic focus but not on mouse click. The 2px width plus offset also
+   * satisfies the area requirement in 2.4.13.
+   */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 
-    --accent: #7cb0ff;
-    --accent-hover: #a8caff;
-    /* 8.81:1 on --background */
-    --accent-text: #7cb0ff;
+  /*
+   * Only suppress the default ring where :focus-visible is supported, so older
+   * engines keep a visible indicator rather than losing it entirely.
+   */
+  @supports selector(:focus-visible) {
+    :focus:not(:focus-visible) {
+      outline: none;
+    }
+  }
 
-    /* 9.74:1 on --background */
-    --danger: #ff9d95;
-    /* 10.57:1 on --background */
-    --success: #6bd39a;
+  /*
+   * Underlined, and not negotiable.
+   *
+   * `--accent-text` resolves to `--primary-9`, which is close enough to
+   * `--foreground` that the two are not distinguishable by colour — so the
+   * underline is the only thing marking a link as a link, and removing it would
+   * fail WCAG 1.4.1 outright. The library's `Link` makes the same call for its
+   * `inline` intent.
+   */
+  a {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    text-decoration-thickness: 0.08em;
+  }
 
-    --code-background: #14171a;
+  a:hover {
+    color: var(--accent-hover);
+    text-decoration-thickness: 0.14em;
+  }
 
-    --focus-ring: #7cb0ff;
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.25;
+    text-wrap: balance;
+    /* Keeps headings clear of sticky chrome when jumped to by anchor. */
+    scroll-margin-top: 5rem;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 1.4rem + 1.8vw, 2.5rem);
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.65rem);
+    letter-spacing: -0.01em;
+  }
+
+  h3 {
+    font-size: 1.125rem;
+  }
+
+  p,
+  ul,
+  ol {
+    max-width: var(--measure);
+  }
+
+  ul,
+  ol {
+    padding-left: 1.35rem;
+  }
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  code {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.9em;
+    background: var(--code-background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 0.1em 0.35em;
+  }
+
+  pre {
+    font-family: var(--font-geist-mono), ui-monospace, monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    background: var(--code-background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 1rem;
+    overflow-x: auto;
+    /* Focusable because it scrolls: keyboard users must be able to reach it. */
+    scrollbar-gutter: stable;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  /*
+   * Bare tables only.
+   *
+   * Anything rendered through the library — `Table`, or `tableStyle()` on static
+   * markup — brings its own cell padding, borders and alignment as utilities,
+   * which beat these because utilities are unlayered and this is `@layer base`.
+   * These rules are the fallback for a `<table>` written by hand in a page.
+   */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.925rem;
+  }
+
+  caption {
+    text-align: left;
+    color: var(--foreground-muted);
+    padding-bottom: 0.5rem;
+    font-size: 0.925rem;
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  th {
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-strong);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
   }
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-html {
-  /* Lets the skip-link target clear any sticky chrome (WCAG 2.4.11). */
-  scroll-padding-top: 5rem;
-  -webkit-text-size-adjust: 100%;
-}
-
-body {
-  min-height: 100svh;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
-  font-size: 1rem;
-  line-height: 1.65;
-  color: var(--foreground);
-  background: var(--background);
-  text-rendering: optimizeLegibility;
-}
-
 /*
- * A single, consistent focus indicator (WCAG 2.4.7).
- *
- * :focus-visible rather than :focus so the ring appears for keyboard and
- * programmatic focus but not on mouse click. The 2px width plus offset also
- * satisfies the area requirement in 2.4.13.
+ * Unlayered and `!important`, because it is a safety net rather than a style: it
+ * has to beat anything, including a utility.
  */
-:focus-visible {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/*
- * Only suppress the default ring where :focus-visible is supported, so older
- * engines keep a visible indicator rather than losing it entirely.
- */
-@supports selector(:focus-visible) {
-  :focus:not(:focus-visible) {
-    outline: none;
-  }
-}
-
-a {
-  color: var(--accent-text);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-  text-decoration-thickness: 0.08em;
-}
-
-a:hover {
-  color: var(--accent-hover);
-  text-decoration-thickness: 0.14em;
-}
-
-h1,
-h2,
-h3,
-h4 {
-  line-height: 1.25;
-  text-wrap: balance;
-  /* Keeps headings clear of sticky chrome when jumped to by anchor. */
-  scroll-margin-top: 5rem;
-}
-
-h1 {
-  font-size: clamp(1.85rem, 1.4rem + 1.8vw, 2.5rem);
-  letter-spacing: -0.02em;
-}
-
-h2 {
-  font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.65rem);
-  letter-spacing: -0.01em;
-}
-
-h3 {
-  font-size: 1.125rem;
-}
-
-p,
-ul,
-ol {
-  max-width: var(--measure);
-}
-
-ul,
-ol {
-  padding-left: 1.35rem;
-}
-
-li + li {
-  margin-top: 0.35rem;
-}
-
-code {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.9em;
-  background: var(--code-background);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.1em 0.35em;
-}
-
-pre {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  background: var(--code-background);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
-  overflow-x: auto;
-  /* Focusable because it scrolls: keyboard users must be able to reach it. */
-  scrollbar-gutter: stable;
-}
-
-pre code {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: inherit;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.925rem;
-}
-
-caption {
-  text-align: left;
-  color: var(--foreground-muted);
-  padding-bottom: 0.5rem;
-  font-size: 0.925rem;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid var(--border);
-  vertical-align: top;
-}
-
-th {
-  font-weight: 600;
-  border-bottom: 2px solid var(--border-strong);
-}
-
-hr {
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 2.5rem 0;
-}
-
-/*
- * Hides content visually while leaving it available to assistive technology
- * and, crucially, in the tab order. `display: none` would remove it from both.
- */
-.visuallyHidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-  border: 0;
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

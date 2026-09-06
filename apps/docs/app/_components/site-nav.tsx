@@ -48,7 +48,7 @@ export function SiteNav(): React.ReactElement {
 
   return (
     <nav aria-labelledby="site-nav-heading" className={styles.nav}>
-      <h2 id="site-nav-heading" className="visuallyHidden">
+      <h2 id="site-nav-heading" className="sr-only">
         Documentation sections
       </h2>
 

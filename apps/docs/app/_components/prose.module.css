@@ -41,7 +41,7 @@
   padding: 0.6rem 0.75rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   font-size: 0.925rem;
 }
 
@@ -79,7 +79,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-left: 3px solid var(--border-strong);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
 }
 
 .callout > * + * {
@@ -120,7 +120,7 @@
 
 .pane {
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm);
   overflow: hidden;
   min-width: 0;
 }
@@ -164,28 +164,31 @@
 
 /* --- Figures / tables --------------------------------------------------- */
 
-.tableWrap {
+/*
+ * What is left after `tableStyle()` took over the frame.
+ *
+ * The scroll container, its border and radius, `border-collapse` and the caption
+ * all come from the library now — see `TableFigure`. These four rules are the
+ * parts specific to a documentation figure: numbers that line up in columns, and
+ * cells that do not wrap except in the last column, which is where the prose
+ * explanation lives and needs the room.
+ */
+.figure {
   margin-top: 1.5rem;
-  overflow-x: auto;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-.tableWrap table {
   font-variant-numeric: tabular-nums;
 }
 
-.tableWrap th,
-.tableWrap td {
+.figure th,
+.figure td {
   white-space: nowrap;
 }
 
-.tableWrap td:last-child,
-.tableWrap th:last-child {
+.figure td:last-child,
+.figure th:last-child {
   white-space: normal;
 }
 
-.tableWrap tr:last-child td {
+.figure tr:last-child td {
   border-bottom: none;
 }
 
