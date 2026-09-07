@@ -1,3 +1,9 @@
 export { ToastAlert } from "./ToastAlert";
-export type { IToastAlertProps } from "./types";
-export { toastAlertStyles, type ToastAlertVariants } from "./styles";
+export { ToastRegion } from "./ToastRegion";
+export type { IToastAlertProps, IToastRegionProps } from "./types";
+export {
+  toastAlertStyles,
+  toastRegionStyles,
+  type ToastAlertVariants,
+  type ToastRegionVariants,
+} from "./styles";

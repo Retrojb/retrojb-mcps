@@ -1,0 +1,190 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Alerts/InlineAlert/Accessibility" />
+
+# InlineAlert Accessibility
+
+Extracted from `packages/ui/src/components/alerts/inlineAlert/styles.ts` and
+`../tone.ts`, plus the wiring in `InlineAlert.tsx` and the prop contract in
+`types.ts`. Ratios are the measured output of `@retrojb/wcag-a11y-scanner`.
+
+Most of this component's accessibility is in one decision that has nothing to do
+with colour: **the live region is a separate element from the visible box, and
+it stays mounted when there is no message.** Everything else here is ordinary.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                                     |
+| ---------------------------- | ----- | ---------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | The tone is a real text node, not a class; the message is a sibling of it, not a title attr    |
+| 1.4.1 Use of Color           | A     | The tone is spelled out in words — the bar colour and label colour only reinforce it           |
+| 1.4.3 Contrast (Minimum)     | AA    | Message 18.95 / 17.21:1; tone labels 8.91–15.33:1. All measured on the alert's own `--surface` |
+| 1.4.11 Non-text Contrast     | AA    | The tone bar clears 3:1 at 8.82–9.77:1; the box edge uses `--border-strong`, not `--border`    |
+| 2.4.6 Headings and Labels    | AA    | `dismissLabel` is settable per alert, so several dismiss buttons stay distinguishable          |
+| 2.4.7 Focus Visible          | AA    | The dismiss button carries the same 2px outline as `Button`, `Link`, `Input` and `Table`       |
+| 2.5.8 Target Size (Minimum)  | AA    | The dismiss button is 24px, exactly the floor                                                  |
+| 4.1.2 Name, Role, Value      | A     | The dismiss glyph is `aria-hidden`; the button's name comes from `aria-label`                  |
+| 4.1.3 Status Messages        | AA    | `live="polite"` / `"assertive"` put the message in a live region that already existed          |
+
+### The live region has to exist before the message does
+
+This is the part worth understanding, because getting it wrong produces markup
+that looks perfect and announces nothing.
+
+A screen reader announces changes _inside_ a live region it is already tracking.
+Mount the region and its text in the same commit and there is no previous state
+to diff against, so most engines stay silent. The usual React shape does exactly
+that:
+
+```tsx
+// Usually silent. The region and the text arrive together.
+{
+  error ? (
+    <InlineAlert tone="danger" live="assertive">
+      {error}
+    </InlineAlert>
+  ) : null;
+}
+```
+
+So the component splits in two. The `root` slot is the live region and carries
+no styling at all; the `box` slot is the visible alert and only renders when
+there is a message. Render the component unconditionally and let `children` be
+the thing that changes:
+
+```tsx
+// Announces. The region was already there when the text arrived.
+<InlineAlert tone="danger" live="assertive">
+  {error}
+</InlineAlert>
+```
+
+With no `children` you get an empty, invisible wrapper — no box, no border, no
+padding — so keeping it mounted costs nothing on screen.
+
+The **Announcement pattern** story puts both arrangements side by side. Turn on
+a screen reader and press the button: the left one speaks, the right one does
+not, and the two produce the same `role="alert"` markup.
+
+### Choosing a liveness
+
+`live` defaults to `"off"`, which is right more often than it looks.
+
+| Value         | Renders         | Use for                                                        |
+| ------------- | --------------- | -------------------------------------------------------------- |
+| `"off"`       | no role         | A notice that was already on the page when it loaded           |
+| `"polite"`    | `role="status"` | Confirmations and progress — announced at the next pause       |
+| `"assertive"` | `role="alert"`  | Errors that block the user — interrupts whatever is being read |
+
+`"off"` for content present at load is not a cop-out: nothing changed, so there
+is nothing to report, and a live region that fires on page load either says
+nothing or interrupts depending on the engine. 4.1.3 is about _changes_ in
+status.
+
+`"assertive"` interrupts mid-word. It is the right answer for a blocking error
+and close to rude for anything else.
+
+### The tone is words first
+
+`tone` sets three things: the bar colour, the label colour, and the default
+label text — `Note`, `Success` or `Error`. The text is the part that carries the
+meaning. The other two vanish in greyscale, in forced-colors mode, and for a
+user who cannot distinguish the hues, so neither can be the sole means of
+conveying which kind of message this is (1.4.1).
+
+Override it whenever you can be more specific. `"Payment failed"` tells the user
+what happened; `"Error"` only tells them that something did.
+
+```tsx
+<InlineAlert tone="danger" label="Payment failed" live="assertive">
+  The card was declined. Try another card or contact your bank.
+</InlineAlert>
+```
+
+### There is no warning tone
+
+Deliberately. The palette ships no `--warning` token, and an amber solved for
+4.5:1 against `--surface` lands at exactly 4.5:1 in both themes — nothing left
+over for `--background`, `--surface-raised`, or a filled variant.
+
+A fourth tone wants its own ten-step ramp alongside `--primary` and
+`--secondary`, not a single value squeezed onto one surface. Until there is one,
+`danger` and `info` cover the ground between them.
+
+## Colors
+
+Every pairing is measured against `--surface`, which is the fill the alert sets
+on itself — so these are the numbers that actually apply rather than
+page-background approximations.
+
+### Text (needs 4.5:1)
+
+| Role          | Pairing                        |   Light |    Dark |
+| ------------- | ------------------------------ | ------: | ------: |
+| Message       | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
+| Info label    | `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+| Success label | `--success` on `--surface`     |  8.99:1 |  9.77:1 |
+| Error label   | `--danger` on `--surface`      |  8.91:1 |  9.00:1 |
+
+### Boundaries (needs 3:1)
+
+| Role        | Pairing                       |       Light |        Dark |
+| ----------- | ----------------------------- | ----------: | ----------: |
+| Info bar    | `--accent` on `--surface`     |      8.82:1 |      9.72:1 |
+| Success bar | `--success` on `--surface`    |      8.99:1 |      9.77:1 |
+| Error bar   | `--danger` on `--surface`     |      8.91:1 |      9.00:1 |
+| Box edge    | `--border-strong` on the page | 4.16–6.36:1 | 4.41–4.83:1 |
+
+The box edge is `--border-strong` rather than `--border`, and that is a
+correctness matter. `--border` measures 1.75–2.67:1 in light and 2.02–2.21:1 in
+dark against the page surfaces and misses 1.4.11 on every one of them.
+
+It is load-bearing because the fill cannot do the job: `--surface` against
+`--background` is 1.42:1 in light and **1.09:1** in dark. At 1.09:1 the alert's
+background is indistinguishable from the page, so the edge and the tone bar are
+the only things that make it read as a box at all.
+
+### Sides, not shorthand
+
+The box sets `border-y-border-strong` and `border-e-border-strong` rather than
+one `border-border-strong`, because the inline-start edge is the tone bar and
+has to keep its own colour. Side-scoped colour utilities are separate
+tailwind-merge groups, so the two cannot overwrite each other — a blanket
+`border-border-strong` next to `border-s-danger` would come down to whichever
+Tailwind happened to emit last.
+
+All the sides are logical (`border-s-*`, `ps-*`), so the tone bar stays on the
+reading-order edge under `dir="rtl"`.
+
+## Aria
+
+| Attribute     | On             | Set when              | Value                                      |
+| ------------- | -------------- | --------------------- | ------------------------------------------ |
+| `role`        | the wrapper    | `live` is not `"off"` | `status` for polite, `alert` for assertive |
+| `aria-hidden` | the × glyph    | Always                | `true`                                     |
+| `aria-label`  | dismiss button | Always                | `dismissLabel`, default `"Dismiss"`        |
+
+### `role` carries the liveness, and nothing else does
+
+`role="alert"` already implies `aria-live="assertive"` and `aria-atomic="true"`;
+`role="status"` implies `polite` and `atomic`. Setting both the role and a
+matching `aria-live` is the common version of this and it is redundant at best —
+where the two disagree, engines split on which wins. There is one of them in the
+markup.
+
+### Dismissal is the caller's
+
+`onDismiss` renders the button and is called on click. It does not unmount
+anything: the component does not own whether the alert exists, and removing
+itself would fight whatever state put it on the page.
+
+Give each button a name that works out of context when more than one alert can
+be on screen. Three buttons all called "Dismiss" tell a screen reader user
+nothing about which is which (2.4.6).
+
+### Styling a notice this component does not own
+
+`inlineAlertStyles()` is a slot function with no `"use client"`, so it is
+callable from a server component — useful for a static notice in prose that
+should look like an alert without being announced as one. The slots are `root`,
+`box`, `content`, `label`, `message` and `dismiss`.

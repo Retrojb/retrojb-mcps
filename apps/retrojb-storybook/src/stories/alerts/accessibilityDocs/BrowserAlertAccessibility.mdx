@@ -1,0 +1,204 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Alerts/BrowserAlert/Accessibility" />
+
+# BrowserAlert Accessibility
+
+Extracted from `packages/ui/src/components/alerts/browserAlert/styles.ts` and
+`../tone.ts`, plus the wiring in `BrowserAlert.tsx`. Ratios are the measured
+output of `@retrojb/wcag-a11y-scanner`.
+
+This is the replacement for `window.alert()` and `window.confirm()`. It is also
+the component with the least accessibility code in it, because it is a real
+`<dialog>` opened with `showModal()` and the platform does the hard parts.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                            |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | The headline is an `<h2>`, so it lands in the heading list and the outline            |
+| 1.4.1 Use of Color           | A     | The tone is spelled out above the title and is part of the accessible name            |
+| 1.4.3 Contrast (Minimum)     | AA    | Title and message 18.95 / 17.21:1; tone labels 8.91–15.33:1                           |
+| 1.4.10 Reflow                | AA    | The action row wraps; the shell keeps a 2rem gap to the viewport at any zoom          |
+| 1.4.11 Non-text Contrast     | AA    | Tone bar 8.82–9.77:1; box edge `--border-strong`                                      |
+| 2.1.2 No Keyboard Trap       | A     | Escape closes it, and `onClose` keeps React's state in step when it does              |
+| 2.4.3 Focus Order            | A     | Cancel precedes confirm in the DOM, so the safe option comes first                    |
+| 2.4.6 Headings and Labels    | AA    | `title` is a required prop — a dialog with no name is announced as just "dialog"      |
+| 2.4.7 Focus Visible          | AA    | The buttons are the package's `Button`, with its shared 2px outline                   |
+| 2.5.8 Target Size (Minimum)  | AA    | `Button` at its default `md` is 40px                                                  |
+| 3.3.4 Error Prevention       | AAA   | Two-button mode is the confirmation step for a destructive or irreversible action     |
+| 4.1.2 Name, Role, Value      | A     | `role="alertdialog"`, named by the label and title together, described by the message |
+
+### What the platform dialog gives you
+
+Rendering a real `<dialog>` and opening it with `showModal()` is the
+load-bearing decision here, and it is worth stating because the common
+alternative — a positioned `<div>` with `aria-modal="true"` — is far harder to
+get right. From the browser:
+
+- **A focus trap.** No `keydown` handler, no sentinel nodes, no focus-cycle
+  maths.
+- **The rest of the document made inert.** Nothing behind the dialog is
+  clickable or reachable by Tab, and a screen reader's virtual cursor stays
+  inside it. This is the part hand-rolled modals almost always miss:
+  `aria-modal` alone does not stop a virtual cursor from wandering out into the
+  page behind.
+- **Escape to close** (2.1.2).
+- **Focus restored** to whatever was focused before, on close.
+- **The top layer**, so the dialog cannot be clipped by an ancestor's `overflow`
+  or lose a `z-index` fight.
+- **A `::backdrop`** to style.
+
+Every one of those is a defect in most bespoke modals, and none of them is code
+in this component. Try it from the keyboard in any story: open, Tab around,
+press Escape, and watch focus land back on the trigger.
+
+### `role="alertdialog"`, and what it obliges
+
+The implicit role of `<dialog>` is `dialog`. This component overrides it to
+`alertdialog`, which tells assistive technology the dialog interrupts for
+something needing a response and prompts it to announce the description
+immediately rather than waiting to be explored.
+
+It comes with a requirement: an `alertdialog` **must contain at least one
+focusable control**. That is why the confirm button always renders, even in
+acknowledge-only mode — there is always somewhere for focus to land and always a
+way out that is not Escape.
+
+Use it for what the name says. A dialog that is merely _modal_ — a form, a date
+picker, a settings panel — should be `role="dialog"`, and this is the wrong
+component for it.
+
+### Escape is not optional, and it needs `onClose`
+
+The platform closes a modal `<dialog>` on Escape whether or not React knows
+about it. So without a `close` listener the element would be shut while `open`
+stayed `true`, and the dialog could never be reopened — the classic
+controlled-dialog desync.
+
+`onClose` is therefore a required prop, and it fires for every route out:
+Escape, either button, or a programmatic `close()`. One handler, all exits.
+
+Not offering Escape is not an option either. A modal with no keyboard way out is
+a keyboard trap (2.1.2).
+
+### Focus lands on the dismissive action
+
+For a confirmation, focus goes to **Cancel**, not Confirm.
+
+`showModal()` focuses the first focusable descendant, which here happens to be
+the cancel button because of the order the two are rendered in — and relying on
+DOM order for something this consequential is how a delete dialog ends up with
+"Delete" pre-focused and one Enter keypress away. The component names the target
+explicitly instead: the cancel button if there is one, the confirm button
+otherwise.
+
+The tone follows through. A `danger` dialog gets the danger fill on its confirm
+button, so the control that does the irreversible thing looks like it does.
+
+```tsx
+<BrowserAlert
+  open={open}
+  onClose={() => setOpen(false)}
+  tone="danger"
+  title="Delete workspace?"
+  confirmLabel="Delete"
+  cancelLabel="Keep it"
+  onConfirm={deleteWorkspace}
+>
+  Every project and invoice in it goes too. This cannot be undone.
+</BrowserAlert>
+```
+
+Supplying `cancelLabel` or `onCancel` is what switches the dialog from an
+acknowledgement into a confirmation. That two-button form is the mechanism 3.3.4
+asks for when an action is irreversible.
+
+### `onConfirm` does not close the dialog
+
+On purpose. The caller owns `open`, so an action that needs to stay open — a
+request in flight, a validation failure that has to be reported in place — can
+leave it open, and one that is done calls `onClose` itself. Omit `onConfirm` and
+the button just closes.
+
+### The title is required, and it is the accessible name
+
+A dialog with no name is announced as "dialog", which tells a screen reader user
+that something has taken over the page and nothing about what (4.1.2, 2.4.6).
+`title` is a required prop so the omission is a compile error — the same call
+`Input` makes about `label` and `Table` about `caption`.
+
+Phrase it as the question or the problem: `"Delete workspace?"`, not
+`"Confirm"`.
+
+It renders as an `<h2>` rather than a styled paragraph, so it appears in a
+screen reader's heading list and in the document outline (1.3.1). `<h2>` and not
+`<h1>` because the page behind still owns its `<h1>`.
+
+The intrinsic `title` _attribute_ is omitted from the props interface so the
+prop name could be used for the visible headline. A tooltip on a modal dialog is
+not a thing anyone needs.
+
+## Colors
+
+Measured against `--surface`, the fill the dialog's inner box sets on itself.
+
+### Text (needs 4.5:1)
+
+| Role          | Pairing                        |   Light |    Dark |
+| ------------- | ------------------------------ | ------: | ------: |
+| Title         | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
+| Message       | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
+| Info label    | `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+| Success label | `--success` on `--surface`     |  8.99:1 |  9.77:1 |
+| Error label   | `--danger` on `--surface`      |  8.91:1 |  9.00:1 |
+
+### Boundaries (needs 3:1)
+
+| Role        | Pairing                       |       Light |        Dark |
+| ----------- | ----------------------------- | ----------: | ----------: |
+| Info bar    | `--accent` on `--surface`     |      8.82:1 |      9.72:1 |
+| Success bar | `--success` on `--surface`    |      8.99:1 |      9.77:1 |
+| Error bar   | `--danger` on `--surface`     |      8.91:1 |      9.00:1 |
+| Box edge    | `--border-strong` on the page | 4.16–6.36:1 | 4.41–4.83:1 |
+
+The backdrop is `--neutral-9` at 60%, which darkens the page behind without
+being the thing that separates the dialog from it — the `--border-strong` edge
+does that, and has to, since `--surface` against `--background` is 1.42:1 in
+light and 1.09:1 in dark.
+
+### Two slots, because `<dialog>` has user-agent styles
+
+The `shell` slot is the `<dialog>` itself, stripped back to a transparent
+positioning box; `box` is a plain `<div>` inside it carrying the appearance.
+That split is not tidiness — the UA sheet gives `<dialog>` a solid border,
+`padding: 1em` and `background: Canvas`, and this package deliberately ships no
+Tailwind preflight, so none of it is reset for you. Making one element be both
+means fighting `background: Canvas` in every theme.
+
+## Aria
+
+| Attribute            | On         | Value                                                 |
+| -------------------- | ---------- | ----------------------------------------------------- |
+| `role="alertdialog"` | the dialog | Always, overriding the implicit `dialog`              |
+| `aria-labelledby`    | the dialog | The tone label id **and** the title id, in that order |
+| `aria-describedby`   | the dialog | The message id, omitted when there are no children    |
+| `aria-modal`         | —          | Not set: `showModal()` makes it modal for real        |
+
+### The name includes the tone
+
+`aria-labelledby` points at two ids, so the name reads "Error, Delete
+workspace?" rather than dropping the severity. That is what keeps the tone off
+colour alone (1.4.1) — the bar is the only other thing carrying it, and a bar
+does not survive greyscale or forced-colors mode.
+
+Ids come from `useId`, so the wiring survives a second dialog on the same page
+and matches between the server and client render.
+
+### `aria-modal` is absent on purpose
+
+`showModal()` puts the dialog in the top layer and makes the rest of the
+document genuinely inert. `aria-modal="true"` is the attribute you need when you
+are _pretending_ to be modal with a positioned `<div>`; adding it here would be
+describing something the browser has already made true, and it has a history of
+causing screen readers to hide content that is legitimately inside the dialog.

@@ -1,0 +1,196 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Alerts/ToastAlert/Accessibility" />
+
+# ToastAlert Accessibility
+
+Extracted from `packages/ui/src/components/alerts/toastAlert/styles.ts` and
+`../tone.ts`, plus the wiring in `ToastRegion.tsx` and `ToastAlert.tsx`. Ratios
+are the measured output of `@retrojb/wcag-a11y-scanner`.
+
+A toast is the hardest of the three alerts to make accessible, because two of
+its defining behaviours are the problem: it appears without being asked for, and
+it goes away on its own. Both are addressed structurally rather than with
+attributes.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                                 |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------------ |
+| 1.3.1 Info and Relationships | A     | The tone is text; the region is a named landmark                                           |
+| 1.4.1 Use of Color           | A     | The tone is spelled out — bar and label colour only reinforce it                           |
+| 1.4.3 Contrast (Minimum)     | AA    | Message 18.95 / 17.21:1; tone labels 8.91–15.33:1 on the toast's own `--surface`           |
+| 1.4.11 Non-text Contrast     | AA    | Tone bar 8.82–9.77:1; box edge `--border-strong`, which is what separates it from the page |
+| 2.2.1 Timing Adjustable      | A     | Auto-dismiss is **off by default**; when set, the timer pauses on hover and on focus       |
+| 2.4.6 Headings and Labels    | AA    | The region's `label` is required; `dismissLabel` is settable per toast                     |
+| 2.4.7 Focus Visible          | AA    | The dismiss button carries the package's shared 2px outline                                |
+| 2.5.8 Target Size (Minimum)  | AA    | The dismiss button is 24px, exactly the floor                                              |
+| 4.1.2 Name, Role, Value      | A     | The × is `aria-hidden`; the button is named by `aria-label`                                |
+| 4.1.3 Status Messages        | AA    | The region is a live region that outlives the messages appended into it                    |
+
+### A toast cannot announce itself
+
+Which is why there are two components rather than one.
+
+A live region only reports changes that happen inside it while assistive
+technology is already watching. So the thing that appears cannot be the thing
+being watched — a self-contained `<Toast>` that mounts, gets read out, and
+unmounts is not implementable.
+
+`ToastRegion` is the region. Mount it once, near the root of the app, and leave
+it there empty for as long as there is nothing to say. `ToastAlert`s are
+appended into it:
+
+```tsx
+<ToastRegion label="Notifications">
+  {toasts.map((toast) => (
+    <ToastAlert
+      key={toast.id}
+      tone={toast.tone}
+      onDismiss={() => remove(toast.id)}
+    >
+      {toast.message}
+    </ToastAlert>
+  ))}
+</ToastRegion>
+```
+
+Rendered outside a region a toast still draws correctly and announces nothing at
+all. Every story on this component keeps it inside one, including the ones that
+exist only to show a tone — a docs page demonstrating the broken arrangement is
+how the broken arrangement spreads.
+
+### `aria-live`, not `role="status"`
+
+`role="status"` looks like the obvious choice for the region and is the wrong
+one.
+
+It implies `aria-atomic="true"`, which tells a screen reader to re-read the
+**entire** region whenever any part of it changes. A second toast makes it read
+the first one again. A third makes it read all three. With four on screen,
+dismissing one re-reads the other three.
+
+So the region sets `aria-live` directly, which leaves `aria-atomic` at its
+default of `false` — only the node that was added is announced.
+`aria-relevant="additions"` then keeps removals quiet, because a toast being
+dismissed is not news.
+
+Both are written out explicitly in the component even though `false` is the
+default, so that nobody "tidies" it into `role="status"` and silently
+reintroduces the re-read.
+
+### The items carry no role
+
+Deliberately, and it is easy to get wrong in the other direction. A
+`role="alert"` or `role="status"` on the toast itself would be a live region
+nested inside the region's live region, and engines that honour both announce
+the message **twice**.
+
+The container announces. The item is just content.
+
+### Auto-dismiss is off by default
+
+A message that removes itself is a time limit on reading it, which is what 2.2.1
+governs. Nothing in a component can know how long a given user needs, so the
+default is not to guess: omit `duration` and the toast stays until dismissed.
+
+When you do set one, the timer pauses while the pointer is over the toast and
+while focus is anywhere inside it. Time already elapsed is kept in a ref rather
+than recomputed, so a pause resumes where it stopped instead of handing out a
+fresh full duration — otherwise a cursor resting nearby could keep a toast alive
+indefinitely.
+
+That covers 2.2.1's "extend" allowance for pointer and keyboard users. **It
+cannot cover a touch user**, who has no hover at all. Which is the reason errors
+should keep the default:
+
+```tsx
+<ToastAlert
+  tone="danger"
+  duration={null} // explicit: this one waits to be dismissed
+  onDismiss={() => remove(id)}
+>
+  invoice-04.pdf is larger than the 10 MB limit.
+</ToastAlert>
+```
+
+Setting a `duration` with no `onDismiss` does nothing at all — the timer has no
+handler to call, so the toast never leaves.
+
+### The region is a landmark
+
+`role="region"` with a required `label` makes the stack navigable on purpose
+rather than only audible in passing. A region is exposed as a landmark only when
+it has an accessible name, which is why `label` is a required prop and not an
+optional one — the type checker catches the omission rather than an audit
+catching it later.
+
+`"Notifications"` is the usual answer.
+
+### What is still missing
+
+Honest gaps, since the component does not solve them:
+
+- **No keyboard shortcut to the stack.** A user who hears a toast has no single
+  key to jump to its dismiss button; they have to Tab there. The region being a
+  landmark means screen reader landmark navigation reaches it, which is a
+  partial answer.
+- **Toasts do not restore focus.** Nothing here moves focus, which is correct —
+  moving focus to an uninvited notification would be worse — but it means a
+  toast with an action in it can be missed by a keyboard user who never tabs
+  that far.
+
+If the message matters enough that neither is acceptable, it is not a toast.
+`BrowserAlert` interrupts properly.
+
+## Colors
+
+Measured against `--surface`, the fill the toast sets on itself.
+
+### Text (needs 4.5:1)
+
+| Role          | Pairing                        |   Light |    Dark |
+| ------------- | ------------------------------ | ------: | ------: |
+| Message       | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
+| Info label    | `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+| Success label | `--success` on `--surface`     |  8.99:1 |  9.77:1 |
+| Error label   | `--danger` on `--surface`      |  8.91:1 |  9.00:1 |
+
+### Boundaries (needs 3:1)
+
+| Role        | Pairing                       |       Light |        Dark |
+| ----------- | ----------------------------- | ----------: | ----------: |
+| Info bar    | `--accent` on `--surface`     |      8.82:1 |      9.72:1 |
+| Success bar | `--success` on `--surface`    |      8.99:1 |      9.77:1 |
+| Error bar   | `--danger` on `--surface`     |      8.91:1 |      9.00:1 |
+| Box edge    | `--border-strong` on the page | 4.16–6.36:1 | 4.41–4.83:1 |
+
+A floating element usually gets a shadow to lift it off the page. The palette
+ships no elevation token, so the `--border-strong` edge does that work — and it
+has to, because `--surface` against `--background` is 1.42:1 in light and
+**1.09:1** in dark. At 1.09:1 the toast's fill is the page's fill.
+
+## Aria
+
+| Attribute       | On         | Value                                     |
+| --------------- | ---------- | ----------------------------------------- |
+| `role="region"` | the region | Always — makes the stack a landmark       |
+| `aria-label`    | the region | The required `label` prop                 |
+| `aria-live`     | the region | `polite` (default) or `assertive`         |
+| `aria-atomic`   | the region | `false` — only the new toast is announced |
+| `aria-relevant` | the region | `additions` — removals stay quiet         |
+| `role`          | a toast    | **none**, on purpose                      |
+| `aria-hidden`   | the ×      | `true`                                    |
+| `aria-label`    | dismiss    | `dismissLabel`, default `"Dismiss"`       |
+
+`assertive` on the region is almost always wrong. If a message is urgent enough
+to interrupt, it is too urgent to be allowed to scroll off the corner of the
+screen on a timer — that is a `BrowserAlert`.
+
+### Styling a stack this component does not own
+
+`toastRegionStyles()` and `toastAlertStyles()` are both directive-free and
+callable from a server component. The region takes a `placement` variant
+(`top-start`, `top-end`, `bottom-start`, `bottom-end`); the toast's slots are
+`box`, `content`, `label`, `message` and `dismiss`. The insets are logical, so
+the stack lands on the reading-order side under `dir="rtl"`.
