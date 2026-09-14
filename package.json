@@ -7,6 +7,10 @@
     "ai"
   ],
   "homepage": "https://github.com/Retrojb/retrojb-mcps",
+  "repository": {
+    "type": "github",
+    "url": "git+https://github.com/Retrojb/retrojb-mcps"
+  },
   "bugs": {
     "url": "https://github.com/Retrojb/retrojb-mcps",
     "email": "jbaltes89@gmail.com"
