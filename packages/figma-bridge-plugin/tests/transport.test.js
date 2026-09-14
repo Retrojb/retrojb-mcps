@@ -7,7 +7,7 @@
  */
 import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
-import { importFromSource } from "./helpers/bundle.mjs";
+import { importFromSource } from "./helpers/bundle.js";
 import { startMockHarness } from "../tools/mock-mcp-server.mjs";
 
 const { HarnessPool } = await importFromSource("src/ui/harness-pool.ts");

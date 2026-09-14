@@ -14,8 +14,8 @@
  */
 import assert from "node:assert/strict";
 import { afterEach, beforeEach, describe, it } from "node:test";
-import { importTogether } from "./helpers/bundle.mjs";
-import { installFakeFigma, makeNode, makePage } from "./helpers/fake-figma.mjs";
+import { importTogether } from "./helpers/bundle.js";
+import { installFakeFigma, makeNode, makePage } from "./helpers/fake-figma.js";
 
 /*
  * Bundled together on purpose. `page-loading.ts` memoises the full-document load
@@ -331,7 +331,7 @@ describe("plugin startup", () => {
     process.on("unhandledRejection", onRejection);
 
     try {
-      const { importTogether: fresh } = await import("./helpers/bundle.mjs");
+      const { importTogether: fresh } = await import("./helpers/bundle.js");
       await fresh(["src/sandbox/main.ts"]);
 
       // start() is async; give it a few turns to finish its awaits.

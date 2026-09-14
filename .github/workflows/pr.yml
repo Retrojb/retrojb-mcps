@@ -1,8 +1,8 @@
 name: Pull Request
 
 on:
-  push:
-    branches: ["branch"]
+  pull_request:
+    branches: ["main"]
 
   workflow_dispatch:
 
