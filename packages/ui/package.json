@@ -26,7 +26,8 @@
     "build:specifiers": "tsc-alias",
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "publish": "npm stage publish"
   },
   "dependencies": {
     "tailwind-merge": "3.6.0",

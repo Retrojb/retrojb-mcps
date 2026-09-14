@@ -17,7 +17,7 @@
     "dev": "tsc --watch --preserveWatchOutput",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "xpublish": "npm run publish"
+    "publish": "npm stage publish"
   },
   "devDependencies": {
     "@retrojb/eslint-config": "*",

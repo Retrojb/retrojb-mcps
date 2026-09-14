@@ -32,7 +32,7 @@
     "inspect": "npx @modelcontextprotocol/inspector node dist/bin.js",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "publish": "npm run publish"
+    "publish": "npm stage publish"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",

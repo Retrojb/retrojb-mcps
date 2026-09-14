@@ -1,0 +1,13 @@
+./kiro
+./github
+./changeset
+./vscode
+./apps
+
+./packages/eslint-config/*
+./packages/typescript-config/*
+./workspace-tools/*
+.editorconfig
+.nvmrc
+.prettierignore
+turbo.*
