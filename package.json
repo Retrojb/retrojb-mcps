@@ -11,10 +11,6 @@
     "url": "https://github.com/Retrojb/retrojb-mcps",
     "email": "jbaltes89@gmail.com"
   },
-  "repository": {
-    "type": "github",
-    "url": "git+https://github.com/Retrojb/retrojb-mcps"
-  },
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
