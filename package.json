@@ -35,9 +35,6 @@
     "turbo": "~2.10.12",
     "typescript": "6.0.3"
   },
-  "engines": {
-    "node": ">=24"
-  },
   "workspaces": [
     "apps/*",
     "packages/*"

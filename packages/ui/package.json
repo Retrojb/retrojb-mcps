@@ -50,8 +50,5 @@
     "tailwindcss": "4.3.3",
     "tsc-alias": "1.9.4",
     "typescript": "6.0.3"
-  },
-  "engines": {
-    "node": ">=20"
   }
 }
