@@ -20,13 +20,13 @@ import tseslint from "typescript-eslint";
  */
 export const config = [
   {
-    // Applies to every consumer. Build output and dependencies are never linted.
     ignores: [
       "**/dist/**",
       "**/build/**",
       "**/.next/**",
       "**/node_modules/**",
       "**/coverage/**",
+      "**/.turbo/**",
       "**/*.tsbuildinfo",
     ],
   },
