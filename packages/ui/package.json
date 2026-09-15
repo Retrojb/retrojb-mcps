@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/ui",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Shared React primitives: Tailwind-styled Button, Link, Input and a composable TanStack Table with typed variants.",
   "type": "module",
   "private": true,

@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/workspace-tools",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Shared utilities plus a CLI for validating, cleaning, and scaffolding this monorepo.",
   "type": "module",
   "private": true,

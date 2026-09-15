@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/kiro-figma-bridge",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Connects an IDE AI agent (Kiro, Claude Code, Cursor, Codex) to live Figma content: a publishable Figma plugin plus a local WebSocket bridge exposed to the agent over MCP, authenticated with a pairing code derived from FIGMA_ACCESS_TOKEN.",
   "type": "module",
   "private": true,

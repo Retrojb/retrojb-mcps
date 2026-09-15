@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/figma-bridge-plugin",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Figma desktop bridge plugin for the Figma Console MCP harness, with reconnect, connectivity status, live selection, and in-canvas node highlighting.",
   "type": "module",
   "private": true,

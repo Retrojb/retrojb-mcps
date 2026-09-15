@@ -1,6 +1,6 @@
 {
   "name": "@retrojb/plugin-kit",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Transport primitives shared by bridge plugins that connect an external tool to an MCP harness.",
   "type": "module",
   "private": true,
