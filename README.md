@@ -1,5 +1,5 @@
 # retro-mcps
-
+[![Pull Request](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml/badge.svg?branch=main)](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml)
 A monorepo for MCP servers and other AI tooling, built on
 [Turborepo](https://turborepo.dev).
 
