@@ -2,6 +2,7 @@
   "name": "@retrojb/retro-mcps",
   "description": "mono repos for retrojb mcp tooling",
   "version": "0.0.1",
+  "private": true,
   "keywords": [
     "mcp",
     "ai"
@@ -20,6 +21,7 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "lint": "turbo run lint",
+    "publish": "turbo run publish",
     "start:docs": "npm run start --workspace=@retrojb/docs",
     "start:storybook": "npm run storybook --workspace=@retrojb/retrojb-storybook",
     "check-types": "turbo run check-types",

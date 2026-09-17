@@ -15,7 +15,7 @@ jobs:
       contents: read
       pages: write
       id-token: write
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v7
@@ -39,6 +39,7 @@ jobs:
         with:
           node-version: "24.x"
           registry-url: https://registry.npmjs.org/
+          scope: "@retrojb"
       - run: npm ci
       - run: npm run build
       - run: npm publish
