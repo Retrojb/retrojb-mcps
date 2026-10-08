@@ -1,0 +1,147 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/SearchBox/Accessibility" />
+
+# SearchBox Accessibility
+
+Extracted from `packages/ui/src/components/forms/SearchBox/SearchBox.tsx` and its
+`types.ts`. The styling comes from `comboBoxStyle` and the behaviour from
+`useComboBox`, both shared with `ComboBox`.
+
+**Read the [ComboBox accessibility page](?path=/docs/forms-combobox-accessibility--docs)
+first.** The focus model, the keyboard contract, the live region, the
+highlighting, the contrast tables and the full ARIA table are identical and are
+documented there rather than repeated here. This page covers only what differs —
+which is the part that justifies a second component.
+
+## Why this is a separate component
+
+The two draw the same box. What differs is the contract, and a style variant
+cannot switch between contracts:
+
+| | `ComboBox` | `SearchBox` |
+| --- | --- | --- |
+| The raw query is a valid outcome | No — reverted on blur | **Yes** — Enter submits it |
+| Enter with nothing highlighted | Submits the surrounding form | **Calls `onSubmit`** |
+| Blur with uncommitted text | Reverts to the committed label | **Keeps the text** |
+| Committed value | `value`, plus a hidden input for `FormData` | **None at all** |
+| Choosing a suggestion | Commits it as the value | **Calls `onSelect`** with the option |
+| Landmark | Never | **`<search>`, by default** |
+| Toggle affordance | Shown by default | **Hidden by default** |
+
+This is the same reasoning behind shipping three alert components rather than one
+with a `tone` prop: the thing that differs is not appearance but how the control
+behaves and what it promises, and that is not something a class name can carry.
+
+## It is a landmark
+
+The root is a real `<search>` element, which carries `role="search"` itself. The
+attribute is not also set — the package prefers platform semantics where they
+exist, the way `BrowserAlert` uses a real `<dialog>` to get its focus trap and
+Escape handling from the browser.
+
+The listbox is a **child** of the landmark rather than a sibling, which is what a
+screen reader user navigating by landmark expects to find inside it.
+
+### Turn it off when it is not the page's search
+
+```tsx
+<SearchBox label="Filter rows" landmark={false} options={rows} />
+```
+
+Landmarks are a navigation menu for screen reader users. A page with one "search"
+entry is useful; a page with five — a header search, three column filters and a
+command palette — is worse than a page with none, because the list stops meaning
+anything. Use `landmark={false}` for anything that is not *the* search, and give
+each one you keep a distinct `label` if you keep more than one.
+
+## Additional WCAG considerations
+
+Everything on the `ComboBox` page applies. These are the ones specific to this
+component:
+
+| Criterion                    | Level | How the component meets it                                                            |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | `<search>` exposes the control as a landmark, so it is reachable by landmark navigation |
+| 2.1.1 Keyboard               | A     | Enter submits the query, so the primary action never requires the mouse                |
+| 2.4.1 Bypass Blocks          | A     | The landmark is one of the regions landmark navigation can jump to                     |
+| 2.4.3 Focus Order            | A     | The submit button **is** in the tab order; clear and toggle are not                    |
+| 3.2.2 On Input               | A     | Typing filters suggestions and nothing more — submission is always explicit            |
+| 4.1.2 Name, Role, Value      | A     | `submitLabel` is the submit button's accessible name; the magnifier is `aria-hidden`   |
+
+### The submit button is focusable, unlike the other affordances
+
+`ComboBox` keeps its clear and toggle buttons out of the tab order, because the
+keyboard already reaches both — Escape clears, `ArrowDown` opens — and extra tab
+stops that add no capability make the focus order worse (2.4.3).
+
+The submit button is different. It is the control's primary action, and while
+Enter covers it from the keyboard, Enter only works while the field has focus. So
+when `submitLabel` is supplied the button is a normal tab stop:
+
+```tsx
+<SearchBox label="Search docs" submitLabel="Run search" options={pages} />
+```
+
+It is omitted by default. On a header search the button is usually redundant,
+and the magnifier on the left already signals what the field is.
+
+## Why not `type="search"`
+
+The input is `type="text"` with `inputMode="search"` and
+`enterKeyHint="search"`.
+
+`type="search"` brings a browser-drawn clear button that duplicates ours, cannot
+be styled to match the token palette, and cannot be given an accessible name —
+Safari's is an unlabelled control, which is a 4.1.2 failure the page author
+cannot fix. `inputMode` and `enterKeyHint` deliver the part that is actually
+wanted: the on-screen keyboard shows a search key, which is the affordance that
+tells a touch user Enter will do something.
+
+## The magnifier is decorative
+
+```html
+<svg aria-hidden="true" focusable="false">…</svg>
+```
+
+The field's label is already its accessible name. Announcing "magnifying glass"
+in front of it is noise, and `focusable="false"` keeps the SVG out of the tab
+order in browsers that would otherwise put it there.
+
+An inline SVG rather than a glyph because the Unicode magnifiers render as emoji
+on some platforms and as a missing-glyph box on others. It inherits
+`currentColor`, so it follows the same `--foreground-muted` token as the other
+affordances and clears 4.5:1 in both themes — see the `ComboBox` contrast table.
+
+## Loading, empty and error stay distinct
+
+Three different rows for three different meanings:
+
+- **Loading** — `labels.loading`, with `aria-busy="true"` on the listbox.
+- **Empty** — `emptyMessage`, or `labels.noResults`.
+- **Error** — `labels.error`, when `onSearch` rejects.
+
+Collapsing error into empty is the common shortcut and it tells the reader their
+data is missing when in fact the request failed. The result count announcement
+distinguishes all three.
+
+## Known limitations
+
+- **`onSubmit` does not submit a form.** There is no `<form>` in the markup —
+  nesting one inside an app's existing form would be invalid. Wrap it yourself if
+  you want native submission, and `onSubmit` will still fire first.
+- **A suggestion sets the field's text.** Choosing one puts its label in the
+  input, which is right for a search box but means `onSelect` and the visible
+  text are coupled. Control `inputValue` if you need them apart.
+- The font-size, on-screen-keyboard and `aria-activedescendant` caveats from the
+  `ComboBox` page all apply here too.
+
+## Testing
+
+As with `ComboBox`, the static checks cover very little of what matters here.
+Verify by keyboard that Enter submits with nothing highlighted and selects with
+something highlighted, and verify with a screen reader that the landmark is
+announced and reachable.
+
+Full WCAG validation requires manual testing with assistive technologies and
+expert accessibility review.

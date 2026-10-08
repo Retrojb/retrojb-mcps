@@ -9,3 +9,80 @@
 @source "../components/**/*.tsx";
 @source "../components/**/*.ts";
 @source "../lib/**/*.ts";
+
+/*
+ * COMBOBOX POPUP POSITIONING
+ *
+ * `ComboBox` and `SearchBox` position their listbox as an absolutely-positioned
+ * sibling inside a `relative` wrapper. That needs no JavaScript and no portal,
+ * and it is correct until the field sits near the bottom of the viewport, at
+ * which point the popup opens off-screen.
+ *
+ * The block below fixes that in CSS. `@position-try` gives the popup a second
+ * geometry to fall back to, and the browser picks it when the first does not fit
+ * — which is collision detection, without a layout read, a resize listener, or a
+ * positioning library. CSS anchor positioning reached Baseline in 2026 (Chrome
+ * and Edge 125, Safari 26, Firefox 147), so this is the path for current
+ * browsers; anything older keeps the geometry from the `placement` variant and
+ * opens downward, which is the same behaviour this package shipped without it.
+ *
+ * Three reasons this is here rather than in `styles.ts`:
+ *
+ *   - `@position-try` and `@supports` are at-rules. A utility class cannot hold
+ *     either.
+ *   - `utilities.css` is imported *unlayered* above, and unlayered CSS beats
+ *     layered CSS whatever the specificity. So these rules are unlayered too and
+ *     rely on source order to override the `top`/`margin` utilities — putting
+ *     them in `@layer components` would silently lose.
+ *   - It only applies to `placement="auto"`, the default. An explicit
+ *     `placement="top"` or `"bottom"` is a decision the caller made, and a flip
+ *     would quietly undo it.
+ *
+ * `anchor-scope` is what keeps several comboboxes on one page from anchoring to
+ * each other: it confines the name to the wrapper's subtree. The specification's
+ * "last element in tree order" rule happens to resolve correctly here even
+ * without it, since each field is the nearest preceding anchor to its own popup,
+ * but relying on that is relying on a coincidence of document order.
+ */
+
+@supports (anchor-name: --retrojb-probe) {
+  [data-combobox-anchor] {
+    anchor-scope: --retrojb-combobox;
+  }
+
+  [data-combobox-field] {
+    anchor-name: --retrojb-combobox;
+  }
+
+  [data-combobox-listbox][data-combobox-placement="auto"] {
+    position-anchor: --retrojb-combobox;
+
+    /*
+     * The same geometry the utilities produce — the field's width, directly
+     * below it — restated against the anchor so the fallback above has something
+     * to flip away from. Stated explicitly rather than left to `inset-x-0` so it
+     * still holds if the field ever stops filling the wrapper.
+     */
+    top: anchor(bottom);
+    bottom: auto;
+    left: anchor(left);
+    right: anchor(right);
+    margin-top: 0.25rem;
+    margin-bottom: 0;
+
+    /*
+     * `flip-block` rather than a named `@position-try` rule. It mirrors the
+     * inset *and* margin properties in the block axis, which is exactly the
+     * alternative geometry wanted here — `top: anchor(bottom)` with a top margin
+     * becomes `bottom: anchor(top)` with a bottom margin — so the custom rule it
+     * replaces was spelling out what the keyword already means.
+     *
+     * It also keeps this file free of an at-rule that CSS parsers do not all
+     * recognise yet. Next.js's PostCSS pass warns "Unknown at rule:
+     * @position-try" and passes it through intact, so the behaviour was never in
+     * question, but a warning in every consumer's build is not worth a rule that
+     * was redundant.
+     */
+    position-try-fallbacks: flip-block;
+  }
+}

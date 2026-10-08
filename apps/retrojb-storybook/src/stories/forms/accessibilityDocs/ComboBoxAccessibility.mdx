@@ -1,0 +1,332 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/ComboBox/Accessibility" />
+
+# ComboBox Accessibility
+
+Extracted from `packages/ui/src/components/forms/ComboBox/styles.ts`, the focus
+and keyboard model in `packages/ui/src/hooks/useComboBox.ts`, the option markup
+in `OptionContent.tsx`, and the prop contract in `types.ts`.
+
+Ratios below are computed directly from the light and dark hex values in
+`packages/ui/src/styles/tokens.css` using the WCAG 2.x relative-luminance
+formula. They are **not** the output of
+`npm run check:contrast --workspace=@retrojb/docs` — that script reads its own
+palette from `apps/docs/app/globals.css`, which is a different set of colours, as
+the header comment in `tokens.css` notes. Where a figure here disagrees with the
+one quoted on the `Input` page, this one was measured against the palette the
+package currently ships.
+
+This is the most accessibility-dense component in the package. A combobox has no
+native equivalent to fall back on, so every part of the contract below is
+something the component has to assert rather than inherit.
+
+## WCAG Standard and Expectations
+
+| Criterion                            | Level | How the component meets it                                                                        |
+| ------------------------------------ | ----- | ------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships         | A     | `for`/`id`, `aria-controls` and `aria-describedby` all generated from `useId`, never hand-written  |
+| 1.4.1 Use of Color                   | A     | The active option carries a left border **and** a background; a match carries weight **and** an underline |
+| 1.4.3 Contrast (Minimum)             | AA    | Every text pairing in the field and the popup clears 4.5:1 in both themes — see below              |
+| 1.4.11 Non-text Contrast             | AA    | Field border, focused border, active-option border and popup border all clear 3:1                  |
+| 1.4.13 Content on Hover or Focus     | AA    | The popup is dismissible with Escape, hoverable without vanishing, and persists until dismissed    |
+| 2.1.1 Keyboard                       | A     | Every action — open, move, commit, clear, close — has a key. See the table below                    |
+| 2.1.2 No Keyboard Trap               | A     | Tab is never swallowed; it commits the active option and moves on                                  |
+| 2.3.3 Animation from Interactions    | AAA   | `motion-reduce:transition-none` drops the colour transitions                                       |
+| 2.4.3 Focus Order                    | A     | Clear and toggle are `tabIndex={-1}`, so the field is one tab stop, not three                      |
+| 2.4.7 Focus Visible                  | AA    | 2px `outline` on the field plus a border colour change, matching `Button`, `Link` and `Input`       |
+| 2.4.13 Focus Appearance              | AAA   | 2px thickness plus a 2px offset                                                                    |
+| 2.5.8 Target Size (Minimum)          | AA    | Field heights 32/40/48px; option rows are 36px+ at every size                                      |
+| 2.5.5 Target Size (Enhanced)         | AAA   | `lg` only — 48px. `md` at 40px is 4px short of 44px                                                |
+| 3.2.2 On Input                       | A     | Typing filters and nothing else; committing an option never submits or navigates                   |
+| 3.3.1 Error Identification           | A     | `error` sets `aria-invalid` and renders the message, associated by `aria-describedby`              |
+| 3.3.2 Labels or Instructions         | A     | `label` is a required prop; `description` carries instructions                                     |
+| 4.1.2 Name, Role, Value              | A     | `role="combobox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`, all always present    |
+| 4.1.3 Status Messages                | AA    | A permanently mounted `role="status"` region announces the result count                            |
+
+## The focus model is the whole component
+
+DOM focus never leaves the text input. The highlighted option is pointed at by
+`aria-activedescendant`, which names an option's `id`:
+
+```html
+<input role="combobox" aria-expanded="true"
+       aria-controls="country-listbox"
+       aria-activedescendant="country-option-3" />
+```
+
+A roving `tabIndex` would be the other way to do it, and it is wrong here: moving
+DOM focus onto an option takes it off the input, and the user cannot type any
+more. Everything else follows from that one constraint.
+
+- **The active option is scrolled into view manually**, with
+  `scrollIntoView({ block: "nearest" })`. `"nearest"` specifically — `"center"`
+  re-centres the list on every arrow press, which reads as the list lurching.
+- **Hover and the keyboard are arbitrated.** Both write to the same active index,
+  so after an arrow press the option under a stationary cursor would steal the
+  highlight back. The component tracks which device moved last and listens for
+  `pointermove` rather than `pointerenter`, because `pointerenter` fires when the
+  list scrolls beneath a cursor that never moved.
+- **Clicking an option does not move focus.** The option's `pointerdown` is
+  prevented, so focus stays in the field and the blur handler does not revert the
+  query a moment before the click commits it.
+
+### `aria-selected` tracks the active option, not the committed one
+
+This follows the APG combobox examples. In a single-select listbox where
+selection follows focus, the active option is the selected one as far as the
+accessibility tree is concerned. Putting `aria-selected="true"` on the committed
+value instead makes a screen reader announce "selected" for an option the user is
+merely arrowing past.
+
+The committed option is distinguished two other ways: `data-selected="true"` for
+the font weight, and the word "Current selection" appended to its accessible
+name — because a font weight has no spoken equivalent.
+
+## The listbox stays in the DOM
+
+It is `hidden` when closed, not unmounted. `aria-controls` on the input points at
+it permanently, and a reference to an element that is absent for most of the
+component's life is a dangling one.
+
+Every child of the listbox is an option or is `role="presentation"`. The empty,
+loading, error and truncation rows take the latter: a bare `<li>` inside a
+listbox is invalid markup, and a screen reader counting options would otherwise
+include "No results" as one of them.
+
+## Keyboard
+
+| Key                   | Closed                          | Open                                             |
+| --------------------- | ------------------------------- | ------------------------------------------------ |
+| `ArrowDown`           | Opens and moves to the first    | Moves to the next option, wrapping               |
+| `Alt` + `ArrowDown`   | Opens, moving nothing           | —                                                |
+| `ArrowUp`             | Opens and moves to the last     | Moves to the previous option, wrapping           |
+| `Alt` + `ArrowUp`     | —                               | Closes, keeping the selection                    |
+| `PageDown` / `PageUp` | —                               | Moves ten, clamped to the ends                   |
+| `Enter`               | Submits the form, as any field  | Commits the active option                        |
+| `Escape`              | Clears the field                | Closes the popup                                 |
+| `Tab`                 | Moves on                        | Commits the active option, then moves on         |
+| `Home` / `End`        | Moves the caret                 | Moves the caret                                  |
+
+Disabled options are skipped rather than merely dimmed, and the walk is bounded,
+so a list of entirely disabled options cannot spin.
+
+### `Home` and `End` deliberately move the caret
+
+The APG lists them as optional ways to jump to the first and last option. They
+are not implemented, because `role="combobox"` on a text input promises textbox
+behaviour, and taking `Home` and `End` away from the caret breaks editing a long
+query. `PageUp` and `PageDown` cover jumping instead.
+
+### Escape is two-staged, and only stops the event when it acts
+
+Open, Escape closes the popup. Closed, Escape clears the field. With nothing to
+clear, the event keeps bubbling.
+
+That last case is the one that matters: a `ComboBox` inside a `BrowserAlert`
+shares Escape with the dialog. If the component swallowed the key
+unconditionally, the dialog could never be closed from the keyboard while a
+combobox had focus — and a document-level listener cannot express this ordering
+at all, which is why the handling is on the input.
+
+Enter follows the same rule: `preventDefault` is called only when an option was
+actually committed, so Enter in a field with nothing highlighted still submits
+the surrounding form.
+
+## The result count is announced
+
+A permanently mounted `role="status"` region reports how many results there are:
+
+```html
+<div id="country-status" role="status" class="sr-only">12 results available</div>
+```
+
+Three decisions in that one line.
+
+**It is mounted whether or not there is anything to say.** This is the same trap
+`InlineAlert` documents: a screen reader announces changes *inside* a region it is
+already watching, so a region that appears in the same commit as its text usually
+says nothing at all. Rendering it conditionally is the single most common way an
+otherwise-correct live region fails, and it fails silently.
+
+**`role="status"` carries the liveness alone.** It implies `aria-live="polite"`
+and `aria-atomic="true"`; setting those alongside it is redundant, and where the
+two disagree engines differ on which wins.
+
+**The text is debounced by 500ms, not throttled.** Each keystroke resets the
+timer, so the count announced is the one for the query the user stopped on rather
+than one announcement per character. Without this region, a non-sighted user has
+no way to know that typing changed anything — which is why it is the piece most
+often missing, and the one that makes 4.1.3 pass.
+
+The region is not referenced by `aria-describedby`. A live region announces
+itself; listing it as a description would also make it read out on focus.
+
+## Highlighting does not break the accessible name
+
+Marking the matched run means splitting the label across elements, and several
+screen readers then announce it in pieces — "John", "Sm", "ith" — because each
+element is its own text node in the accessibility tree.
+
+So the fragmented copy is hidden and the whole label is supplied once:
+
+```html
+<li role="option" id="…-option-0" aria-selected="false">
+  <span aria-hidden="true"><mark>Joh</mark><span>n Smith</span></span>
+  <span class="sr-only">John Smith</span>
+</li>
+```
+
+Both always carry the same text. With nothing to highlight — an empty query, with
+every option showing — the label is rendered plainly and neither wrapper appears.
+
+A custom `renderOption` is responsible for reproducing this. The
+`CustomOptions` story shows the pattern.
+
+### `<mark>` is restyled, not used as-is
+
+The browser default is a yellow fill with black text, which is unreadable in the
+dark theme. The background is dropped and the emphasis is carried by weight and
+an underline instead, so the highlight survives on the plain and the active
+option background alike, survives forced-colors mode, and is not conveyed by
+colour alone (1.4.1).
+
+## Results are capped, not virtualised
+
+`aria-activedescendant` names an element by id, so the active option has to exist
+in the DOM. That is what makes windowing a combobox listbox awkward, and why the
+default is a cap of 100 with the overflow announced rather than a virtualised
+list with a silent discrepancy between what is rendered and what is reachable.
+
+## Form integration, and the one thing it does not do
+
+`name` renders a hidden input carrying the committed value, so `FormData` gets the
+option's value rather than the text in the field.
+
+`required` sets the native attribute on the visible input, which is what gets
+announced and what triggers the browser's own "please fill out this field".
+**It validates that the field is non-empty, not that its contents are a valid
+option.** A hidden input is barred from constraint validation, so there is no way
+to express "must be one of the options" natively. Check `value !== null` on
+submit if that matters.
+
+## Colors
+
+The field and the popup both sit on `--surface-raised`, so their pairings are
+measured against that. The active option sits on `--primary-3`, which `tokens.css`
+designates the active/selected surface and the lowest-contrast surface anything is
+allowed to land on.
+
+### Text (needs 4.5:1)
+
+| Role                        | Pairing                                     |  Light |   Dark |
+| --------------------------- | ------------------------------------------- | -----: | -----: |
+| Query text                  | `--foreground` on `--surface-raised`        | 20.3:1 | 16.0:1 |
+| Placeholder                 | `--foreground-muted` on `--surface-raised`  | 9.55:1 | 6.76:1 |
+| Option label                | `--foreground` on `--surface-raised`        | 20.3:1 | 16.0:1 |
+| Option label, active        | `--foreground` on `--primary-3`             | 15.1:1 | 12.5:1 |
+| Matched run                 | `--accent-text` on `--surface-raised`       | 16.4:1 | 13.5:1 |
+| Matched run, active option  | `--accent-text` on `--primary-3`            | 12.2:1 | 10.5:1 |
+| Empty / loading / truncated | `--foreground-muted` on `--surface-raised`  | 9.55:1 | 6.76:1 |
+| Clear and toggle glyphs     | `--foreground-muted` on `--surface-raised`  | 9.55:1 | 6.76:1 |
+| Error                       | `--danger` on `--background`                | 6.53:1 | 9.74:1 |
+
+### Borders and focus ring (needs 3:1)
+
+| State                     | Pairing                                    |  Light |   Dark |
+| ------------------------- | ------------------------------------------ | -----: | -----: |
+| Field, valid              | `--border-strong` on `--surface-raised`    | 6.36:1 | 4.51:1 |
+| Field, focused            | `--accent` on `--surface-raised`           | 9.46:1 | 9.06:1 |
+| Field, invalid            | `--danger` on `--surface-raised`           | 9.56:1 | 8.39:1 |
+| Popup outer border        | `--border-strong` on `--background`        | 4.17:1 | 4.42:1 |
+| Active-option left border | `--accent` on `--primary-3`                | 7.01:1 | 7.04:1 |
+| Focus ring                | `--focus-ring` on `--background`           | 6.19:1 | 8.88:1 |
+
+1.4.11 applies to the field's boundary because the boundary is what identifies the
+control, and to the active-option border because that border is what identifies
+where the keyboard is. `border-border-strong` is used rather than `border-border`
+for that reason — `--border` is for decorative rules and is never the sole
+indicator of anything.
+
+The popup also has a `shadow-lg`, which is decorative only. Forced-colors mode
+drops box-shadows entirely, which is why the border is there to carry the edge.
+
+## Aria
+
+Everything below is wired by the component from `useId`-generated ids. `useId`
+matters specifically because it produces ids that match between the server and
+client render, which hand-written ones stop doing as soon as a field appears
+twice on a page.
+
+| Attribute                           | On          | Set when                       | Value                                               |
+| ----------------------------------- | ----------- | ------------------------------ | --------------------------------------------------- |
+| `role="combobox"`                   | input       | Always                         | —                                                   |
+| `aria-expanded`                     | input       | Always                         | `true` / `false`, never absent                      |
+| `aria-controls`                     | input       | Always                         | The listbox id, which is always in the DOM          |
+| `aria-autocomplete`                 | input       | Always                         | `list`, or `both` with inline completion            |
+| `aria-activedescendant`             | input       | Open, with an option active    | That option's id; omitted otherwise                 |
+| `aria-invalid`                      | input       | `error` is present             | `true`, otherwise omitted                           |
+| `aria-describedby`                  | input       | `error` or `description`       | Error id first, then description id, then the caller's |
+| `required`                          | input       | `required`                     | The native attribute                                |
+| `role="listbox"`                    | `ul`        | Always                         | —                                                   |
+| `aria-label`                        | `ul`        | `label` is a string            | The field's label                                   |
+| `aria-busy`                         | `ul`        | Loading                        | `true`, otherwise omitted                           |
+| `hidden`                            | `ul`        | Closed                         | —                                                   |
+| `role="option"`                     | `li`        | Always                         | —                                                   |
+| `aria-selected`                     | `li`        | Always                         | `true` on the **active** option only                |
+| `aria-disabled`                     | `li`        | `getOptionDisabled` returns true | `true`, otherwise omitted                         |
+| `role="presentation"`               | `li`        | Status rows                    | Keeps non-options out of the option count           |
+| `role="status"`                     | `div`       | Always mounted                 | Debounced result count                              |
+| `aria-label`                        | clear/toggle| Always                         | From `labels.clear` / `labels.toggle`               |
+| `aria-hidden="true"`                | glyphs      | Always                         | The `×` and `▾` are decorative                      |
+
+### A caller's `aria-describedby` is preserved, not replaced
+
+Any `aria-describedby` you pass is appended to the generated ids rather than
+overwriting them. Dropping it would silently break a tooltip or hint the app had
+already associated with the field.
+
+### Announcement strings are translatable
+
+Every string the component speaks — the result count, "No results", "Searching",
+the clear and toggle names — comes from `labels`, which takes a partial override:
+
+```tsx
+<ComboBox
+  label="Pays"
+  options={pays}
+  labels={{
+    noResults: "Aucun résultat",
+    results: (count) => `${count} résultat${count === 1 ? "" : "s"} disponible${count === 1 ? "" : "s"}`,
+    clear: "Effacer",
+  }}
+/>
+```
+
+## Known limitations
+
+These are real and worth knowing before you ship.
+
+- **`required` does not enforce "one of the options".** See above. Validate
+  `value !== null` yourself.
+- **`sm` and `md` use a 14px font, which triggers the iOS zoom-on-focus
+  behaviour.** Only `lg` is at 16px. Prefer `lg` on touch-first surfaces.
+- **The on-screen keyboard can cover a downward-opening popup.** The anchor
+  positioning fallback flips on viewport collision, not on keyboard insets.
+- **Multi-select is not supported.** It changes the pattern enough — removable
+  chips, each needing its own accessible name and a Backspace behaviour — that it
+  belongs on `useComboBox` rather than on a flag here.
+- **`aria-activedescendant` support is good but not uniform** across every
+  screen reader and browser pairing.
+
+## Testing
+
+The `a11y` addon checks what can be checked statically, and a combobox is mostly
+not that: the parts above that matter — whether the result count is actually
+heard, whether the active option is announced as you arrow, whether the
+highlighted label reads as one phrase — are only observable with a screen reader
+driving it.
+
+Full WCAG validation requires manual testing with assistive technologies and
+expert accessibility review. Treat the tables on this page as a record of intent
+and of measured contrast, not as a conformance claim.

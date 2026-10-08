@@ -1,0 +1,16 @@
+export const MOCKUSCITYDATA = [
+  "Dayton",
+  "Columbus",
+  "Cleveland",
+  "Cincinatti",
+  "Toledo",
+  "Akron",
+  "Youngstown",
+  "Berea",
+  "Dublin",
+  "Kettering",
+  "BeaverCreek",
+  "Centerville",
+  "Middletown",
+  "Springfield",
+];

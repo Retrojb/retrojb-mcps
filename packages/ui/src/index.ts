@@ -45,6 +45,70 @@ export {
 } from "./components/forms/Input";
 
 /*
+ * The combobox pair.
+ *
+ * Two components rather than one with a `variant` prop, for the same reason the
+ * alerts below are three. What differs is not appearance — they draw the same
+ * box from the same `comboBoxStyle` — but the contract:
+ *
+ *   - `ComboBox` is a form control. The user has to end up on one of the
+ *     options, free text is reverted on blur, and the committed value reaches
+ *     `FormData` through a hidden input.
+ *   - `SearchBox` is navigational. The raw query is a valid outcome, so Enter
+ *     submits it, text survives a blur, and there is no committed value at all —
+ *     `value` and `name` are not on its props. It is a `search` landmark, which a
+ *     form control must never be.
+ *
+ * A style variant cannot switch between those. The behaviour they do share lives
+ * in `useComboBox`, and both are built on it.
+ */
+export {
+  ComboBox,
+  comboBoxStyle,
+  type ComboBoxVariants,
+  type IComboBoxOptionState,
+  type IComboBoxProps,
+} from "./components/forms/ComboBox";
+
+export { SearchBox, type ISearchBoxProps } from "./components/forms/SearchBox";
+
+/*
+ * The behavioural core, exported so the markup can be replaced without
+ * reimplementing the keyboard and ARIA contract — grouped options under
+ * headings, multi-select with removable chips, a command palette whose popup is a
+ * dialog. It returns prop getters rather than rendering anything, and is the
+ * behavioural counterpart to exporting `comboBoxStyle` for markup this package
+ * does not own.
+ *
+ * `comboBoxFilter` and `highlightSegments` come with it. The matcher is a pure
+ * module with no React in it, so a server component ranking a static result list
+ * can call it directly; `highlightSegments` turns the ranges it returns into runs
+ * of text to mark up.
+ */
+export {
+  useComboBox,
+  DEFAULT_LABELS as COMBOBOX_DEFAULT_LABELS,
+  DEFAULT_MAX_RESULTS as COMBOBOX_DEFAULT_MAX_RESULTS,
+  type ComboBoxAutocomplete,
+  type ComboBoxBlurBehaviour,
+  type ComboBoxOptionProps,
+  type IComboBoxLabels,
+  type IUseComboBoxOptions,
+  type IUseComboBoxResult,
+} from "./hooks/useComboBox";
+
+export { useControllableState } from "./hooks/useControllableState";
+
+export {
+  comboBoxFilter,
+  highlightSegments,
+  type ComboBoxFilter,
+  type IComboBoxMatch,
+  type IHighlightSegment,
+  type IMatchRange,
+} from "./lib/filter";
+
+/*
  * The parts are exported flat as well as on `Table` itself. `<Table.Head>` reads
  * better in markup; the named exports are what you want when a part has to be
  * passed somewhere or wrapped.

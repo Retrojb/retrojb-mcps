@@ -19,10 +19,17 @@ export default defineConfig({
    * reports success, `tsc` still emits the declarations, so `dist` type-checks
    * while `dist/index.js` imports JavaScript that was never written. Add a
    * nesting level to the tree and this list is what has to keep up.
+   *
+   * `src/hooks/*.ts` is here because that is exactly what happened when
+   * `useComboBox` was added: declarations appeared in `dist/hooks`, no JavaScript
+   * did, `tsc-alias` left `./hooks/useComboBox` unrewritten because there was no
+   * file on disk to resolve it against, and the build passed. It only surfaced on
+   * `import` at runtime. A new top-level directory under `src` needs a line here.
    */
   entry: [
     "src/index.ts",
     "src/lib/*.ts",
+    "src/hooks/*.ts",
     "src/components/**/*.ts",
     "src/components/**/*.tsx",
   ],
