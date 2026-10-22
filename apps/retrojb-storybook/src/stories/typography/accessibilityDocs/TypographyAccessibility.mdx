@@ -1,0 +1,202 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Typography/Accessibility" />
+
+# Typography Accessibility
+
+Covers the five headings (`ProductHeading`, `PageHeading`, `TitleHeading`,
+`SectionHeading`, `SubHeading`) and the body components (`Paragraph`, `Code`,
+`CodeBlock`, `List`, `ListItem`, `Reference`).
+
+Extracted from the `styles.ts` files under
+`packages/ui/src/components/typography/`, the typography section of
+`packages/ui/src/styles/tokens.css` and its mapping in `theme.css`. Ratios are
+the measured output of `@retrojb/wcag-a11y-scanner` against the default palette.
+
+The two decisions worth reading are that **a heading's size is not its level**,
+and that **every size is `rem` on a unitless line height**, which is what 1.4.4
+and 1.4.12 come down to.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the components meet it                                                                                                                                  |
+| ---------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | Real `<h1>`–`<h6>`, `<p>`, `<ul>`/`<ol>`/`<li>`, `<code>`/`<pre>`, `<figure>`/`<blockquote>`/`<figcaption>`/`<cite>`. `level` is set separately from `size` |
+| 1.4.1 Use of Color           | A     | No meaning is carried by colour. Headings differ by size and weight; quotations by structure and a bar; code by its monospace face                          |
+| 1.4.3 Contrast (Minimum)     | AA    | `--foreground` 13.30:1 or more; `--foreground-muted` 6.25:1 or more on every surface, both themes                                                           |
+| 1.4.4 Resize Text            | AA    | Every size is `rem` (code is `em`), every line height unitless. Browser text zoom and a raised default font size scale all of it                            |
+| 1.4.6 Contrast (Enhanced)    | AAA   | `--foreground` clears 7:1 everywhere. `--foreground-muted` clears it on `--surface` (8.91 / 7.26:1); on `--surface-raised` in dark it is 6.76:1             |
+| 1.4.8 Visual Presentation    | AAA   | Partial. `Paragraph measure` caps lines at 65ch, body line height is 1.5–1.65, and nothing is justified. Colours are not user-selectable here               |
+| 1.4.10 Reflow                | AA    | `wrap-break-word` on headings, paragraphs, list items and inline code. `CodeBlock` scrolls sideways — code is the two-dimensional exception                 |
+| 1.4.11 Non-text Contrast     | AA    | The `Reference` bar and `CodeBlock` edge are `--border-strong`, 4.17:1 or more. Inline `Code`'s edge is decorative — see below                              |
+| 1.4.12 Text Spacing          | AA    | No fixed heights and no `overflow: hidden` on any text box, so user-applied spacing grows the box instead of clipping it                                    |
+| 2.1.1 Keyboard               | A     | `CodeBlock` is `tabIndex={0}`, so a keyboard user can focus it and scroll it with the arrow keys                                                            |
+| 2.4.6 Headings and Labels    | AA    | Heading text is the caller's; the components make sure it is a real heading. `CodeBlock`'s `label` is required                                              |
+| 2.4.7 Focus Visible          | AA    | `CodeBlock`, the one focusable part, takes the shared 2px `outline` on `:focus-visible`                                                                     |
+| 2.4.13 Focus Appearance      | AAA   | 2px thickness plus 2px offset. `--focus` on `--background` is 6.19 / 8.88:1                                                                                 |
+| 4.1.2 Name, Role, Value      | A     | `CodeBlock` is `role="region"` with `aria-label` from `label`. Nothing else is interactive                                                                  |
+
+2.5.8 Target Size does not apply: none of these components is a pointer target.
+A `Link` placed inside one keeps its own target behaviour.
+
+### A heading's size is not its level
+
+The heading type roles — `display`, `heading-xl` down to `heading-xs` — are
+visual sizes. The level, `<h1>` to `<h6>`, is the document outline, and the
+outline is how a screen reader user moves through a page: the heading list, the
+`H` key, the `1`–`6` keys. If the levels follow the design instead of the
+structure, that navigation describes a different page from the one on screen.
+
+So the two are separate props. Each named heading defaults to the pairing that
+is usually right, and either can be changed alone:
+
+| Component        | Role         | Default level |
+| ---------------- | ------------ | ------------- |
+| `ProductHeading` | `display`    | `1`           |
+| `PageHeading`    | `heading-xl` | `1`           |
+| `TitleHeading`   | `heading-lg` | `2`           |
+| `SectionHeading` | `heading-md` | `2`           |
+| `SubHeading`     | `heading-sm` | `3`           |
+
+```tsx
+// An <h2> in the outline, drawn small because the design calls for it.
+<SectionHeading size="heading-sm">Billing contacts</SectionHeading>
+
+// A product name on a page that already has its <h1>.
+<ProductHeading level={2}>Retro Studio</ProductHeading>
+```
+
+The rules the components cannot enforce for you: one `<h1>` per page, no skipped
+levels on the way down (an `<h2>` section's subsections are `<h3>`), and no
+heading used only to make text big — use `Paragraph size="lg"` for that.
+
+### rem, unitless line heights, and 1.4.4
+
+Every font size in the scale is `rem`: `body-md` is `1rem`, `display` is `3rem`.
+When a user raises the browser's default font size — rather than zooming the
+whole page — `rem` text grows with it and `px` text does not. Page zoom scales
+both, so `rem` is the unit that satisfies both ways of asking for larger text.
+
+Line heights are unitless (`1.2`, `1.35`, `1.5`, `1.65`). A unitless line height
+multiplies each element's own font size, so a heading and its body copy keep
+their proportions at any text size. A `px` or `rem` line height would stay put
+while the text grew, and lines would start to overlap at 200%.
+
+`text-code` is `0.9em`, not `rem`, so inline code follows its surroundings — a
+`<code>` in a heading is heading-sized. It still scales with the root, through
+its parent.
+
+The **Typography/Tokens** story reads every role back from the page. Raise the
+browser's default font size and its px column grows.
+
+### 1.4.12 Text Spacing
+
+A user may override line height to 1.5×, paragraph spacing to 2×, letter spacing
+to 0.12em and word spacing to 0.16em, and nothing may be lost.
+
+- **Line height.** The body roles already sit at 1.5 or above, so the override
+  is a no-op for running text. Headings are tighter (1.2 / 1.35) and grow.
+- **No fixed heights.** No text box in this group sets `height`, `max-height` or
+  `overflow: hidden`, so the extra spacing makes the box taller rather than
+  clipping it. `CodeBlock` sets `overflow-x: auto` — horizontal only — so added
+  letter spacing widens the scroll area and every character stays reachable.
+- **No margins to fight.** The components reset UA margins to `0` (the package
+  ships no preflight) and leave vertical rhythm to the layout. A user's
+  paragraph-spacing override applies to that layout as it would to plain HTML.
+
+Not verified with a text-spacing bookmarklet in every browser; the reasoning
+above is from the CSS, and the stories are the place to check it.
+
+### CodeBlock is a focusable region
+
+A `<pre>` that scrolls horizontally is unreachable from the keyboard unless
+something in it can take focus, and nothing inside a `<pre>` can (2.1.1). So the
+`<pre>` itself is `tabIndex={0}`. A focusable element needs a name, so it is
+also `role="region"` with `aria-label` from the required `label` prop.
+
+It is focusable whether or not it overflows. Detecting overflow needs a layout
+read and a `ResizeObserver`, which would make the component client-side, and the
+answer changes with viewport and text size anyway — a block that fits at 100%
+does not at 200%. Pass `tabIndex={-1}` for a block you know never scrolls.
+
+### Reference is a quotation, with the attribution outside it
+
+`<figure>` around a `<blockquote>` and a `<figcaption>`, the pattern from the
+HTML specification. The `<blockquote>` holds only what was said; the person and
+the work go in the `<figcaption>`, so they are not read, or copied, as part of
+the quote. The work's title is a `<cite>`, which is for titles, not names. The
+leading dash is `aria-hidden`.
+
+`cite` (the URL) goes on the `<blockquote>`'s `cite` attribute, which no browser
+exposes to users. A source the reader should be able to open needs a visible
+`Link`.
+
+### Inline Code's edge is decorative
+
+Inline `Code` uses `--border`, the decorative border, at 2.06–2.67:1 against its
+own fill. That is below 3:1, and deliberately so: 1.4.11 covers boundaries
+needed to identify a control or understand content, and the chip is neither. The
+monospace face identifies it, and losing the edge loses nothing.
+`--border-strong` would draw a heavy box around every identifier in a paragraph.
+
+`CodeBlock` is different. It is a focusable region, so its edge uses
+`--border-strong`.
+
+## Colors
+
+Measured against the default palette. Text in this group inherits whatever
+surface it sits on, so it is measured on all three.
+
+### Text (needs 4.5:1)
+
+| Role                                    | Pairing                                    |   Light |    Dark |
+| --------------------------------------- | ------------------------------------------ | ------: | ------: |
+| Headings, paragraph, list, quote        | `--foreground` on `--background`           | 13.30:1 | 15.72:1 |
+| Headings, paragraph, list, quote        | `--foreground` on `--surface`              | 18.95:1 | 17.22:1 |
+| Headings, paragraph, list, quote        | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--background`     |  6.25:1 |  6.63:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface`        |  8.91:1 |  7.26:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
+| `Code`, `CodeBlock`                     | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
+
+The muted rows on `--background` and on `--surface-raised` in dark miss the 7:1
+AAA bar; all are well above the 4.5:1 AA requirement.
+
+### Boundaries (needs 3:1 where they carry meaning)
+
+| Role                    | Pairing                             |  Light |   Dark |
+| ----------------------- | ----------------------------------- | -----: | -----: |
+| `Reference` bar         | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
+| `Reference` bar         | `--border-strong` on `--surface`    | 5.94:1 | 4.84:1 |
+| `CodeBlock` edge        | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
+| `CodeBlock` focus ring  | `--focus` on `--background`         | 6.19:1 | 8.88:1 |
+| `Code` edge, decorative | `--border` on `--surface-raised`    | 2.67:1 | 2.06:1 |
+
+## Aria
+
+| Attribute     | On                           | Set when                           | Value                                   |
+| ------------- | ---------------------------- | ---------------------------------- | --------------------------------------- |
+| `role`        | `CodeBlock`'s `<pre>`        | always                             | `"region"`                              |
+| `aria-label`  | `CodeBlock`'s `<pre>`        | always                             | the required `label` prop               |
+| `tabindex`    | `CodeBlock`'s `<pre>`        | always (caller may pass `-1`)      | `0`                                     |
+| `aria-hidden` | the dash in `Reference`      | `attribution` or `work` is present | `"true"` — the dash is typographic only |
+| `cite`        | `Reference`'s `<blockquote>` | `cite` is passed                   | the source URL; not exposed to users    |
+
+No other ARIA is set. Headings, paragraphs and lists use their native roles, and
+`List` keeps its markers, so Safari keeps the list role without a `role="list"`
+patch.
+
+## Known gaps
+
+- **Heading order is the caller's.** The components default to sensible levels
+  but cannot see the rest of the page. Storybook's a11y panel flags
+  `heading-order` and `page-has-heading-one` per story; whole pages need the
+  same check in the app.
+- **`CodeBlock` always adds a tab stop**, even when it does not overflow. See
+  above for why; `tabIndex={-1}` opts out.
+- **Font family is inherited.** These components set no `font-sans`, matching
+  every other component in the package, so `--font-family-sans` only applies
+  where the app uses it. `Code` and `CodeBlock` do set `font-mono`.
+- **Not verified with assistive technology.** Announcements have not been
+  checked with VoiceOver, NVDA or JAWS for this release. Full WCAG validation
+  needs manual testing with assistive technologies and expert review.

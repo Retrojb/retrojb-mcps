@@ -1,31 +1,13 @@
 import { ComboBox } from "@retrojb/ui";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
+import { MOCKCOUNTRIES } from "../../story-data/mockCountriesData";
 
 interface ICountry {
   readonly label: string;
   readonly value: string;
   readonly disabled?: boolean;
 }
-
-const countries: readonly ICountry[] = [
-  { label: "Argentina", value: "ar" },
-  { label: "Brazil", value: "br" },
-  { label: "Canada", value: "ca" },
-  { label: "Denmark", value: "dk" },
-  { label: "France", value: "fr" },
-  { label: "Germany", value: "de" },
-  { label: "Japan", value: "jp" },
-  { label: "México", value: "mx" },
-  { label: "New Zealand", value: "nz" },
-  { label: "Norway", value: "no" },
-  { label: "South Africa", value: "za" },
-  { label: "Sweden", value: "se" },
-  { label: "Switzerland", value: "ch" },
-  { label: "United Kingdom", value: "gb" },
-  { label: "United States", value: "us" },
-  { label: "Österreich", value: "at" },
-];
 
 /*
  * `typeof ComboBox<ICountry>` is an instantiation expression. `ComboBox` is
@@ -56,7 +38,7 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     placeholder: "Start typing…",
   },
 };
@@ -69,7 +51,7 @@ export const Primary: Story = {
 export const Typeahead: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     description: "Try “mexico”, “osterreich”, or “new z”.",
     defaultOpen: true,
     defaultInputValue: "united",
@@ -84,7 +66,7 @@ export const Typeahead: Story = {
 export const InlineCompletion: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     autocomplete: "both",
     description: "Type “de” and the rest of “Denmark” is filled in, selected.",
   },
@@ -93,7 +75,7 @@ export const InlineCompletion: Story = {
 export const WithDescription: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     description: "Where the invoice will be issued.",
   },
 };
@@ -105,7 +87,7 @@ export const WithDescription: Story = {
 export const Invalid: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     error: "Choose a country from the list.",
     defaultInputValue: "Atlantis",
   },
@@ -114,16 +96,17 @@ export const Invalid: Story = {
 export const Required: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     required: true,
-    description: "The marker is decorative; the attribute is what is announced.",
+    description:
+      "The marker is decorative; the attribute is what is announced.",
   },
 };
 
 export const Disabled: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     disabled: true,
     defaultInputValue: "Canada",
   },
@@ -137,7 +120,7 @@ export const LabelHidden: Story = {
     label: "Country",
     labelHidden: true,
     placeholder: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
   },
 };
 
@@ -146,7 +129,7 @@ export const LabelHidden: Story = {
  * a row. Only `lg` reaches the 44px enhanced target in WCAG 2.5.5.
  */
 export const Sizes: Story = {
-  args: { label: "Country", options: countries },
+  args: { label: "Country", options: MOCKCOUNTRIES },
   render: (args) => (
     <div style={{ display: "grid", gap: "1rem" }}>
       <ComboBox {...args} label="Small" size="sm" />
@@ -163,8 +146,9 @@ export const Sizes: Story = {
 export const DisabledOptions: Story = {
   args: {
     label: "Country",
-    options: countries,
-    getOptionDisabled: (option) => option.value === "br" || option.value === "ca",
+    options: MOCKCOUNTRIES,
+    getOptionDisabled: (option) =>
+      option.value === "br" || option.value === "ca",
     defaultOpen: true,
     description: "Brazil and Canada cannot be selected or arrowed onto.",
   },
@@ -197,7 +181,7 @@ export const LargeList: Story = {
 export const CustomOptions: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     defaultOpen: true,
     renderOption: (match, state) => (
       <>
@@ -224,7 +208,7 @@ export const CustomOptions: Story = {
 export const PlacementTop: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     placement: "top",
     defaultOpen: true,
   },
@@ -267,7 +251,7 @@ const searchCountries = async (
   });
 
   const needle = query.trim().toLowerCase();
-  return countries.filter((country) =>
+  return MOCKCOUNTRIES.filter((country) =>
     country.label.toLowerCase().includes(needle),
   );
 };
@@ -310,7 +294,7 @@ export const AsyncSearch: Story = {
 export const InAForm: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
     name: "country",
     required: true,
   },
@@ -344,7 +328,7 @@ export const InAForm: Story = {
 export const Controlled: Story = {
   args: {
     label: "Country",
-    options: countries,
+    options: MOCKCOUNTRIES,
   },
   render: (args) => {
     const [value, setValue] = useState<string | null>("se");

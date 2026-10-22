@@ -194,10 +194,220 @@
     --spacing-800: 68px;
     --spacing-900: 72px;
     --spacing-1000: 96px;
+
+    /*
+     * TYPOGRAPHY
+     *
+     * Two layers, the same split as the colours: primitives that are only a
+     * scale, and semantic roles the components use. A component asks for
+     * `text-body-sm`, never for `--font-size-200`, so retuning body copy is one
+     * edit here rather than a search through every `styles.ts`.
+     *
+     * Sizes are `rem`, never `px`. A user who raises the browser's default font
+     * size gets larger text everywhere (1.4.4), and the line heights are unitless
+     * so they scale with it. Nothing in this package sets a fixed `height` on a
+     * text box, which is what keeps 1.4.12 text-spacing overrides from clipping.
+     *
+     * No token here shares a name with a Tailwind theme variable (`--text-*`,
+     * `--leading-*`, `--tracking-*`, `--font-sans`, `--font-weight-medium`…).
+     * `theme.css` maps those names onto these, and a token with the same name
+     * as the theme variable reading it would be a reference to itself. That is
+     * why weights are numbered (`--font-weight-500`) rather than named.
+     *
+     * None of this differs by colour scheme, so the dark block does not restate
+     * it.
+     */
+
+    /* Families. System stacks: nothing to download, and a consuming app sets
+       its brand face by overriding these two (e.g. to `var(--font-geist-sans)`). */
+    --font-family-sans:
+      ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-family-mono:
+      ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+
+    /* Size scale. Indexed like spacing; the comment is the px at a 16px root. */
+    --font-size-100: 0.75rem; /* 12px */
+    --font-size-200: 0.875rem; /* 14px */
+    --font-size-300: 1rem; /* 16px */
+    --font-size-400: 1.125rem; /* 18px */
+    --font-size-500: 1.25rem; /* 20px */
+    --font-size-600: 1.5rem; /* 24px */
+    --font-size-700: 1.875rem; /* 30px */
+    --font-size-800: 2.25rem; /* 36px */
+    --font-size-900: 3rem; /* 48px */
+
+    /* Weights. Named by number: the name is the CSS value. */
+    --font-weight-400: 400;
+    --font-weight-500: 500;
+    --font-weight-600: 600;
+    --font-weight-700: 700;
+
+    /*
+     * Line heights. Unitless, so they multiply the element's own size.
+     * Headings run tight because their lines are short and large; body copy
+     * runs at 1.5, which is the 1.4.12 floor — a user stylesheet applying it
+     * changes nothing, so nothing reflows.
+     */
+    --line-height-tight: 1.2;
+    --line-height-snug: 1.35;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.65;
+
+    /* Tracking. Large display type is tightened; small caps are opened up. */
+    --letter-spacing-tight: -0.01em;
+    --letter-spacing-normal: 0em;
+    --letter-spacing-wide: 0.05em;
+
+    /*
+     * SEMANTIC TYPE ROLES
+     *
+     * Each role is four values — size, line height, weight, tracking — and
+     * `theme.css` turns each into one utility that sets all four:
+     * `text-heading-md`, `text-body-sm`, `text-label-md`. A weight utility after
+     * it still wins (`text-body-sm font-medium`), because Tailwind's
+     * `--tw-font-weight` takes precedence over a role's default.
+     *
+     *   role        use
+     *   ----------  --------------------------------------------------------
+     *   display     product names and hero headlines (ProductHeading)
+     *   heading-xl  the page's <h1> (PageHeading)
+     *   heading-lg  major page regions (TitleHeading)
+     *   heading-md  sections (SectionHeading)
+     *   heading-sm  subsections (SubHeading)
+     *   heading-xs  dialog titles, small headed regions
+     *   title-md    component titles: a card, an alert's label
+     *   title-sm    the same, in `size="sm"` components
+     *   body-lg     lead paragraphs
+     *   body-md     default reading text (Paragraph), lg control text
+     *   body-sm     component copy: descriptions, cells, messages
+     *   label-lg    lg button text
+     *   label-md    form labels, legends, button text
+     *   label-sm    compact labels
+     *   caption     footnotes, timestamps, table sort glyphs
+     *   overline    small uppercase eyebrows above a title
+     *   code        inline and block code; sized in `em` to follow its context
+     *
+     * The heading roles are visual sizes, not levels. Which `<h2>`–`<h6>` an
+     * element is comes from the document outline (1.3.1); the role is only how
+     * large it looks.
+     */
+    --type-display-size: var(--font-size-900);
+    --type-display-line-height: var(--line-height-tight);
+    --type-display-weight: var(--font-weight-700);
+    --type-display-tracking: var(--letter-spacing-tight);
+
+    --type-heading-xl-size: var(--font-size-800);
+    --type-heading-xl-line-height: var(--line-height-tight);
+    --type-heading-xl-weight: var(--font-weight-700);
+    --type-heading-xl-tracking: var(--letter-spacing-tight);
+
+    --type-heading-lg-size: var(--font-size-700);
+    --type-heading-lg-line-height: var(--line-height-tight);
+    --type-heading-lg-weight: var(--font-weight-600);
+    --type-heading-lg-tracking: var(--letter-spacing-tight);
+
+    --type-heading-md-size: var(--font-size-600);
+    --type-heading-md-line-height: var(--line-height-snug);
+    --type-heading-md-weight: var(--font-weight-600);
+    --type-heading-md-tracking: var(--letter-spacing-normal);
+
+    --type-heading-sm-size: var(--font-size-500);
+    --type-heading-sm-line-height: var(--line-height-snug);
+    --type-heading-sm-weight: var(--font-weight-600);
+    --type-heading-sm-tracking: var(--letter-spacing-normal);
+
+    --type-heading-xs-size: var(--font-size-400);
+    --type-heading-xs-line-height: var(--line-height-snug);
+    --type-heading-xs-weight: var(--font-weight-600);
+    --type-heading-xs-tracking: var(--letter-spacing-normal);
+
+    --type-title-md-size: var(--font-size-300);
+    --type-title-md-line-height: var(--line-height-normal);
+    --type-title-md-weight: var(--font-weight-600);
+    --type-title-md-tracking: var(--letter-spacing-normal);
+
+    --type-title-sm-size: var(--font-size-200);
+    --type-title-sm-line-height: var(--line-height-normal);
+    --type-title-sm-weight: var(--font-weight-600);
+    --type-title-sm-tracking: var(--letter-spacing-normal);
+
+    --type-body-lg-size: var(--font-size-400);
+    --type-body-lg-line-height: var(--line-height-relaxed);
+    --type-body-lg-weight: var(--font-weight-400);
+    --type-body-lg-tracking: var(--letter-spacing-normal);
+
+    --type-body-md-size: var(--font-size-300);
+    --type-body-md-line-height: var(--line-height-normal);
+    --type-body-md-weight: var(--font-weight-400);
+    --type-body-md-tracking: var(--letter-spacing-normal);
+
+    --type-body-sm-size: var(--font-size-200);
+    --type-body-sm-line-height: var(--line-height-normal);
+    --type-body-sm-weight: var(--font-weight-400);
+    --type-body-sm-tracking: var(--letter-spacing-normal);
+
+    --type-label-lg-size: var(--font-size-300);
+    --type-label-lg-line-height: var(--line-height-normal);
+    --type-label-lg-weight: var(--font-weight-500);
+    --type-label-lg-tracking: var(--letter-spacing-normal);
+
+    --type-label-md-size: var(--font-size-200);
+    --type-label-md-line-height: var(--line-height-normal);
+    --type-label-md-weight: var(--font-weight-500);
+    --type-label-md-tracking: var(--letter-spacing-normal);
+
+    --type-label-sm-size: var(--font-size-100);
+    --type-label-sm-line-height: var(--line-height-normal);
+    --type-label-sm-weight: var(--font-weight-500);
+    --type-label-sm-tracking: var(--letter-spacing-normal);
+
+    --type-caption-size: var(--font-size-100);
+    --type-caption-line-height: var(--line-height-normal);
+    --type-caption-weight: var(--font-weight-400);
+    --type-caption-tracking: var(--letter-spacing-normal);
+
+    --type-overline-size: var(--font-size-200);
+    --type-overline-line-height: var(--line-height-normal);
+    --type-overline-weight: var(--font-weight-600);
+    --type-overline-tracking: var(--letter-spacing-wide);
+
+    /* `em`, so `<code>` inside a heading is heading-sized. Monospace faces run
+       large for their nominal size; 0.9em evens that out against the text. */
+    --type-code-size: 0.9em;
+    --type-code-line-height: var(--line-height-normal);
+    --type-code-weight: var(--font-weight-400);
+    --type-code-tracking: var(--letter-spacing-normal);
   }
 
+  /*
+   * THEME SELECTION
+   *
+   * By default the theme follows the OS (`prefers-color-scheme`). Setting
+   * `data-theme` on `<html>` overrides that in either direction:
+   *
+   *   <html>                    follows the OS
+   *   <html data-theme="light"> light, even on a dark OS
+   *   <html data-theme="dark">  dark, even on a light OS
+   *
+   * Light is the base `:root` above, so forcing light only needs the media
+   * block to stand down — that is the `:not([data-theme="light"])`. Forcing dark
+   * needs the dark values outside the media query as well, and CSS has no way
+   * to share one declaration block between a media query and a plain selector,
+   * so the dark values are written twice: once here, once in the
+   * `[data-theme="dark"]` block below. KEEP THE TWO IN STEP. Specificity keeps
+   * the order safe: `:root[data-theme]` and `:root:not([data-theme])` both
+   * outrank the bare `:root`.
+   *
+   * `apps/docs/scripts/check-contrast.mjs` reads everything after the media
+   * query as the dark theme, so both copies are inside what it measures.
+   *
+   * Spacing, radii, border weights and type are theme-independent and are not
+   * restated in either dark block.
+   */
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
       color-scheme: dark;
 
       /* PRIMARY  */
@@ -245,42 +455,56 @@
       --danger: #ff9d95;
       --success: #6bd39a;
       --information: #32aee3;
-
-      /* BORDER WEIGHT */
-      --border-weight-none: 0px;
-      --border-weight-sm: 1px;
-      --border-weight-md: 2px;
-      --border-weight-lg: 4px;
-
-      /* Radii */
-      --radius-none: 0px;
-      --radius-xs: 4px;
-      --radius-sm: 8px;
-      --radius-md: 16px;
-      --radius-lg: 24px;
-      --radius-circle: 99px;
-
-      /* SPACING */
-      --spacing-0: 0px;
-      --spacing-10: 4px;
-      --spacing-20: 8px;
-      --spacing-30: 12px;
-      --spacing-40: 16px;
-      --spacing-50: 20px;
-      --spacing-60: 24px;
-      --spacing-70: 28px;
-      --spacing-80: 32px;
-      --spacing-90: 36px;
-      --spacing-100: 40px;
-      --spacing-200: 44px;
-      --spacing-300: 48px;
-      --spacing-400: 52px;
-      --spacing-500: 56px;
-      --spacing-600: 60px;
-      --spacing-700: 64px;
-      --spacing-800: 68px;
-      --spacing-900: 72px;
-      --spacing-1000: 96px;
     }
+  }
+
+  /* Forced dark. Same values as the media block above — keep them in step. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+
+    /* PRIMARY  */
+    --primary-0: #200230;
+    --primary-1: #2b0b3e;
+    --primary-2: #38164c;
+    --primary-3: #44215a;
+    --primary-4: #593571;
+    --primary-5: #906aab;
+    --primary-6: #a17cbd;
+    --primary-7: #af89ca;
+    --primary-8: #d3b2ec;
+    --primary-9: #f1e1fd;
+
+    /* SECONDARY  */
+    --secondary-0: #001d01;
+    --secondary-1: #012904;
+    --secondary-2: #033608;
+    --secondary-3: #06430e;
+    --secondary-4: #0e5a17;
+    --secondary-5: #20962d;
+    --secondary-6: #30aa3b;
+    --secondary-7: #46b84d;
+    --secondary-8: #82de83;
+    --secondary-9: #9dff9e;
+
+    /* NEUTRAL */
+    --neutral-0: #201f20;
+    --neutral-1: #272427;
+    --neutral-2: #332f33;
+    --neutral-3: #3e3a3e;
+    --neutral-4: #534e53;
+    --neutral-5: #888388;
+    --neutral-6: #9a969a;
+    --neutral-7: #a8a3a8;
+    --neutral-8: #d0ccd0;
+    --neutral-9: #fcf9fc;
+
+    /* ELEVATION */
+    --surface: #14171a;
+    --surface-raised: #1a1e22;
+
+    /* STATUS */
+    --danger: #ff9d95;
+    --success: #6bd39a;
+    --information: #32aee3;
   }
 }

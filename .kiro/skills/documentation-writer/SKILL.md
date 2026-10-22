@@ -3,6 +3,9 @@ name: documentation-writer
 description:
   "Documentation Expert. An expert technical writer specializing in creating
   high-quality software documentation."
+metadata:
+  author: retro-mcp
+  version: "1.0"
 ---
 
 # Documentation Expert

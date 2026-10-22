@@ -24,14 +24,6 @@ const config: StorybookConfig = {
       options: {
         mdxPluginOptions: {
           mdxCompileOptions: {
-            /*
-             * MDX parses CommonMark, where tables are not included — they are a
-             * GitHub-flavoured extension. Without this plugin a pipe table
-             * renders as a paragraph of literal `|` characters instead of a
-             * `<table>`. The per-component `accessibilityDocs` pages are
-             * largely contrast-ratio tables, so this is what makes them
-             * legible.
-             */
             remarkPlugins: [remarkGfm],
           },
         },

@@ -15,7 +15,7 @@ const inputStyle = tv({
   slots: {
     root: "flex flex-col gap-1.5",
 
-    label: "text-sm font-medium text-foreground",
+    label: "text-label-md text-foreground",
 
     control: [
       "w-full rounded-control border bg-surface-raised",
@@ -29,11 +29,11 @@ const inputStyle = tv({
       "disabled:cursor-not-allowed disabled:opacity-60",
     ],
 
-    description: "text-sm text-foreground-muted",
+    description: "text-body-sm text-foreground-muted",
 
     // 6.53:1 on --background. Paired with `aria-invalid` and the border colour,
     // so the error is conveyed by more than red text (WCAG 1.4.1).
-    error: "text-sm font-medium text-danger",
+    error: "text-body-sm font-medium text-danger",
   },
 
   variants: {
@@ -41,9 +41,9 @@ const inputStyle = tv({
       // Matches Button's 32/40/48px so an input and a button line up when they
       // sit side by side in a row — including the target-size trade noted there:
       // all three clear 2.5.8 (AA, 24px), only `lg` clears 2.5.5 (AAA, 44px).
-      sm: { control: "h-8 px-2.5 text-sm" },
-      md: { control: "h-10 px-3 text-sm" },
-      lg: { control: "h-12 px-4 text-base" },
+      sm: { control: "h-8 px-2.5 text-body-sm" },
+      md: { control: "h-10 px-3 text-body-sm" },
+      lg: { control: "h-12 px-4 text-body-md" },
     },
 
     invalid: {

@@ -1,0 +1,102 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/Checkbox/Accessibility" />
+
+# Checkbox Accessibility
+
+Extracted from `packages/ui/src/components/forms/Checkbox/styles.ts`, plus the
+wiring in `Checkbox.tsx` and the prop contract in `types.ts`. Ratios are
+measured with `checkContrast` from `@retrojb/wcag-a11y-scanner` against the
+tokens in `packages/ui/src/styles/tokens.css`.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                              |
+| --------------------------------- | ----- | ------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | `htmlFor` / `id` and `aria-describedby` come from `useId`; the label also wraps the input               |
+| 1.4.1 Use of Color                | A     | Checked is a glyph as well as a fill; an error is a message and `aria-invalid` as well as a red border  |
+| 1.4.3 Contrast (Minimum)          | AA    | Label, description and error text all clear 4.5:1 in both themes                                        |
+| 1.4.11 Non-text Contrast          | AA    | Box border, checked fill and check mark all clear 3:1 against what they sit on                          |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition                                             |
+| 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on the input itself                                                      |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset                                                                         |
+| 2.5.8 Target Size (Minimum)       | AA    | The `<label>` row is at least 24px tall and spans box, gap and text; a click anywhere toggles the input |
+| 3.3.1 Error Identification        | A     | `error` sets `aria-invalid` and renders the message, associated by `aria-describedby`                   |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `description` carries instructions                                          |
+| 4.1.2 Name, Role, Value           | A     | Native `<input type="checkbox">`; checked and `mixed` are reported by the platform, not by ARIA         |
+
+### The real input is the box
+
+The visible box is the native `<input type="checkbox">` with `appearance-none`,
+not a `<span>` drawn over a hidden input. Focus, the click target, form
+submission and the reported state all belong to one element, so they cannot
+drift apart. The check and dash are `aria-hidden` SVG siblings with
+`pointer-events-none`; a click on the glyph lands on the input beneath.
+
+### Indeterminate is native
+
+There is no `indeterminate` attribute in HTML, only a DOM property. The
+component sets it through its own ref after every render, and the browser then
+exposes the checkbox as `mixed` — no `aria-checked` is written. The effect has
+no dependency list on purpose: a click clears the property in the DOM, and a
+controlled parent that keeps `indeterminate` true needs it written again.
+
+### Target size
+
+The box is 20px inside a 24px cell. The `<label>` wraps the cell and the label
+text with `min-h-6`, so the activatable area is the whole row and never less
+than 24 × 24. Description and error text sit outside the label so they do not
+become part of the accessible name.
+
+### Forced colors
+
+The input opts out of forced-color repainting and paints itself with system
+colours: `CanvasText` border on `Canvas` unchecked, a `SelectedItem` fill with a
+`SelectedItemText` glyph checked or indeterminate, `GrayText` when disabled, and
+a `Highlight` focus outline. Without the opt-out the browser repaints both
+states to `Canvas` and only the glyph would differ. Not yet verified in Windows
+High Contrast with a screen reader — that needs a manual pass.
+
+### Disabled
+
+The native `disabled` attribute takes the input out of the tab order. The row
+dims with `has-[input:disabled]:opacity-60`, which also matches an input
+disabled by an ancestor `<fieldset disabled>`.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role        |                                Pairing |   Light |    Dark |
+| ----------- | -------------------------------------: | ------: | ------: |
+| Label       |       `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Label       |          `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Description | `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Error       |           `--danger` on `--background` |  6.26:1 |  8.22:1 |
+
+### Box, mark and focus (needs 3:1)
+
+| Role             |                                 Pairing |  Light |    Dark |
+| ---------------- | --------------------------------------: | -----: | ------: |
+| Unchecked border | `--border-strong` on `--surface-raised` | 6.36:1 |  4.50:1 |
+| Unchecked border |     `--border-strong` on `--background` | 4.16:1 |  4.41:1 |
+| Checked fill     |            `--accent` on `--background` | 6.19:1 |  8.87:1 |
+| Checked fill     |               `--accent` on `--surface` | 8.82:1 |  9.72:1 |
+| Check / dash     |     `--accent-foreground` on `--accent` | 9.32:1 | 10.19:1 |
+| Invalid border   |        `--danger` on `--surface-raised` | 9.56:1 |  8.38:1 |
+| Focus ring       |        `--focus-ring` on `--background` | 6.19:1 |  8.87:1 |
+
+`--border` (1.75–2.67:1) is never used for the box: it fails 1.4.11.
+
+## Aria
+
+| Attribute          | On    | Set when                         | Value                                       |
+| ------------------ | ----- | -------------------------------- | ------------------------------------------- |
+| `id`               | input | always                           | the `id` prop, or a generated `…-input`     |
+| `htmlFor`          | label | always                           | matches the input's `id`                    |
+| `aria-invalid`     | input | `error`, or the group has one    | `true`; omitted otherwise                   |
+| `aria-describedby` | input | `error` or `description` present | error id, description id, then the caller's |
+| `aria-hidden`      | SVGs  | always                           | `true` — the glyphs are decorative          |
+| `aria-hidden`      | `*`   | `required` on a standalone box   | `true` — the native `required` is announced |

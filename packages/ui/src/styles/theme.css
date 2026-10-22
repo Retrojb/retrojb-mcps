@@ -106,4 +106,124 @@
    * fell back to the 8px literal. `--radius-sm` is that same 8px, named.
    */
   --radius-control: var(--radius-sm, 8px);
+
+  /*
+   * TYPOGRAPHY
+   *
+   * Families and weights replace Tailwind's own values under the same names, so
+   * `font-sans`, `font-mono` and `font-medium` keep working and now read the
+   * token layer. Only the four weights the scale defines are restated; the
+   * rest (`font-thin`, `font-black`…) are left as Tailwind ships them and are
+   * not used in this package.
+   */
+  --font-sans: var(--font-family-sans, ui-sans-serif, system-ui, sans-serif);
+  --font-mono: var(--font-family-mono, ui-monospace, monospace);
+
+  --font-weight-normal: var(--font-weight-400, 400);
+  --font-weight-medium: var(--font-weight-500, 500);
+  --font-weight-semibold: var(--font-weight-600, 600);
+  --font-weight-bold: var(--font-weight-700, 700);
+
+  /*
+   * The type roles, one `text-<role>` utility each.
+   *
+   * Tailwind reads the `--line-height`, `--font-weight` and `--letter-spacing`
+   * sub-properties of a `--text-*` theme variable as that utility's defaults,
+   * so `text-body-sm` sets size, line height, weight and tracking in one class.
+   * Each default sits behind Tailwind's own `--tw-*` variable, so a `font-*`,
+   * `leading-*` or `tracking-*` utility on the same element still overrides it,
+   * and the `text-body-sm/6` line-height modifier works as it does on `text-sm`.
+   *
+   * Fallbacks are the resolved values, so `dist/styles.css` renders correctly
+   * without `tokens.css` in front of it. Tailwind's `text-xs` … `text-9xl` are
+   * still emitted; components in this package use the roles instead.
+   *
+   * The role names are registered with tailwind-merge in `lib/tv.ts`. Without
+   * that it reads `text-body-sm` as a colour and drops it next to
+   * `text-foreground`.
+   */
+  --text-display: var(--type-display-size, 3rem);
+  --text-display--line-height: var(--type-display-line-height, 1.2);
+  --text-display--font-weight: var(--type-display-weight, 700);
+  --text-display--letter-spacing: var(--type-display-tracking, -0.01em);
+
+  --text-heading-xl: var(--type-heading-xl-size, 2.25rem);
+  --text-heading-xl--line-height: var(--type-heading-xl-line-height, 1.2);
+  --text-heading-xl--font-weight: var(--type-heading-xl-weight, 700);
+  --text-heading-xl--letter-spacing: var(--type-heading-xl-tracking, -0.01em);
+
+  --text-heading-lg: var(--type-heading-lg-size, 1.875rem);
+  --text-heading-lg--line-height: var(--type-heading-lg-line-height, 1.2);
+  --text-heading-lg--font-weight: var(--type-heading-lg-weight, 600);
+  --text-heading-lg--letter-spacing: var(--type-heading-lg-tracking, -0.01em);
+
+  --text-heading-md: var(--type-heading-md-size, 1.5rem);
+  --text-heading-md--line-height: var(--type-heading-md-line-height, 1.35);
+  --text-heading-md--font-weight: var(--type-heading-md-weight, 600);
+  --text-heading-md--letter-spacing: var(--type-heading-md-tracking, 0em);
+
+  --text-heading-sm: var(--type-heading-sm-size, 1.25rem);
+  --text-heading-sm--line-height: var(--type-heading-sm-line-height, 1.35);
+  --text-heading-sm--font-weight: var(--type-heading-sm-weight, 600);
+  --text-heading-sm--letter-spacing: var(--type-heading-sm-tracking, 0em);
+
+  --text-heading-xs: var(--type-heading-xs-size, 1.125rem);
+  --text-heading-xs--line-height: var(--type-heading-xs-line-height, 1.35);
+  --text-heading-xs--font-weight: var(--type-heading-xs-weight, 600);
+  --text-heading-xs--letter-spacing: var(--type-heading-xs-tracking, 0em);
+
+  --text-title-md: var(--type-title-md-size, 1rem);
+  --text-title-md--line-height: var(--type-title-md-line-height, 1.5);
+  --text-title-md--font-weight: var(--type-title-md-weight, 600);
+  --text-title-md--letter-spacing: var(--type-title-md-tracking, 0em);
+
+  --text-title-sm: var(--type-title-sm-size, 0.875rem);
+  --text-title-sm--line-height: var(--type-title-sm-line-height, 1.5);
+  --text-title-sm--font-weight: var(--type-title-sm-weight, 600);
+  --text-title-sm--letter-spacing: var(--type-title-sm-tracking, 0em);
+
+  --text-body-lg: var(--type-body-lg-size, 1.125rem);
+  --text-body-lg--line-height: var(--type-body-lg-line-height, 1.65);
+  --text-body-lg--font-weight: var(--type-body-lg-weight, 400);
+  --text-body-lg--letter-spacing: var(--type-body-lg-tracking, 0em);
+
+  --text-body-md: var(--type-body-md-size, 1rem);
+  --text-body-md--line-height: var(--type-body-md-line-height, 1.5);
+  --text-body-md--font-weight: var(--type-body-md-weight, 400);
+  --text-body-md--letter-spacing: var(--type-body-md-tracking, 0em);
+
+  --text-body-sm: var(--type-body-sm-size, 0.875rem);
+  --text-body-sm--line-height: var(--type-body-sm-line-height, 1.5);
+  --text-body-sm--font-weight: var(--type-body-sm-weight, 400);
+  --text-body-sm--letter-spacing: var(--type-body-sm-tracking, 0em);
+
+  --text-label-lg: var(--type-label-lg-size, 1rem);
+  --text-label-lg--line-height: var(--type-label-lg-line-height, 1.5);
+  --text-label-lg--font-weight: var(--type-label-lg-weight, 500);
+  --text-label-lg--letter-spacing: var(--type-label-lg-tracking, 0em);
+
+  --text-label-md: var(--type-label-md-size, 0.875rem);
+  --text-label-md--line-height: var(--type-label-md-line-height, 1.5);
+  --text-label-md--font-weight: var(--type-label-md-weight, 500);
+  --text-label-md--letter-spacing: var(--type-label-md-tracking, 0em);
+
+  --text-label-sm: var(--type-label-sm-size, 0.75rem);
+  --text-label-sm--line-height: var(--type-label-sm-line-height, 1.5);
+  --text-label-sm--font-weight: var(--type-label-sm-weight, 500);
+  --text-label-sm--letter-spacing: var(--type-label-sm-tracking, 0em);
+
+  --text-caption: var(--type-caption-size, 0.75rem);
+  --text-caption--line-height: var(--type-caption-line-height, 1.5);
+  --text-caption--font-weight: var(--type-caption-weight, 400);
+  --text-caption--letter-spacing: var(--type-caption-tracking, 0em);
+
+  --text-overline: var(--type-overline-size, 0.875rem);
+  --text-overline--line-height: var(--type-overline-line-height, 1.5);
+  --text-overline--font-weight: var(--type-overline-weight, 600);
+  --text-overline--letter-spacing: var(--type-overline-tracking, 0.05em);
+
+  --text-code: var(--type-code-size, 0.9em);
+  --text-code--line-height: var(--type-code-line-height, 1.5);
+  --text-code--font-weight: var(--type-code-weight, 400);
+  --text-code--letter-spacing: var(--type-code-tracking, 0em);
 }

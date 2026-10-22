@@ -6,11 +6,11 @@ interface IBrowserAlertProps
   extends
     Omit<ComponentPropsWithRef<"dialog">, "children" | "open" | "title">,
     BrowserAlertVariants {
-  /** Whether the dialog is open. Controlled — the caller owns this. */
+  /** @description Whether the dialog is open. Controlled — the caller owns this. */
   readonly open: boolean;
 
   /**
-   * Called whenever the dialog closes, by any route: the confirm button, the cancel
+   * @description Called whenever the dialog closes, by any route: the confirm button, the cancel
    * button, or Escape.
    *
    * Escape is the one that catches people out. The platform closes a modal `<dialog>`
@@ -24,7 +24,7 @@ interface IBrowserAlertProps
   /**
    * The headline. Required, because it is the dialog's accessible name.
    *
-   * A dialog with no name is announced as just "dialog", which tells a screen reader
+   * @description A dialog with no name is announced as just "dialog", which tells a screen reader
    * user that something has taken over the page and nothing about what (WCAG 4.1.2,
    * 2.4.6). Required means the type checker catches it — the same call `Input` makes
    * about `label` and `Table` about `caption`.
@@ -37,22 +37,23 @@ interface IBrowserAlertProps
    */
   readonly title: string;
 
-  /** The explanation under the title. Becomes the dialog's accessible description. */
+  /**
+   * @description The explanation under the title. Becomes the dialog's accessible description. */
   readonly children?: ReactNode;
 
   /**
-   * The eyebrow above the title. Defaults to `Note`, `Success` or `Error`.
+   * @description The eyebrow above the title. Defaults to `Note`, `Success` or `Error`.
    *
    * Part of the accessible name along with `title`, so the tone is announced rather
    * than being carried by the bar colour alone (WCAG 1.4.1).
    */
   readonly label?: string;
 
-  /** Label for the confirming action. Defaults to `"OK"`. */
+  /** @description Label for the confirming action. Defaults to `"OK"`. */
   readonly confirmLabel?: string;
 
   /**
-   * What the confirming action does. Defaults to just closing.
+   * @description What the confirming action does. Defaults to just closing.
    *
    * It does not close the dialog for you. The caller owns `open`, so an action that
    * needs to stay open — a request in flight, a validation failure — can leave it
@@ -61,16 +62,16 @@ interface IBrowserAlertProps
   readonly onConfirm?: () => void;
 
   /**
-   * Label for the dismissing action. Providing this or `onCancel` is what turns the
+   * @description Label for the dismissing action. Providing this or `onCancel` is what turns the
    * dialog from an acknowledgement into a confirmation. Defaults to `"Cancel"` once
    * either is present.
    */
   readonly cancelLabel?: string;
 
-  /** What the dismissing action does. Defaults to just closing. */
+  /** @description What the dismissing action does. Defaults to just closing. */
   readonly onCancel?: () => void;
 
-  /** Class for the inner box. `className` goes to the `<dialog>` shell. */
+  /** @description Class for the inner box. `className` goes to the `<dialog>` shell. */
   readonly boxClassName?: string;
 }
 

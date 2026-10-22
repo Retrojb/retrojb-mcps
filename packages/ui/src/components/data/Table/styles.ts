@@ -126,7 +126,7 @@ const tableStyle = tv({
      * is never conveyed by colour or position alone (WCAG 1.4.1). `shrink-0`
      * keeps it from being squeezed out by a long header.
      */
-    sortIcon: "shrink-0 text-xs leading-none",
+    sortIcon: "shrink-0 text-caption leading-none",
 
     cell: "border-b border-b-border align-middle",
 
@@ -144,25 +144,25 @@ const tableStyle = tv({
      */
     size: {
       sm: {
-        caption: "px-2.5 py-2 text-sm",
-        headerLabel: "px-2.5 py-2 text-sm",
-        sortButton: "px-2.5 py-2 text-sm",
-        cell: "px-2.5 py-2 text-sm",
-        empty: "px-2.5 py-6 text-sm",
+        caption: "px-2.5 py-2 text-body-sm",
+        headerLabel: "px-2.5 py-2 text-body-sm",
+        sortButton: "px-2.5 py-2 text-body-sm",
+        cell: "px-2.5 py-2 text-body-sm",
+        empty: "px-2.5 py-6 text-body-sm",
       },
       md: {
-        caption: "px-3 py-2.5 text-sm",
-        headerLabel: "px-3 py-2.5 text-sm",
-        sortButton: "px-3 py-2.5 text-sm",
-        cell: "px-3 py-2.5 text-sm",
-        empty: "px-3 py-8 text-sm",
+        caption: "px-3 py-2.5 text-body-sm",
+        headerLabel: "px-3 py-2.5 text-body-sm",
+        sortButton: "px-3 py-2.5 text-body-sm",
+        cell: "px-3 py-2.5 text-body-sm",
+        empty: "px-3 py-8 text-body-sm",
       },
       lg: {
-        caption: "px-4 py-3 text-base",
-        headerLabel: "px-4 py-3 text-base",
-        sortButton: "px-4 py-3 text-base",
-        cell: "px-4 py-3 text-base",
-        empty: "px-4 py-10 text-base",
+        caption: "px-4 py-3 text-body-md",
+        headerLabel: "px-4 py-3 text-body-md",
+        sortButton: "px-4 py-3 text-body-md",
+        cell: "px-4 py-3 text-body-md",
+        empty: "px-4 py-10 text-body-md",
       },
     },
 

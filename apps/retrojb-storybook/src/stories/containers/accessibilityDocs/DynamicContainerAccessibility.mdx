@@ -1,0 +1,49 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Containers/DynamicContainer/Accessibility" />
+
+# DynamicContainer Accessibility
+
+Extracted from
+`packages/ui/src/components/containers/dynamicContainer/styles.ts` and
+`DynamicContainer.tsx`. A layout primitive: it draws nothing, so it has no
+colours to measure and no focusable surface.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                                         |
+| ---------------------------- | ----- | -------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | `as="ul"` / `"ol"` renders a real list; `role="list"` is restored for WebKit                       |
+| 1.3.2 Meaningful Sequence    | A     | Only `flex-col` / `flex-row` — never a reversed direction or `order`, so visual order is DOM order |
+| 1.4.10 Reflow                | AA    | Stacks below `sm`; the row wraps instead of overflowing                                            |
+| 2.4.3 Focus Order            | A     | Follows from 1.3.2: tabbing goes in the order the items appear                                     |
+
+### Lists keep their semantics
+
+The root carries `list-style: none` because this package ships no preflight and
+a `<ul>` would otherwise keep its markers. WebKit drops the list role from a
+list styled that way, so VoiceOver in Safari stops announcing "list, 3 items".
+The component sets `role="list"` on a `ul` or `ol` root to restore it; a `role`
+you pass still wins.
+
+### Not a fieldset
+
+`as` does not accept `fieldset`. A group of form controls should be a
+`<fieldset>` with a `<legend>`, with the container inside it after the legend —
+which is how `CheckboxGroup` uses it.
+
+### Container-query mode
+
+`responsiveTo="container"` switches at `@sm` of the nearest `@container`
+ancestor. With no such ancestor it stays a column, which never causes horizontal
+scrolling — the safe failure for 1.4.10.
+
+## Colors
+
+None. The container has no fill, border or text colour of its own.
+
+## Aria
+
+| Attribute | On   | Set when                              | Value    |
+| --------- | ---- | ------------------------------------- | -------- |
+| `role`    | root | `as` is `ul` or `ol`, no `role` given | `"list"` |

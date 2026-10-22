@@ -1,0 +1,150 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/Toggle/Accessibility" />
+
+# Toggle Accessibility
+
+Extracted from `packages/ui/src/components/forms/Toggle/styles.ts`, plus the
+wiring in `Toggle.tsx` and the prop contract in `types.ts`. Ratios are measured
+with `checkContrast` from `@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                 |
+| --------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | `htmlFor` / `id` and `aria-describedby` come from `useId`; the label also wraps the input                  |
+| 1.3.2 Meaningful Sequence         | A     | `labelPosition` changes the DOM order, not just the visual order, so reading order matches the screen      |
+| 1.4.1 Use of Color                | A     | On is thumb position, a track fill change of 9.45 / 9.05:1 and a check glyph; an error is also a message   |
+| 1.4.3 Contrast (Minimum)          | AA    | Label, description and error text all clear 4.5:1 in both themes                                           |
+| 1.4.11 Non-text Contrast          | AA    | Track border, on fill and the thumb in both states clear 3:1 against what they sit on                      |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` on the track and the thumb: the thumb jumps rather than slides             |
+| 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on the input — the track — itself                                           |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset                                                                            |
+| 2.5.8 Target Size (Minimum)       | AA    | `md` track is 44 × 24; `sm` is 36 × 20 inside a `<label>` row at least 24px tall that toggles on any click |
+| 3.3.1 Error Identification        | A     | `error` sets `aria-invalid` and renders the message, associated by `aria-describedby`                      |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `description` carries instructions                                             |
+| 4.1.2 Name, Role, Value           | A     | Native checkbox with `role="switch"`; the on/off value is the platform's checked state, not `aria-checked` |
+
+### Switch semantics
+
+The control is `<input type="checkbox" role="switch">`. ARIA in HTML allows the
+`switch` role on a checkbox, and the browser maps the input's native checked
+state to the switch's on/off value, so the component writes no `aria-checked`.
+Everything else is native: Space toggles it, the `<label>` activates it, it
+submits `name=value` with a form when on, honours `required`, and `form.reset()`
+restores `defaultChecked`.
+
+A `<button role="switch" aria-checked>` was not used. It would need `FormData`,
+`required`, reset and `<fieldset disabled>` support rebuilt by hand.
+
+### How screen readers announce it
+
+The accessible name is the label text; the state is announced as on or off
+rather than checked or not checked. Typical output:
+
+- VoiceOver (macOS / iOS): "Wi-Fi, off, switch".
+- NVDA (recent versions): "Wi-Fi, switch, off".
+- JAWS: "Wi-Fi, switch, off" or "toggle button, not pressed" depending on
+  version.
+- TalkBack: "Off, Wi-Fi, switch".
+
+Exact phrasing varies by screen reader, version and browser, and older
+combinations may fall back to announcing it as a checkbox. These strings have
+not been verified with each screen reader for this component yet — that needs a
+manual pass. The description and any error follow the name, through
+`aria-describedby`.
+
+Name the setting, not the action: "Wi-Fi", not "Turn on Wi-Fi". The switch
+already says "on" or "off", and "Turn on Wi-Fi, on" is confusing.
+
+### When to use a checkbox instead
+
+A switch takes effect immediately, like a light switch: flipping "Dark mode"
+changes the theme there and then. A checkbox is a choice that is collected and
+submitted later. Use a `Checkbox` when:
+
+- nothing happens until the user presses Save or Submit;
+- the user is agreeing to something ("I accept the terms");
+- the options are a multi-select list (use `CheckboxGroup`);
+- a mixed or indeterminate state is needed — a switch has no `mixed`.
+
+### Target size
+
+The `md` track is 44 × 24 and clears 24 × 24 on its own. The `sm` track is 36 ×
+20, so on its own it would fall short of 24px tall. It sits in a 24px cell
+inside a `<label>` with `min-h-6` that spans the track, the gap and the label
+text, and a click anywhere in it toggles the input. Description and error sit
+outside the label, so they do not become part of the accessible name.
+
+### Forced colors
+
+The track and the thumb opt out of forced-color repainting and paint themselves
+with system colours: a `CanvasText` border on `Canvas` with a `CanvasText` thumb
+when off; a `SelectedItem` track with a `SelectedItemText` thumb and a
+`SelectedItem` check when on; `GrayText` when disabled; a `Highlight` focus
+outline. Without the opt-out the browser repaints the track to `Canvas` in both
+states and the thumb, a plain `<span>`, disappears. Not yet verified in Windows
+High Contrast with a screen reader — that needs a manual pass.
+
+### Disabled
+
+The native `disabled` attribute takes the input out of the tab order. The row
+dims with `has-[input:disabled]:opacity-60`, which also matches an input
+disabled by an ancestor `<fieldset disabled>`. Disabled controls are exempt from
+the contrast criteria; the on/off state stays readable because position and
+glyph do not depend on contrast.
+
+### Right-to-left
+
+The thumb is positioned with logical `margin-inline-start` and has an `rtl:`
+translate, so "off" is at the inline start and "on" at the inline end in either
+direction.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role        |                                Pairing |   Light |    Dark |
+| ----------- | -------------------------------------: | ------: | ------: |
+| Label       |       `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Label       |          `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Description | `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Description |    `--foreground-muted` on `--surface` |  8.91:1 |  7.25:1 |
+| Error       |           `--danger` on `--background` |  6.26:1 |  8.22:1 |
+| Error       |              `--danger` on `--surface` |  8.91:1 |  9.00:1 |
+
+### Track, thumb and focus (needs 3:1)
+
+| Role                |                                 Pairing |  Light |    Dark |
+| ------------------- | --------------------------------------: | -----: | ------: |
+| Off track border    |     `--border-strong` on `--background` | 4.16:1 |  4.41:1 |
+| Off track border    |        `--border-strong` on `--surface` | 5.93:1 |  4.83:1 |
+| Off thumb           | `--border-strong` on `--surface-raised` | 6.36:1 |  4.50:1 |
+| On track            |            `--accent` on `--background` | 6.19:1 |  8.87:1 |
+| On track            |               `--accent` on `--surface` | 8.82:1 |  9.72:1 |
+| On thumb            |     `--accent-foreground` on `--accent` | 9.32:1 | 10.19:1 |
+| Check glyph         |     `--accent` on `--accent-foreground` | 9.32:1 | 10.19:1 |
+| Off fill vs on fill |        `--accent` on `--surface-raised` | 9.45:1 |  9.05:1 |
+| Invalid border      |        `--danger` on `--surface-raised` | 9.56:1 |  8.38:1 |
+| Focus ring          |        `--focus-ring` on `--background` | 6.19:1 |  8.87:1 |
+| Focus ring          |           `--focus-ring` on `--surface` | 8.82:1 |  9.72:1 |
+
+`--border` (1.75 / 2.02:1 on `--background`) is never used for the track: it
+fails 1.4.11.
+
+## Aria
+
+| Attribute          | On    | Set when                         | Value                                       |
+| ------------------ | ----- | -------------------------------- | ------------------------------------------- |
+| `role`             | input | always                           | `switch`                                    |
+| `id`               | input | always                           | the `id` prop, or a generated `…-input`     |
+| `htmlFor`          | label | always                           | matches the input's `id`                    |
+| `aria-invalid`     | input | `error` present                  | `true`; omitted otherwise                   |
+| `aria-describedby` | input | `error` or `description` present | error id, description id, then the caller's |
+| `aria-hidden`      | thumb | always                           | `true` — the thumb and glyph are decorative |
+| `aria-hidden`      | `*`   | `required`                       | `true` — the native `required` is announced |

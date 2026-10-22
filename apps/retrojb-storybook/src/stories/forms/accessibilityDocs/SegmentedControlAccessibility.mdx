@@ -1,0 +1,145 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/SegmentedControl/Accessibility" />
+
+# SegmentedControl Accessibility
+
+Extracted from `packages/ui/src/components/forms/SegmentedControl/styles.ts`,
+plus the wiring in `SegmentedControl.tsx` and the prop contract in `types.ts`.
+Ratios are measured with `checkContrast` from `@retrojb/wcag-a11y-scanner`
+against the tokens in `packages/ui/src/styles/tokens.css`, in the light theme
+and the dark theme (`prefers-color-scheme: dark` or `data-theme="dark"`, which
+share one set of values).
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                      |
+| --------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | A `<fieldset role="radiogroup">` with its `<legend>` wired by `aria-labelledby`; each radio is inside its label |
+| 1.4.1 Use of Color                | A     | Selected is a filled box only it has, a 8.82 / 9.72:1 luminance change and a 500 → 600 weight change            |
+| 1.4.3 Contrast (Minimum)          | AA    | Legend, unselected and selected segment text all clear 4.5:1 in both themes                                     |
+| 1.4.11 Non-text Contrast          | AA    | The track edge and the selected fill clear 3:1 against what they sit on                                         |
+| 2.1.1 Keyboard                    | A     | One tab stop; arrows move and select, wrapping and skipping disabled segments; Home / End jump to the ends      |
+| 2.3.3 Animation from Interactions | AAA   | Colour transitions only, with `motion-reduce:transition-none`; there is no sliding indicator                    |
+| 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on the radio, which is the segment itself                                        |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset, on the `--surface` track at 8.82 / 9.72:1                                      |
+| 2.5.8 Target Size (Minimum)       | AA    | Segments are 24 / 32 / 40px tall (`sm` / `md` / `lg`) and at least their label plus padding wide                |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `labelHidden` hides it visually but keeps it as the name                            |
+| 4.1.2 Name, Role, Value           | A     | Native radios: role `radio`, name from the wrapping label, checked state from the platform                      |
+
+### Radio-group semantics from native radios
+
+Every segment is an `<input type="radio">` with `appearance-none`, stretched
+over the segment so the drawn shape, the focus ring and the pointer target are
+one element. All of them share one `name` — the `name` prop, or a generated one
+when it is omitted — and that is what makes the browser treat them as a group:
+
+- Tab enters on the selected segment, or on the first enabled one when nothing
+  is selected, and the next Tab leaves the group.
+- Arrow keys move focus and selection together, wrap at either end, skip
+  disabled segments and reverse under `dir="rtl"`.
+- Home and End are not native for radios. The component adds them, following the
+  APG radio-group pattern: they focus and select the first or last enabled
+  segment. They are ignored with a modifier held, or if the caller's `onKeyDown`
+  already called `preventDefault()`.
+
+A row of `<button role="radio">` with a roving `tabindex` was not used. It would
+need the keyboard model, `FormData`, `<fieldset disabled>` and label activation
+rebuilt by hand.
+
+Verified in headless Chromium (Playwright) with real key presses: Tab lands on
+the selected segment, Right skips a disabled segment and wraps, Left wraps back,
+Home / End select and focus the ends, a second Tab leaves the group, and axe
+reports no violations. Firefox, Safari and screen-reader output have not been
+tested yet and need a manual pass.
+
+### How screen readers announce it
+
+The group is named by the legend and announced on entry, then each segment as a
+radio button with its position. Typical output: "Range, radio group. Week, radio
+button, checked, 2 of 4". Exact phrasing varies by screen reader, version and
+browser and has not been verified for this component yet.
+
+### Selected is not colour alone
+
+Three cues change together:
+
+- shape — only the selected segment has a box; the others are transparent on the
+  track, so in greyscale the selection is still the one filled shape;
+- fill — `--surface` to `--accent`, a luminance change of 8.82 / 9.72:1;
+- weight — the text goes from 500 to 600.
+
+An invisible, `aria-hidden` copy of each label in the selected weight reserves
+its width, so selecting a segment never shifts its neighbours and the accessible
+name still reads the label once.
+
+### Forced colors
+
+The radios opt out of forced-color repainting and paint with system colours: the
+selected segment is a `SelectedItem` box with `SelectedItemText`, the others are
+`CanvasText` on the track's `Canvas`, hover draws a `Highlight` edge, focus a
+`Highlight` outline, and disabled text is `GrayText` (a disabled selected
+segment is a `GrayText` box with `Canvas` text). The track is not opted out; the
+browser draws its border in `CanvasText`. Not yet verified in Windows High
+Contrast — that needs a manual pass.
+
+### Disabled
+
+`disabled` on the component disables the fieldset, which disables every radio
+inside it natively and removes the group from the tab order. `disabled` on an
+option disables that radio only, and the arrow keys skip it. Both dim with
+`has-[input:disabled]:opacity-60` on the segment. Disabled controls are exempt
+from the contrast criteria; the selection stays readable because the shape cue
+does not depend on contrast.
+
+### Known gaps
+
+- Segments do not wrap or truncate. A long set in a narrow container overflows
+  rather than reflowing (1.4.10). Keep segments few and labels short; for long
+  or many options use a radio group with stacked options.
+- Segments are 24–40px tall, so none clears the 44px of 2.5.5 (AAA).
+- `form.reset()` does not restore `defaultValue`: the selection is React state,
+  as in `CheckboxGroup`.
+- Without a `name`, the generated name is submitted too when the control is
+  inside a `<form>`.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role                  |                              Pairing |   Light |    Dark |
+| --------------------- | -----------------------------------: | ------: | ------: |
+| Legend                |     `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Legend                |        `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Unselected segment    |        `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Unselected, hovered   | `--foreground` on `--surface-raised` | 20.31:1 | 16.04:1 |
+| Selected segment text |  `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
+
+### Track, indicator and focus (needs 3:1)
+
+| Role                    |                             Pairing |  Light |   Dark |
+| ----------------------- | ----------------------------------: | -----: | -----: |
+| Track border, outside   | `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Track border, inside    |    `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
+| Selected fill           |           `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| Selected fill vs. hover |    `--accent` on `--surface-raised` | 9.45:1 | 9.05:1 |
+| Focus ring              |       `--focus-ring` on `--surface` | 8.82:1 | 9.72:1 |
+| Focus ring              |    `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
+
+`--border` (1.75 / 2.02:1 on `--background`) is never used for the track: it
+fails 1.4.11. Unselected segments have no boundary of their own; their text
+identifies them, which is what 1.4.11 allows for an inactive state.
+
+## Aria
+
+| Attribute         | On       | Set when          | Value                                              |
+| ----------------- | -------- | ----------------- | -------------------------------------------------- |
+| `role`            | fieldset | always            | `radiogroup`                                       |
+| `aria-labelledby` | fieldset | always            | the generated `…-label` id of the legend           |
+| `name`            | radios   | always            | the `name` prop, or a generated `…-name`           |
+| `checked`         | radio    | always            | `true` on the selected segment — native, no `aria` |
+| `disabled`        | fieldset | `disabled` prop   | native; disables every radio inside it             |
+| `disabled`        | radio    | `option.disabled` | native; skipped by the arrow keys                  |
+| `aria-hidden`     | sizer    | always            | `true` — the width-reserving copy of the label     |

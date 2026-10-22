@@ -16,7 +16,8 @@ const buttonStyle = tv({
   base: [
     "inline-flex items-center justify-center gap-2",
     "rounded-control border border-transparent",
-    "font-medium whitespace-nowrap",
+    // Weight comes from the `label-*` type role in `size`.
+    "whitespace-nowrap",
     "cursor-pointer select-none",
     "transition-colors motion-reduce:transition-none",
 
@@ -59,9 +60,9 @@ const buttonStyle = tv({
       // Heights are 32/40/48px. All three clear the 24px minimum in 2.5.8 (AA).
       // Only `lg` clears the 44px enhanced target in 2.5.5 (AAA) — `md` is 40px
       // and falls 4px short, so reach for `lg` where AAA is the bar.
-      sm: "h-8 px-3 text-sm",
-      md: "h-10 px-4 text-sm",
-      lg: "h-12 px-6 text-base",
+      sm: "h-8 px-3 text-label-md",
+      md: "h-10 px-4 text-label-md",
+      lg: "h-12 px-6 text-label-lg",
     },
 
     fullWidth: {

@@ -9,6 +9,13 @@
 @source "../components/**/*.tsx";
 @source "../components/**/*.ts";
 @source "../lib/**/*.ts";
+/*
+ * Every type role, emitted whether or not a component here uses it. Apps that
+ * only import `dist/styles.css` (no Tailwind build of their own) can then write
+ * `text-overline` or `text-caption` and get a real rule. Keep in step with
+ * `TYPE_ROLES` in `lib/tv.ts`.
+ */
+@source inline("text-{display,heading-xl,heading-lg,heading-md,heading-sm,heading-xs,title-md,title-sm,body-lg,body-md,body-sm,label-lg,label-md,label-sm,caption,overline,code}");
 
 /*
  * COMBOBOX POPUP POSITIONING

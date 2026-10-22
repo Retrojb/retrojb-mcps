@@ -1,0 +1,14 @@
+/*
+ * Paints the preview with the package's own surface tokens, so a story sits on
+ * `--background` in whichever theme the toolbar has selected. Without it the
+ * canvas stays Storybook's white, and dark-theme components would be measured
+ * by the a11y addon against a page colour they never actually land on.
+ *
+ * `.docs-story` is the story frame inside a docs page. The surrounding docs
+ * prose keeps Storybook's own docs theme.
+ */
+body,
+.docs-story {
+  background: var(--background);
+  color: var(--foreground);
+}

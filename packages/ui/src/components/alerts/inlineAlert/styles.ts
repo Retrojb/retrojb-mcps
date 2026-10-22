@@ -58,7 +58,8 @@ const inlineAlertStyles = tv({
      * blindness, and a forced-colors mode that discards the bar (WCAG 1.4.1). The
      * colour here is reinforcement and never the signal.
      */
-    label: "font-semibold",
+    // Size and weight come from the `title-*` type role in `size`.
+    label: "",
 
     message: "min-w-0",
 
@@ -70,14 +71,14 @@ const inlineAlertStyles = tv({
 
     size: {
       sm: {
-        box: "gap-(--spacing-20) p-(--spacing-30) text-sm",
+        box: "gap-(--spacing-20) p-(--spacing-30) text-body-sm",
         content: "gap-(--spacing-10)",
-        label: "text-sm",
+        label: "text-title-sm",
       },
       md: {
-        box: "gap-(--spacing-30) p-(--spacing-40) text-sm",
+        box: "gap-(--spacing-30) p-(--spacing-40) text-body-sm",
         content: "gap-(--spacing-10)",
-        label: "text-base",
+        label: "text-title-md",
       },
     },
   },

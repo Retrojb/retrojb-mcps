@@ -1,0 +1,193 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Containers/Card/Accessibility" />
+
+# Card Accessibility
+
+Covers `Card`, `InteractiveCard` and `GraphicCard`, which share one slot recipe.
+Extracted from `packages/ui/src/components/containers/card/styles.ts`, plus the
+wiring in `InteractiveCard.tsx` and the prop contract in `types.ts`. Ratios are
+the measured output of `@retrojb/wcag-a11y-scanner` against the default palette.
+
+Most of the family is an ordinary box. The part worth reading is
+`InteractiveCard`: **the card is not the link.** There is one real `<a>` or
+`<button>`, named by the title, with a pseudo-element stretched over the card.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                                               |
+| --------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.1.1 Non-text Content            | A     | `media` is the caller's markup, so alt text is too. Meaningful images need `alt` that says what they show; decorative ones take `alt=""` |
+| 1.3.1 Info and Relationships      | A     | `CardTitle` and the `InteractiveCard` title are real headings (`level` / `headingLevel`); `as="li"` lets a set of cards be a real list   |
+| 1.3.2 Meaningful Sequence         | A     | Media comes first in the DOM and on screen in both orientations, so reading order and visual order agree                                 |
+| 1.4.3 Contrast (Minimum)          | AA    | Title 18.95 / 17.22:1, body 8.91 / 7.26:1 on `--surface`; both stay above 4.5:1 on the hover fill                                        |
+| 1.4.6 Contrast (Enhanced)         | AAA   | The muted body still clears 7:1 in both themes                                                                                           |
+| 1.4.10 Reflow                     | AA    | Every card fills its container (`w-full min-w-0`); horizontal stacks below 28rem of card width; media is cropped, never overflowing      |
+| 1.4.11 Non-text Contrast          | AA    | The edge is `--border-strong`, 4.17 / 4.42:1 on `--background`. The fill alone is 1.42 / 1.10:1 and could not carry the boundary         |
+| 2.1.1 Keyboard                    | A     | `InteractiveCard` is a native `<a href>` or `<button>`, so Tab, Enter and (for buttons) Space work with no handlers                      |
+| 2.4.4 Link Purpose                | A     | The link's name is the title alone; supporting copy is a description, not part of the name                                               |
+| 2.4.7 Focus Visible               | AA    | The shared 2px outline, drawn on the card's overlay so it surrounds the card                                                             |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness at a 2px offset from the card's border edge; `--focus` on `--background` is 6.19 / 8.88:1                                  |
+| 2.5.8 Target Size (Minimum)       | AA    | The primary target is the whole card. Secondary `actions` are sized by the caller — `Button` at any size clears 24px                     |
+| 2.3.3 Animation from Interactions | AAA   | The hover transition is `transition-colors motion-reduce:transition-none`                                                                |
+| 4.1.2 Name, Role, Value           | A     | No role on a static card (ARIA has none). `title` is required on `InteractiveCard` because it is the control's accessible name           |
+
+### The card is not the link
+
+The two obvious builds both fail, in different ways.
+
+Wrap the card in `<a>` and every word inside it becomes the link's accessible
+name. A screen reader user hears title, copy, date and button labels as one
+run-on link — on every card, every time they tab. Any button inside it is
+interactive content nested in interactive content, which is invalid HTML with
+undefined click behaviour.
+
+Put `onClick` on a `<div>` and it has no role, no keyboard access and no focus
+(2.1.1, 4.1.2). Each of those can be patched back by hand, which is how half of
+them get missed.
+
+So `InteractiveCard` renders exactly one control, inside the heading:
+
+```tsx
+<h3>
+  <a href="/projects/atlas" aria-describedby=":r0:-description">
+    Atlas
+  </a>
+</h3>
+<div id=":r0:-description">Mapping pipeline · updated 2 hours ago</div>
+<div class="relative z-10">{actions}</div>
+```
+
+The `<a>`'s `::after` is absolutely positioned over the whole card, so a click
+anywhere lands on it. The screen reader hears "Atlas, link" and then the
+description. The `actions` are lifted above the overlay with `z-index`, so each
+one is still its own control, and they come after the primary control in tab
+order.
+
+`href` picks the mode. With it the control is an `<a>`; without it, a
+`<button type="button">`. Only button mode accepts `disabled` — an `<a>` has no
+disabled state, so the type does not offer one.
+
+### The focus ring is on the overlay
+
+The control is the size of the title text, but the thing that looks clickable is
+the whole card. So the focus outline moves to the stretched `::after`, which
+sits at the card's border edge: the ring surrounds the card. It is the same 2px
+outline at a 2px offset as `Button`, `Link` and `Input`, and still an `outline`,
+so it survives forced-colors mode.
+
+The control's own outline is suppressed only on `:focus-visible` — the same
+moment the overlay's appears — so there is no frame with no indicator. The
+overflow clip that rounds the media corners is on an inner `layout` element
+rather than the root, because the overlay resolves against the root and would
+otherwise have its ring clipped off.
+
+### Disabled
+
+Button mode uses the native `disabled` attribute, never `aria-disabled`. The
+button leaves the tab order; the card dims to `opacity-60` and loses its hover
+state; the cursor is `not-allowed`. Contrast drops below 4.5:1, which 1.4.3
+permits for a disabled control.
+
+### Hugging the container
+
+Cards fill whatever they are put in. The root is `w-full min-w-0 h-full`:
+
+- `w-full` because the root is an `@container`, and
+  `container-type: inline-size` stops an element sizing from its content — in a
+  shrink-to-fit parent it would collapse to zero.
+- `min-w-0` because flex and grid items default to `min-width: auto`, which lets
+  a long word or wide image push a card past its track.
+- `h-full` so cards in a grid row share a height; `CardFooter` uses `mt-auto` to
+  sit on the bottom edge.
+
+`GraphicCard`'s media children are taken out of flow and cropped with
+`object-cover`. An in-flow image contributes its natural height, so a 2000px
+photo would otherwise set the height of a horizontal card's whole row.
+
+Horizontal cards switch to side-by-side at `@md` — 28rem of **card** width, not
+viewport width. A card in a 300px sidebar on a wide screen stacks; a viewport
+breakpoint would have kept it side by side and crushed the copy. The **Hugging
+containers** story shows the same card in four frames of different widths.
+
+### Alt text is the caller's
+
+`media` is a slot, so the component cannot know whether an image means anything.
+That decision is the caller's, and it is the one that matters:
+
+| Media                         | Markup                                  |
+| ----------------------------- | --------------------------------------- |
+| Meaningful image              | `alt` describing what it shows          |
+| Decorative image              | `alt=""` — removed from the tree        |
+| Image with no `alt` attribute | Wrong. Most screen readers read the URL |
+| Decorative inline SVG         | `aria-hidden="true"`                    |
+| Meaningful inline SVG         | `role="img"` and an `aria-label`        |
+
+In an `InteractiveCard`, `alt=""` is right more often than not: the image
+usually restates the title, and a non-empty alt is read alongside it on every
+card.
+
+## Colors
+
+Measured against the default palette. The card sets `--surface` on itself, so
+text is measured there; the edge sits on the page, so it is measured on
+`--background`.
+
+### Text (needs 4.5:1)
+
+| Role           | Pairing                                    |   Light |    Dark |
+| -------------- | ------------------------------------------ | ------: | ------: |
+| Title          | `--foreground` on `--surface`              | 18.95:1 | 17.22:1 |
+| Title, hovered | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
+| Body           | `--foreground-muted` on `--surface`        |  8.91:1 |  7.26:1 |
+| Body, hovered  | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
+
+The hovered body in dark mode drops just under the 7:1 AAA bar; it is well above
+the 4.5:1 AA requirement.
+
+### Boundaries (needs 3:1)
+
+| Role               | Pairing                             |  Light |   Dark |
+| ------------------ | ----------------------------------- | -----: | -----: |
+| Card edge          | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
+| Card edge, hovered | `--accent` on `--background`        | 6.19:1 | 8.88:1 |
+| Focus ring         | `--focus` on `--background`         | 6.19:1 | 8.88:1 |
+| Fill vs page       | `--surface` on `--background`       | 1.42:1 | 1.10:1 |
+
+The last row is why the edge is `--border-strong` and not `--border`. At 1.10:1
+the fill is indistinguishable from the page in dark mode, so the edge is the
+only thing that makes the card read as a region. `--border` measures 1.75–2.67:1
+in light and 2.02–2.21:1 in dark and misses 1.4.11 on every surface.
+
+The hover state changes the edge colour as well as the fill, and underlines the
+title. `--surface-raised` against `--surface` is barely a step, so the fill
+alone would be a weak cue; the edge and the underline are the ones that carry
+it.
+
+## Aria
+
+| Attribute          | On                     | Set when                    | Value                                                        |
+| ------------------ | ---------------------- | --------------------------- | ------------------------------------------------------------ |
+| `aria-describedby` | the `<a>` / `<button>` | `children` is present       | the description's generated id, plus any caller-supplied ids |
+| `disabled`         | the `<button>`         | button mode with `disabled` | native attribute — not `aria-disabled`                       |
+| `data-card-action` | the `<a>` / `<button>` | always                      | marks the primary control for styling and tests              |
+
+No role is set on any card. ARIA has no card role, and a `div` with
+`role="group"` or `role="region"` adds landmark noise without adding meaning.
+Use `as` for real semantics: `article` for a self-contained item, `section` for
+a titled region, `li` inside a `<ul>`.
+
+## Known gaps
+
+- **Text selection.** Text under the overlay cannot be selected by dragging.
+  That is the standard trade for the stretched-link pattern. Anything a user
+  needs to interact with separately belongs in `actions`, or carries
+  `cardStyles().raised()`.
+- **Nested links in `children`.** They sit under the overlay and are unclickable
+  unless raised. The type does not prevent it.
+- **Not verified with assistive technology.** The markup follows the established
+  pattern, but announcements have not been checked with VoiceOver, NVDA or JAWS
+  for this release. Full WCAG validation needs manual testing with assistive
+  technologies and expert review.
+- **Container queries** need a browser with `@container` support (Baseline
+  2023). Without it, horizontal cards stay stacked, which is the safe fallback.

@@ -68,7 +68,7 @@ const toastAlertStyles = tv({
       ...ALERT_SURFACE,
       "pointer-events-auto",
       "flex items-start justify-between",
-      "gap-(--spacing-30) p-(--spacing-40) text-sm",
+      "gap-(--spacing-30) p-(--spacing-40) text-body-sm",
     ],
 
     content: "flex min-w-0 flex-col gap-(--spacing-10)",
@@ -78,7 +78,7 @@ const toastAlertStyles = tv({
      * the label colour both vanish in greyscale and in forced-colors mode, so neither
      * can be the only thing saying which kind of message this is (WCAG 1.4.1).
      */
-    label: "font-semibold",
+    label: "text-title-sm",
 
     message: "min-w-0",
 

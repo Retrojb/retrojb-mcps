@@ -31,7 +31,7 @@ const comboBoxStyle = tv({
   slots: {
     root: "flex flex-col gap-1.5",
 
-    label: "text-sm font-medium text-foreground",
+    label: "text-label-md text-foreground",
 
     /*
      * `relative` here and not on `root`, so the listbox is positioned against
@@ -104,7 +104,7 @@ const comboBoxStyle = tv({
 
     option: [
       "flex cursor-pointer items-center justify-between gap-2",
-      "px-3 py-2 text-sm text-foreground",
+      "px-3 py-2 text-body-sm text-foreground",
 
       /*
        * The active option is identified by a background *and* a left border, so
@@ -135,13 +135,13 @@ const comboBoxStyle = tv({
       "underline decoration-2 underline-offset-2",
     ],
 
-    note: "px-3 py-2 text-sm text-foreground-muted",
+    note: "px-3 py-2 text-body-sm text-foreground-muted",
 
-    description: "text-sm text-foreground-muted",
+    description: "text-body-sm text-foreground-muted",
 
     // Paired with `aria-invalid` and the border colour, so the error is conveyed
     // by more than red text (WCAG 1.4.1).
-    error: "text-sm font-medium text-danger",
+    error: "text-body-sm font-medium text-danger",
   },
 
   variants: {
@@ -157,17 +157,17 @@ const comboBoxStyle = tv({
        */
       sm: {
         field: "h-8 pl-2.5 pr-1",
-        control: "text-sm",
+        control: "text-body-sm",
         affordance: "size-6",
       },
       md: {
         field: "h-10 pl-3 pr-1.5",
-        control: "text-sm",
+        control: "text-body-sm",
         affordance: "size-7",
       },
       lg: {
         field: "h-12 pl-4 pr-2",
-        control: "text-base",
+        control: "text-body-md",
         affordance: "size-8",
       },
     },

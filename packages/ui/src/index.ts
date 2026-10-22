@@ -45,6 +45,79 @@ export {
 } from "./components/forms/Input";
 
 /*
+ * The checkbox pair.
+ *
+ * `Checkbox` is a native `<input type="checkbox">` drawn with `appearance-none`,
+ * so focus, clicks, `FormData` and the reported state — `mixed` included, for
+ * `indeterminate` — stay native. `label` is required, as on `Input`.
+ *
+ * `CheckboxGroup` is a `<fieldset>` + `<legend>` holding one `string[]` value,
+ * controlled (`value` / `onValueChange`) or not (`defaultValue`). Build it from
+ * an `options` array, from `<Checkbox value>` children joined through context,
+ * or both. Its `required` means "at least one", which native `required` on the
+ * individual boxes does not — see the note in `CheckboxGroup.tsx`. The layout is
+ * `DynamicContainer`'s, below.
+ */
+export {
+  Checkbox,
+  checkboxStyles,
+  type CheckboxVariants,
+  type ICheckboxProps,
+} from "./components/forms/Checkbox";
+
+export {
+  CheckboxGroup,
+  checkboxGroupStyles,
+  type CheckboxGroupVariants,
+  type ICheckboxGroupOption,
+  type ICheckboxGroupProps,
+} from "./components/forms/CheckboxGroup";
+
+/*
+ * Toggle — an on/off switch.
+ *
+ * A native `<input type="checkbox" role="switch">` drawn as the track, the same
+ * `appearance-none` pattern as `Checkbox`, so `name`, `value`, `required`,
+ * `checked` / `defaultChecked` / `onChange` and `form.reset()` are all native.
+ * `label` is required; `labelPosition` defaults to `"start"`, the settings-list
+ * layout with the switch at the end of the row.
+ *
+ * Toggle or Checkbox: a switch takes effect the moment it is flipped — Wi-Fi
+ * on, dark mode off — and is announced as "on" / "off". A checkbox is a choice
+ * the user makes and then submits with a form, and is announced as "checked".
+ * If nothing happens until a Save button is pressed, use a `Checkbox`.
+ */
+export {
+  Toggle,
+  toggleStyles,
+  type IToggleProps,
+  type ToggleVariants,
+} from "./components/forms/Toggle";
+
+/*
+ * SegmentedControl — one choice from a short row of mutually exclusive
+ * segments, "Day | Week | Month".
+ *
+ * A `<fieldset role="radiogroup">` of native radios drawn with
+ * `appearance-none`, so one tab stop, wrapping arrow keys that skip disabled
+ * segments, `FormData` and `disabled` on the whole group are the browser's;
+ * Home / End is added on top. `label` is required — it is the group's
+ * accessible name — and `labelHidden` hides it visually. Controlled with
+ * `value` / `onValueChange` or uncontrolled with `defaultValue`, as on
+ * `CheckboxGroup`.
+ *
+ * SegmentedControl or Tabs: segments choose a value — a view, a unit, a filter.
+ * If each choice reveals a different panel of content, that is a tab list.
+ */
+export {
+  SegmentedControl,
+  segmentedControlStyles,
+  type ISegmentedControlOption,
+  type ISegmentedControlProps,
+  type SegmentedControlVariants,
+} from "./components/forms/SegmentedControl";
+
+/*
  * The combobox pair.
  *
  * Two components rather than one with a `variant` prop, for the same reason the
@@ -187,7 +260,133 @@ export {
 } from "./components/alerts/browserAlert";
 
 export { ALERT_TONE_LABELS, type AlertTone } from "./components/alerts/tone";
+/*
+ * The cards.
+ *
+ * Three components on one `cardStyles` slot recipe, split where the contract
+ * differs and not where only the layout does:
+ *
+ *   - `Card` is a static box. No role; `as` supplies `article`, `section` or `li`
+ *     semantics where they apply.
+ *   - `InteractiveCard` is one click target with one real control in it — an `<a>`
+ *     with `href`, a `<button>` without — whose `::after` is stretched over the
+ *     card. `title` is required because it is that control's accessible name;
+ *     secondary controls go in `actions`, above the overlay.
+ *   - `GraphicCard` adds a media region and an `orientation` variant. Horizontal
+ *     collapses to vertical by *container* width, so the card lays out for the
+ *     space it is given rather than for the viewport.
+ *
+ * `CardHeader`, `CardTitle`, `CardBody` and `CardFooter` are optional parts for
+ * `Card` and `GraphicCard`. The specifier names the barrel file explicitly, per the
+ * note at the top of this module; `tsc-alias` adds the `.js` on the way to `dist`.
+ */
+export {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  GraphicCard,
+  InteractiveCard,
+  cardStyles,
+  type CardElement,
+  type CardHeadingLevel,
+  type CardVariants,
+  type ICardBodyProps,
+  type ICardFooterProps,
+  type ICardHeaderProps,
+  type ICardProps,
+  type ICardTitleProps,
+  type IGraphicCardProps,
+  type IInteractiveCardButtonProps,
+  type IInteractiveCardLinkProps,
+  type IInteractiveCardProps,
+} from "./components/containers/card/index";
 
+/*
+ * DynamicContainer — a flex layout that stacks below the `sm` breakpoint and
+ * lays out in a wrapping row from `sm` up.
+ *
+ * `direction` pins it to one axis instead; `gap` and `align` map to the spacing
+ * tokens and `items-*`. The breakpoint is the viewport's by default and the
+ * nearest `@container` ancestor's with `responsiveTo="container"`. `as` renders
+ * a `ul` or `ol` (with `role="list"` restored) when the items are a list.
+ */
+export {
+  DynamicContainer,
+  dynamicContainerStyles,
+  type DynamicContainerElement,
+  type DynamicContainerVariants,
+  type IDynamicContainerProps,
+} from "./components/containers/dynamicContainer";
+
+/*
+ * Typography — headings and body text on the semantic type roles.
+ *
+ * The exception to "the components are client modules" above: nothing in this
+ * group has `"use client"`, because none of it uses a hook. Each renders in a
+ * server component as-is.
+ *
+ * Five named headings rather than one `<Heading size>`. Each fixes a level and
+ * a role that belong together — `PageHeading` is an `<h1>` at `heading-xl`,
+ * `SubHeading` an `<h3>` at `heading-sm` — and takes `level` and `size` to
+ * override either independently. Choose `level` from the outline and never to
+ * get a size (1.3.1); the reasoning is in `components/typography/index.ts`.
+ *
+ * `CodeBlock` requires `label`: it is a keyboard-focusable scroll region, and
+ * the label is its accessible name. `Reference` is an attributed quotation —
+ * `<figure>`, `<blockquote>`, `<figcaption>` — not an inline `<cite>`.
+ */
+export {
+  Code,
+  CodeBlock,
+  List,
+  ListItem,
+  PageHeading,
+  Paragraph,
+  ProductHeading,
+  Reference,
+  SectionHeading,
+  SubHeading,
+  TitleHeading,
+  codeBlockStyles,
+  codeStyles,
+  listItemStyles,
+  listStyles,
+  pageHeadingStyles,
+  paragraphStyles,
+  productHeadingStyles,
+  referenceStyles,
+  sectionHeadingStyles,
+  subHeadingStyles,
+  titleHeadingStyles,
+  type HeadingLevel,
+  type HeadingSize,
+  type HeadingVariants,
+  type ICodeBlockProps,
+  type ICodeProps,
+  type IHeadingProps,
+  type IListItemProps,
+  type IListProps,
+  type IPageHeadingProps,
+  type IParagraphProps,
+  type IProductHeadingProps,
+  type IReferenceProps,
+  type ISectionHeadingProps,
+  type ISubHeadingProps,
+  type ITitleHeadingProps,
+  type ListVariants,
+  type PageHeadingVariants,
+  type ParagraphVariants,
+  type ProductHeadingVariants,
+  type ReferenceVariants,
+  type SectionHeadingVariants,
+  type SubHeadingVariants,
+  type TitleHeadingVariants,
+} from "./components/typography/index";
 // Re-exported so consumers compose class names with the same conflict-resolution
 // rules the components use, rather than a second, differently-configured copy.
 export { cn, cx, tv, type VariantProps } from "./lib/tv";
+// The semantic type roles; `text-${role}` is the utility for each. See the
+// typography section of `styles/tokens.css`.
+export { TYPE_ROLES, type TypeRole } from "./lib/tv";
