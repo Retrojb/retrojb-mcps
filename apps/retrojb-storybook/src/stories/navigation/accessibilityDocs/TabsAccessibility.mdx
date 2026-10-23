@@ -1,0 +1,201 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Navigation/Tabs/Accessibility" />
+
+# Tabs Accessibility
+
+Extracted from `packages/ui/src/components/navigation/Tabs/styles.ts`, plus the
+wiring in `TabGroup.tsx`, `Tab.tsx`, `parts.tsx` and `context.ts`, and the prop
+contract in `types.ts`. Ratios are measured with `checkContrast` from
+`@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+The component implements the
+[WAI-ARIA APG Tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/):
+`TabGroup` owns the selection, `TabList` is the `role="tablist"`, each `Tab` is
+a `<button role="tab">` and each `TabPanel` a `role="tabpanel"`.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                              |
+| --------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | `tablist` / `tab` / `tabpanel` roles; each tab `aria-controls` its panel and each panel is `aria-labelledby` its tab    |
+| 1.4.1 Use of Color                | A     | Selected is an indicator bar only it has and a 500 → 600 weight change, as well as a colour change                      |
+| 1.4.3 Contrast (Minimum)          | AA    | Unselected, hovered and selected tab text all clear 4.5:1 on `--background`, `--surface` and `--surface-raised`         |
+| 1.4.10 Reflow                     | AA    | A row longer than its container scrolls inside the list's own scroller instead of overflowing the page                  |
+| 1.4.11 Non-text Contrast          | AA    | The `--accent` indicator clears 3:1 against every surface and against the `--border` baseline it sits on                |
+| 1.4.12 Text Spacing               | AA    | Tabs use `min-h`, not `h`, so text-spacing overrides grow them instead of clipping                                      |
+| 2.1.1 Keyboard                    | A     | One tab stop; arrows move with wrap, skipping disabled tabs; Home / End; Enter / Space; panels are tab stops by default |
+| 2.3.3 Animation from Interactions | AAA   | Colour transitions only, with `motion-reduce:transition-none`; there is no sliding indicator                            |
+| 2.4.3 Focus Order                 | A     | Tab moves from the selected tab to its panel, then out; inactive panels are `hidden` and out of the tab order           |
+| 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on every tab and panel                                                                   |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset; the scroller's 4px padding keeps the ring from being clipped                           |
+| 2.5.8 Target Size (Minimum)       | AA    | Tabs are at least 32 / 40 / 48px tall (`sm` / `md` / `lg`) and their label plus 24–48px of padding wide                 |
+| 4.1.2 Name, Role, Value           | A     | The tablist is named by the required `label`; each tab by its text; `aria-selected` reports the state on every tab      |
+
+### Keyboard
+
+The list is one tab stop: only the selected tab has `tabIndex={0}`, the rest
+`-1`. The arrow keys are handled once, on the tablist:
+
+| Key           | Horizontal                             | Vertical                  |
+| ------------- | -------------------------------------- | ------------------------- |
+| Right / Left  | next / previous enabled tab, wrapping  | —                         |
+| Down / Up     | —                                      | next / previous, wrapping |
+| Home / End    | first / last enabled tab               | first / last enabled tab  |
+| Enter / Space | select the focused tab (native button) | select the focused tab    |
+| Tab           | into the selected panel                | into the selected panel   |
+
+- Under `dir="rtl"` Left and Right swap for a horizontal list, so Left moves to
+  the next tab as the row reads. The direction is read from the tablist's
+  computed style, so an ancestor's `dir` is enough.
+- With `activation="automatic"` (the default) a move also selects, and the panel
+  follows focus. With `"manual"` only focus moves; Enter or Space selects,
+  through the native button activation.
+- Disabled tabs use native `disabled`. They cannot take focus, so the arrow keys
+  skip them and a click does nothing.
+- Keys with Alt, Ctrl or Meta held are ignored, and so is any key the caller's
+  `onKeyDown` already handled with `preventDefault()`.
+
+If no enabled tab is selected — no `defaultValue`, a value that matches no tab,
+or a selected tab that is disabled — the list gives the first enabled tab the
+tab stop, so the group never drops out of the tab order. Pass `defaultValue` (or
+`value`) anyway: the APG pattern expects one tab to be selected at all times,
+and without it no panel shows.
+
+### Panels are tab stops
+
+The APG asks for `tabindex="0"` on a panel unless its first content is
+focusable, so Tab from the list lands on the panel instead of skipping text a
+screen reader user may not know is there. Detecting "first content is focusable"
+would mean inspecting the panel's DOM after every render. The panel is therefore
+always a tab stop, as `CodeBlock` is; pass `tabIndex={-1}` to a panel you know
+starts with a control.
+
+### Ids and naming
+
+No part takes an `id`. Every tab and panel id is derived from the group's
+`useId` and the shared `value` (URI-encoded, so a value with spaces still makes
+a valid id), so `aria-controls` and `aria-labelledby` always agree.
+
+The tablist is named by the required `label` prop, set as its `aria-label`. To
+name it from a visible heading instead, pass `aria-labelledby` to `TabList`:
+`aria-labelledby` outranks `aria-label` in accessible-name computation.
+
+### Mounted or unmounted panels
+
+`keepMounted` defaults to `true`: inactive panels stay in the DOM with the
+`hidden` attribute, which is `display: none` — out of the accessibility tree,
+the tab order and find-in-page. Every tab's `aria-controls` then points at a
+real element, and panel state (form fields, scroll position) survives switching.
+With `keepMounted={false}` inactive panels render nothing, and unselected tabs
+drop `aria-controls` rather than reference a missing id.
+
+### How screen readers announce it
+
+Typical output on entering the list: "Workspace, tab list. Overview, tab,
+selected, 1 of 4". The position comes from the browser counting the tabs in the
+list. Exact phrasing varies by screen reader, version and browser and has not
+been verified for this component yet.
+
+### Selected is not colour alone
+
+Three cues change together:
+
+- shape — only the selected tab has a 3px indicator bar, on the edge facing the
+  panels (bottom when horizontal, inline end when vertical);
+- weight — the text goes from 500 to 600;
+- colour — `--foreground-muted` to `--accent-text`.
+
+An invisible, `aria-hidden` copy of each label in the selected weight reserves
+its width, so selecting a tab never shifts its neighbours and the accessible
+name reads the label once.
+
+### Overflow
+
+The tab row does not wrap. When it is longer than its container the wrapper
+around the tablist scrolls sideways (a vertical list scrolls if the caller caps
+its height through `rootClassName`). The scroller is not a tab stop: every tab
+is reachable with the arrow keys and `focus()` scrolls it into view, with
+`scroll-padding` keeping it off the very edge. The scroller has 4px of padding
+because `overflow: auto` clips on both axes, and the focus ring sits 4px outside
+the tab.
+
+### Forced colors
+
+Tabs opt out of forced-color repainting and paint with system colours:
+`CanvasText` text on the inherited `Canvas`, a `SelectedItem` bar on the
+selected tab, a `Highlight` bar on hover, a `Highlight` focus outline, and
+`GrayText` for disabled text (and the bar of a disabled selected tab). Without
+the opt-out, the transparent bars of the unselected tabs could be repainted too
+and the selection would disappear. The list is not opted out; the browser draws
+its baseline in `CanvasText`. Panels keep their outline, which forced colors
+preserve. Not yet verified in Windows High Contrast — that needs a manual pass.
+
+### Known gaps
+
+- Tab labels do not wrap; a very long label makes the row scroll rather than
+  reflow.
+- Only `lg` clears the 44px height of 2.5.5 (AAA).
+- A `Tab`'s children are rendered twice (visible and as the hidden width
+  reserver), so content with its own `id` would duplicate it. Keep tab labels to
+  text and icons.
+- `fullWidth` has no effect on a vertical list, which already stretches its
+  tabs.
+- Screen-reader output, Firefox, Safari and Windows High Contrast have not been
+  tested and need a manual pass.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role           |                                    Pairing |   Light |    Dark |
+| -------------- | -----------------------------------------: | ------: | ------: |
+| Unselected tab |     `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Unselected tab |        `--foreground-muted` on `--surface` |  8.91:1 |  7.25:1 |
+| Unselected tab | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
+| Hovered tab    |           `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Hovered tab    |              `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Selected tab   |          `--accent-text` on `--background` | 10.76:1 | 13.24:1 |
+| Selected tab   |             `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+| Selected tab   |      `--accent-text` on `--surface-raised` | 16.43:1 | 13.51:1 |
+
+### Indicator and focus (needs 3:1)
+
+| Role                   |                             Pairing |  Light |   Dark |
+| ---------------------- | ----------------------------------: | -----: | -----: |
+| Selected indicator     |        `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| Selected indicator     |           `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| Selected indicator     |    `--accent` on `--surface-raised` | 9.45:1 | 9.05:1 |
+| Indicator vs. baseline |            `--accent` on `--border` | 3.53:1 | 4.39:1 |
+| Hover bar (decorative) | `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Focus ring             |    `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
+| Focus ring             |       `--focus-ring` on `--surface` | 8.82:1 | 9.72:1 |
+
+The baseline under the list is `--border` (1.75 / 2.02:1 on `--background`) on
+purpose: it is a separator that identifies nothing, so 1.4.11 does not apply to
+it. Unselected tabs have no boundary of their own; their text identifies them,
+which 1.4.11 allows for an inactive state.
+
+## Aria
+
+| Attribute          | On    | Set when                             | Value                                                 |
+| ------------------ | ----- | ------------------------------------ | ----------------------------------------------------- |
+| `role`             | list  | always                               | `tablist`                                             |
+| `aria-label`       | list  | always                               | the `label` prop, or a caller `aria-label` on TabList |
+| `aria-labelledby`  | list  | caller passes it to `TabList`        | the caller's ids; outranks `aria-label`               |
+| `aria-orientation` | list  | always                               | `horizontal` or `vertical`, from `orientation`        |
+| `role`             | tab   | always                               | `tab`                                                 |
+| `aria-selected`    | tab   | always                               | `true` on the selected tab, `false` on the rest       |
+| `aria-controls`    | tab   | selected, or `keepMounted` is `true` | the generated `…-panel-<value>` id                    |
+| `tabindex`         | tab   | always                               | `0` on the selected tab (or the fallback), else `-1`  |
+| `disabled`         | tab   | `disabled` prop                      | native; skipped by the arrow keys                     |
+| `aria-hidden`      | sizer | always                               | `true` — the width-reserving copy of the label        |
+| `role`             | panel | always                               | `tabpanel`                                            |
+| `aria-labelledby`  | panel | always                               | the generated `…-tab-<value>` id                      |
+| `hidden`           | panel | not selected (and `keepMounted`)     | native; `display: none`                               |
+| `tabindex`         | panel | always                               | `0`, or the caller's `tabIndex`                       |

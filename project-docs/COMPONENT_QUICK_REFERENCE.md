@@ -33,7 +33,7 @@ Status key:
 | Toggle           | Forms        | Shipped | `forms/Toggle`                       |
 | Button           | Interactions | Shipped | `interactions/Button`                |
 | Link             | Navigation   | Shipped | `navigation/Link`                    |
-| Tabs             | Navigation   | Planned | `navigation/Tabs`                    |
+| Tabs             | Navigation   | Shipped | `navigation/Tabs`                    |
 | Code             | Typography   | Shipped | `typography/body/code`               |
 | Lists            | Typography   | Shipped | `typography/body/lists`              |
 | Paragraph        | Typography   | Shipped | `typography/body/paragraph`          |
@@ -129,6 +129,12 @@ Status key:
     - `Link`
     - `linkStyle`
   - Tabs
+    - `TabGroup` (container; owns the selection, controlled or not)
+    - `TabList` (`role="tablist"` in a scroller; the keyboard contract)
+    - `Tab` (`<button role="tab">`, roving `tabIndex`)
+    - `TabPanel` (`role="tabpanel"`, a tab stop by default)
+    - `TabGroupContext` (internal)
+    - `tabGroupStyles`
 - Typography
   - Body
     - Code
@@ -196,7 +202,7 @@ SegmentedControl,Forms,,Shipped,forms/SegmentedControl,SegmentedControl; segment
 Toggle,Forms,,Shipped,forms/Toggle,Toggle; toggleStyles
 Button,Interactions,,Shipped,interactions/Button,Button; buttonStyle
 Link,Navigation,,Shipped,navigation/Link,Link; linkStyle
-Tabs,Navigation,,Planned,navigation/Tabs,
+Tabs,Navigation,,Shipped,navigation/Tabs,TabGroup; TabList; Tab; TabPanel; TabGroupContext; tabGroupStyles
 Code,Typography,Body,Shipped,typography/body/code,Code; CodeBlock; codeStyles; codeBlockStyles
 Lists,Typography,Body,Shipped,typography/body/lists,List; ListItem; listStyles; listItemStyles
 Paragraph,Typography,Body,Shipped,typography/body/paragraph,Paragraph; paragraphStyles

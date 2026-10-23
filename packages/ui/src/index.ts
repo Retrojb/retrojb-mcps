@@ -37,6 +37,40 @@ export {
   type LinkVariants,
 } from "./components/navigation/Link";
 
+/*
+ * Tabs — the WAI-ARIA APG Tabs pattern, as compound parts.
+ *
+ * `TabGroup` is the container and owns the selection, controlled (`value` /
+ * `onValueChange`) or not (`defaultValue`). Inside it, one `TabList` holds the
+ * `Tab` elements and each `TabPanel` names the `value` of the tab that shows
+ * it. No part takes an `id`: every tab and panel id is derived from the
+ * group's `useId` and the shared `value`, so `aria-controls` and
+ * `aria-labelledby` cannot drift. `label` is required — it is the tablist's
+ * accessible name.
+ *
+ * One tab stop, arrow keys with wrap (Up / Down when `orientation="vertical"`,
+ * swapped under `dir="rtl"`), Home / End, disabled tabs skipped.
+ * `activation="manual"` makes the arrows move focus only, for panels that are
+ * slow to show. Inactive panels stay mounted with `hidden` unless
+ * `keepMounted={false}`.
+ *
+ * Tabs or SegmentedControl: see the note on `SegmentedControl` below. Tabs
+ * reveal different panels of content; segments choose a value.
+ */
+export {
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  tabGroupStyles,
+  type ITabGroupProps,
+  type ITabListProps,
+  type ITabPanelProps,
+  type ITabProps,
+  type TabActivation,
+  type TabGroupVariants,
+} from "./components/navigation/Tabs";
+
 export {
   Input,
   inputStyle,

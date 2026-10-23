@@ -40,7 +40,7 @@
 - [ ] Ranking
 - [ ] Rating
 - [ ] Key Value
-- [ ] Tab & Tab Group
+- [x] Tab & Tab Group
 - [ ] Footer - flexible composite component
 - [ ] Header - flexible composite component
 - [ ] Radio & Radio Group
