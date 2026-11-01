@@ -108,6 +108,34 @@
   --radius-control: var(--radius-sm, 8px);
 
   /*
+   * `animate-progress-indeterminate` — the sliding segment of an indeterminate
+   * `ProgressBar`.
+   *
+   * Here rather than in `styles.ts` because `@keyframes` is an at-rule, which
+   * a utility class cannot hold. Registered in `@theme` so it is a real
+   * utility in apps that run their own Tailwind build on this file, not only
+   * in `dist/styles.css`.
+   *
+   * The segment is 40% of the track, so it starts one own-width before the
+   * inline start (-100%) and ends one track-width later (250%), fully clear of
+   * both ends. `--retrojb-progress-direction` is `-1` under `dir="rtl"`, which
+   * mirrors the physical `translateX`. One pass every 1.8s, eased: a movement,
+   * never a flash (2.3.1). `ProgressBar` replaces it with a still pattern under
+   * `prefers-reduced-motion: reduce` (2.3.3).
+   */
+  --animate-progress-indeterminate: retrojb-progress-indeterminate 1.8s
+    ease-in-out infinite;
+
+  @keyframes retrojb-progress-indeterminate {
+    from {
+      transform: translateX(calc(-100% * var(--retrojb-progress-direction, 1)));
+    }
+    to {
+      transform: translateX(calc(250% * var(--retrojb-progress-direction, 1)));
+    }
+  }
+
+  /*
    * TYPOGRAPHY
    *
    * Families and weights replace Tailwind's own values under the same names, so

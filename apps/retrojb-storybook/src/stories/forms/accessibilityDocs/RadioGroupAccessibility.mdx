@@ -1,0 +1,121 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/RadioGroup/Accessibility" />
+
+# RadioGroup Accessibility
+
+Extracted from `packages/ui/src/components/forms/RadioGroup/styles.ts`, plus the
+wiring in `RadioGroup.tsx` and the prop contract in `types.ts`. Each member is a
+`Radio`, so the circle, dot, target size, focus and forced-colors contract is
+documented on **Forms/Radio/Accessibility** and not repeated here. Ratios are
+measured with `checkContrast` from `@retrojb/wcag-a11y-scanner`.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                                               |
+| ---------------------------- | ----- | -------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | A `<fieldset role="radiogroup">` with its `<legend>` wired by `aria-labelledby`                          |
+| 1.3.2 Meaningful Sequence    | A     | Legend, description, error, then the radios — the DOM order is the reading and arrow-key order           |
+| 1.4.1 Use of Color           | A     | A group error is a message, a red border on every radio, and `aria-invalid` on every radio               |
+| 1.4.3 Contrast (Minimum)     | AA    | Legend, description and error text all clear 4.5:1 in both themes                                        |
+| 1.4.10 Reflow                | AA    | Vertical by default; `orientation="horizontal"` wraps, so there is no horizontal scroll at 320px         |
+| 2.1.1 Keyboard               | A     | One tab stop; arrows move and select, wrapping and skipping disabled radios; Home / End jump to the ends |
+| 3.3.1 Error Identification   | A     | `error` is wired to the fieldset and marks each member invalid                                           |
+| 3.3.2 Labels or Instructions | A     | `label` (the legend) is a required prop; `labelHidden` hides it visually but keeps it as the name        |
+| 4.1.2 Name, Role, Value      | A     | The fieldset is a `radiogroup` named by its legend; each member is a native radio with its checked state |
+
+### Keyboard: the browser's, plus Home / End
+
+All the radios share one `name` — the `name` prop, or a generated one when it is
+omitted — so the browser treats them as one group:
+
+- Tab enters on the checked radio, or on the first enabled one when none is
+  checked, and the next Tab leaves the group.
+- Arrow keys move focus and selection together, in both axes regardless of
+  `orientation`, wrap at either end, skip disabled radios and reverse under
+  `dir="rtl"`.
+- Space selects the focused radio when none is checked.
+
+None of that is reimplemented. Home and End are not native for radios; the group
+adds them, as `SegmentedControl` does, so the package's two radio-based controls
+answer the same keys. They focus and select the first or last enabled radio, and
+are ignored with a modifier held, on any element that is not one of this group's
+radios, or if the caller's `onKeyDown` already called `preventDefault()`.
+Selection goes through the radio's native `click()`, so the browser checks it
+and fires `change` exactly as for a pointer click.
+
+Verified in headless Chromium (Playwright) with real key presses: Tab lands on
+the checked radio, Down skips a disabled radio and wraps, Up wraps back, Home /
+End select and focus the ends in both controlled and uncontrolled mode, a second
+Tab leaves the group, a disabled group is out of the tab order, and axe reports
+no violations. Firefox, Safari and screen-reader output have not been tested yet
+and need a manual pass.
+
+### Uncontrolled means DOM-owned, so `form.reset()` works
+
+`CheckboxGroup` and `SegmentedControl` hold their value in React state in both
+modes, and `form.reset()` does not restore it. `RadioGroup` avoids that. When
+`value` is not passed, each radio gets native `defaultChecked` from
+`defaultValue` and the DOM owns the selection from then on. A reset restores
+`defaultValue` natively, and Home / End select through `click()` rather than
+through state, so they do not break this. The **InAForm** story shows it, and
+the Playwright run above checked that a reset restores both a `null` and a
+non-null `defaultValue`.
+
+Two limits remain:
+
+- `onValueChange` is not called by a reset, because the browser fires no
+  `change` event for it. Listen for the form's `reset` event if you need to
+  know.
+- Controlled (`value` passed), the radios follow `value` and a reset is the
+  parent's job, as for any controlled React input.
+
+### `required`
+
+Native `required` on a radio already means "one radio of this `name` must be
+checked", so the group sets it on every member and the browser's constraint
+validation does the rest — no computed state, unlike `CheckboxGroup`. Each radio
+announces "required". The `*` after the legend is `aria-hidden`.
+
+### Disabled
+
+`disabled` goes on the `<fieldset>`, which disables every radio inside it
+natively, composed children included, and removes the group from the tab order.
+`option.disabled` disables one radio, and the arrow keys skip it.
+
+### Known gaps
+
+- **VoiceOver and `aria-describedby` on a fieldset.** NVDA and JAWS read the
+  description and error on entering the group; VoiceOver's support is
+  inconsistent. Each member also carries `aria-invalid`, so the error state is
+  not lost, but the message text may not be read. Needs a manual pass.
+- **Screen-reader phrasing.** Typical output is "Delivery, radio group.
+  Standard, radio button, checked, 1 of 4". Not verified for this component.
+- Without a `name`, the generated name is submitted too when the group is inside
+  a `<form>`.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role        |                                Pairing |   Light |    Dark |
+| ----------- | -------------------------------------: | ------: | ------: |
+| Legend      |       `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Legend      |          `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Description | `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Error       |           `--danger` on `--background` |  6.26:1 |  8.22:1 |
+
+## Aria
+
+| Attribute          | On       | Set when                         | Value                                         |
+| ------------------ | -------- | -------------------------------- | --------------------------------------------- |
+| `role`             | fieldset | always                           | `radiogroup`                                  |
+| `aria-labelledby`  | fieldset | always                           | the generated `…-label` id of the legend      |
+| `aria-describedby` | fieldset | `error` or `description` present | error id, description id, then the caller's   |
+| `name`             | members  | always                           | the `name` prop, or a generated `…-name`      |
+| `aria-invalid`     | members  | `error` present                  | `true`                                        |
+| `required`         | members  | `required`                       | native attribute on every member              |
+| `disabled`         | fieldset | `disabled` prop                  | native; disables every radio inside it        |
+| `aria-hidden`      | `*`      | `required`                       | `true` — the members' `required` is announced |

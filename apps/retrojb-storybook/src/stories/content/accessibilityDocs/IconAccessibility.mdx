@@ -1,0 +1,173 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Content/Icon/Accessibility" />
+
+# Icon Accessibility
+
+Extracted from `packages/ui/src/components/content/icon/styles.ts`, plus the
+wiring in `Icon.tsx` and the prop contract in `types.ts`. Ratios are measured
+with `checkContrast` from `@retrojb/wcag-a11y-scanner` (content type
+`graphical-object`, 3:1) against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+## WCAG Standard and Expectations
+
+| Criterion                     | Level | How the component meets it                                                                                                     |
+| ----------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1.1.1 Non-text Content        | A     | Decorative by default (`aria-hidden="true"`); a meaningful icon must be given `label`, which becomes its text alternative      |
+| 1.3.3 Sensory Characteristics | A     | Not enforceable here: instructions must not rely on the icon's shape alone ("press the gear") — name the control as well       |
+| 1.4.1 Use of Color            | A     | `tone` only sets `color`; every story pairs a toned icon with a label or visible text that states the status                   |
+| 1.4.11 Non-text Contrast      | AA    | Every `tone` clears 3:1 on `--background`, `--surface` and `--surface-raised` in both themes; inherited colour, see below      |
+| 2.4.7 Focus Visible           | AA    | Not applicable: the icon is never focusable (`focusable="false"`, no `tabIndex`). The focus ring belongs to its control        |
+| 2.5.8 Target Size (Minimum)   | AA    | Not applicable to the icon. An icon-only control is sized by the control (`Button` is 32 / 40 / 48px), not by the 16–24px icon |
+| 4.1.2 Name, Role, Value       | A     | Labelled: `role="img"` + `aria-label`. Decorative: hidden. The props union makes `label` the only way to name an icon          |
+
+### Decorative or meaningful
+
+An icon is **decorative** unless it carries information that nothing else on the
+page says. That covers most icons:
+
+- **Next to visible text.** "✓ Saved": the word is the information. Labelling
+  the icon too would announce "Saved, Saved". Leave it decorative.
+- **Inside an icon-only button or link.** The name goes on the control, with
+  `aria-label` on the `<button>` or `<a>`, and the icon inside stays decorative.
+  The name then lives on the element that is focused and operated. A screen
+  reader announces "Search, button". See the **Icon Only Button** story.
+- **Repeating a nearby heading or status text.** Decorative.
+
+An icon is **meaningful** when it stands alone and carries information. One
+example is a status icon in a table cell with no text beside it. Pass `label`
+with what it _means_ ("Payment failed"), not what it looks like ("red circle").
+
+The types enforce the split. `IIconProps` is a union of `IIconDecorativeProps`
+(`label?: never`) and `IIconLabelledProps` (`label: string`). `aria-label`,
+`aria-labelledby` and `aria-hidden` are declared as `never`, so
+`<Icon aria-label="…" />` is a type error. Without that, TypeScript lets any
+hyphenated JSX attribute through unchecked. `role`, `tabIndex`, `focusable` and
+`children` are omitted. At runtime the ARIA attributes are written after the
+prop spread, so a cast cannot undo the contract. An empty or whitespace-only
+`label` is treated as no label.
+
+### Why `role="img"` + `aria-label`, not `<title>`
+
+Both can name an SVG. `role="img"` with `aria-label` names the element directly
+and is the commonly recommended pattern. Support for a `<title>` child has
+historically been less consistent, and some browser and screen reader pairs only
+read it when `aria-labelledby` points at it. A `<title>` also shows a native
+hover tooltip that cannot be styled or dismissed. `role="img"` makes the `<svg>`
+a single leaf, so its paths are never exposed.
+
+The trade-off: some page-translation tools translate `<title>` text but not
+`aria-label`. A translated app should pass an already-translated `label`.
+
+Screen-reader output has not been tested with real assistive technology for this
+component. The markup was checked with server rendering: decorative icons have
+`aria-hidden="true" focusable="false"`, and labelled icons have `role="img"`,
+`aria-label` and `focusable="false"`.
+
+### Sizes and stroke
+
+`sm` / `md` / `lg` are 16 / 20 / 24px. These are the same three steps as
+`Button`, `ProgressBar` and `SegmentedControl`. They pair with `label-md` /
+`body-sm` (14px), `label-lg` / `body-md` (16px) and stand-alone use. Lucide's
+2-unit stroke on its 24-unit grid draws 1.33px at 16px, which anti-aliases
+lighter than its colour. So `sm` uses 2.25 units (1.5px), and `md` and `lg` keep
+2 (1.67 and 2px). The measured ratios assume solid colour. A hairline stroke on
+a 1x screen shows less contrast than the token pair suggests.
+
+### Forced colors
+
+The icon draws with `stroke="currentColor"`. Browsers give `<svg>`
+`forced-color-adjust: preserve-parent-color`, so an svg with an inherited
+`color` takes its parent's forced colour. That is `CanvasText`, or `LinkText`
+inside a link. An svg with its **own** `color` keeps it, which is what a `tone`
+class sets. Without a fix, a `danger` icon would stay `#ff9d95` / `#900204` on
+the user's chosen `Canvas`.
+
+`forced-colors:text-current` in the base style fixes that. `currentColor` counts
+as inherited, so every tone falls back to the forced parent colour. There is no
+`forced-color-adjust: none` opt-out.
+
+Checked in Google Chrome with forced colors emulated through Playwright
+(`emulateMedia({ forcedColors: "active" })`), with a light and a dark colour
+scheme. Without the reset, a `text-danger` icon kept `rgb(144, 2, 4)`. With it,
+the icon went to the forced text colour (`rgb(0, 0, 0)` light,
+`rgb(255, 255, 255)` dark). An untoned icon in a link went to the forced link
+colour. Not yet verified in Windows High Contrast itself.
+
+### Right-to-left
+
+`mirrorInRtl` adds `rtl:-scale-x-100`, which flips the icon under `dir="rtl"` on
+any ancestor or under `:dir(rtl)`. In Chrome the computed `scale` is `-1 1`
+under `dir="rtl"` and `none` otherwise.
+
+**Mirror** icons that point along the reading order: back / forward arrows,
+previous / next chevrons, undo / redo, indent / outdent, "send", a "start"
+text-alignment icon.
+
+**Do not mirror** icons that show a real-world object or a physical direction:
+clocks and refresh arrows, media play / fast-forward, checkmarks, a search
+magnifier, a download arrow pointing down, logos, and anything with Latin
+letters or digits in it.
+
+### Known gaps
+
+- Whether an icon is decorative is a judgement the caller makes. The types can
+  require a `label` once the icon is meaningful, but cannot tell that it is.
+- With no `tone`, contrast depends on the surrounding text colour. The pairings
+  below cover the package's own surfaces and `Button` intents. Any other
+  container needs its own check.
+- Screen-reader announcements, Windows High Contrast and right-to-left screen
+  readers have not been tested with real assistive technology.
+
+## Colors
+
+Measured against the default palette. A meaningful icon needs 3:1 (1.4.11). A
+decorative icon has no contrast requirement, but these pass anyway.
+
+### `tone` (needs 3:1)
+
+| Tone      |                                    Pairing |  Light |   Dark |
+| --------- | -----------------------------------------: | -----: | -----: |
+| `muted`   |     `--foreground-muted` on `--background` | 6.25:1 | 6.62:1 |
+| `muted`   |        `--foreground-muted` on `--surface` | 8.91:1 | 7.25:1 |
+| `muted`   | `--foreground-muted` on `--surface-raised` | 9.55:1 | 6.76:1 |
+| `info`    |               `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| `info`    |                  `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| `info`    |           `--accent` on `--surface-raised` | 9.45:1 | 9.05:1 |
+| `success` |              `--success` on `--background` | 6.31:1 | 8.92:1 |
+| `success` |                 `--success` on `--surface` | 8.99:1 | 9.77:1 |
+| `success` |          `--success` on `--surface-raised` | 9.64:1 | 9.10:1 |
+| `danger`  |               `--danger` on `--background` | 6.26:1 | 8.22:1 |
+| `danger`  |                  `--danger` on `--surface` | 8.91:1 | 9.00:1 |
+| `danger`  |           `--danger` on `--surface-raised` | 9.56:1 | 8.38:1 |
+
+`info` uses `--accent`, as the alert tone bars and `ProgressBar`'s fill do,
+because an icon is a graphic. `--accent-text` would pass too (10.76–16.43:1),
+but in the light theme it is close enough to `--foreground` that the tone would
+be hard to tell apart from an untoned icon.
+
+### Inherited colour (`tone="inherit"`, needs 3:1 when meaningful)
+
+| Where the icon sits   |                                   Pairing |   Light |    Dark |
+| --------------------- | ----------------------------------------: | ------: | ------: |
+| Page text             |          `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Card or alert text    |             `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Primary button        |       `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
+| Primary button, hover | `--accent-foreground` on `--accent-hover` | 16.21:1 | 15.21:1 |
+| Danger button         |       `--danger-foreground` on `--danger` |  9.42:1 |  9.44:1 |
+| Ghost button          |         `--accent-text` on `--background` | 10.76:1 | 13.24:1 |
+| Ghost button, hover   |            `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+
+## Aria
+
+| Attribute     | On      | Set when                    | Value                                            |
+| ------------- | ------- | --------------------------- | ------------------------------------------------ |
+| `aria-hidden` | `<svg>` | no `label` (or blank label) | `true`                                           |
+| `role`        | `<svg>` | `label` set                 | `img`                                            |
+| `aria-label`  | `<svg>` | `label` set                 | the `label` prop                                 |
+| `focusable`   | `<svg>` | always                      | `false` (stops legacy IE / Edge tabbing to SVG)  |
+| `tabIndex`    | not set | never                       | removed from the props; the icon is never a stop |
+| `aria-label`  | control | icon-only button or link    | set by the caller on the `<button>` / `<a>`      |

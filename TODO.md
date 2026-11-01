@@ -35,15 +35,16 @@
 - [ ] write unit test and vr testing suites
 - [x] Typography
 - [x] Toggle
-- [ ] Segmented Controller
-- [ ] Loader (progress, inline)
+- [x] Segmented Controller
+- [ ] InLine Loader
+- [x] Progress Loader
 - [ ] Ranking
 - [ ] Rating
 - [ ] Key Value
 - [x] Tab & Tab Group
 - [ ] Footer - flexible composite component
 - [ ] Header - flexible composite component
-- [ ] Radio & Radio Group
+- [x] Radio & Radio Group
 - [ ] File Upload
 
 ### Styling:

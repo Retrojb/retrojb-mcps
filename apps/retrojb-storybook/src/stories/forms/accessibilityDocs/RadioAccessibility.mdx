@@ -1,0 +1,125 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Forms/Radio/Accessibility" />
+
+# Radio Accessibility
+
+Extracted from `packages/ui/src/components/forms/Radio/styles.ts`, plus the
+wiring in `Radio.tsx` and the prop contract in `types.ts`. Ratios are measured
+with `checkContrast` from `@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme. The
+group label, required and error behaviour are documented on
+**Forms/RadioGroup/Accessibility**.
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                         |
+| --------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
+| 1.3.1 Info and Relationships      | A     | `htmlFor` / `id` and `aria-describedby` come from `useId`; the label also wraps the input                          |
+| 1.4.1 Use of Color                | A     | Checked is a dot as well as a fill; an error is a message and `aria-invalid` as well as a red border               |
+| 1.4.3 Contrast (Minimum)          | AA    | Label, description and error text all clear 4.5:1 in both themes                                                   |
+| 1.4.11 Non-text Contrast          | AA    | Circle border, checked fill and dot all clear 3:1 against what they sit on                                         |
+| 2.1.1 Keyboard                    | A     | Native radio: Tab into the group, arrows move and select, Space selects the focused radio                          |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition                                                        |
+| 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on the input itself, which follows the circle's radius                              |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset                                                                                    |
+| 2.5.8 Target Size (Minimum)       | AA    | The `<label>` row is at least 24px tall (32px at `lg`) and spans circle, gap and text; a click anywhere selects it |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `description` carries instructions                                                     |
+| 4.1.2 Name, Role, Value           | A     | Native `<input type="radio">`; role, checked state and position in the group come from the platform                |
+
+### The real input is the circle
+
+The visible circle is the native `<input type="radio">` with `appearance-none`,
+not a `<span>` drawn over a hidden input — the approach `Checkbox` uses. Focus,
+the click target, form submission and the reported state all belong to one
+element. The dot is an `aria-hidden` SVG sibling with `pointer-events-none`; a
+click on it lands on the input beneath.
+
+Because the input is native, everything radios do comes from the browser: radios
+that share a `name` are one group with one tab stop, the arrow keys move the
+selection, and `required` on any of them means "one of these". `Radio` adds no
+keyboard handling of its own. Home / End are added by `RadioGroup`, not here.
+
+### Checked is not colour alone
+
+Checked changes two things: the circle fills with `--accent`, and a dot appears
+in `--accent-foreground`. The dot is a shape, so the state survives greyscale,
+low vision and forced colors. The round shape is also what tells a radio apart
+from `Checkbox`'s rounded square.
+
+### Target size
+
+| Size | Circle |  Dot | Cell / row height | Target               |
+| ---- | -----: | ---: | ----------------: | -------------------- |
+| `sm` |   16px |  6px |              24px | whole row, ≥ 24 × 24 |
+| `md` |   20px |  8px |              24px | whole row, ≥ 24 × 24 |
+| `lg` |   24px | 10px |              32px | whole row, ≥ 32 × 32 |
+
+`md` is `Checkbox`'s geometry. At `sm` the circle alone is under 24px; the
+`<label>` row is not, and a click anywhere on it selects the radio, which is
+what 2.5.8 measures. None of the sizes clears the 44px of 2.5.5 (AAA).
+Description and error text sit outside the label, so they are not part of the
+accessible name or the target.
+
+### Forced colors
+
+The input opts out of forced-color repainting and paints itself with system
+colours: a `CanvasText` border on `Canvas` unchecked, a `SelectedItem` fill with
+a `SelectedItemText` dot checked, a `Highlight` border on hover and a
+`Highlight` focus outline. Disabled is a `GrayText` border, and a disabled
+checked radio is a `GrayText` fill with a `Canvas` dot. Without the opt-out the
+browser repaints both states to `Canvas` and only the dot would differ. Not yet
+verified in Windows High Contrast — that needs a manual pass.
+
+### Disabled
+
+The native `disabled` attribute takes the radio out of the tab order, and the
+arrow keys skip it. The row dims with `has-[input:disabled]:opacity-60`, which
+also matches a radio disabled by an ancestor `<fieldset disabled>`.
+
+### Used without a group
+
+Radios that share a `name` but sit outside a `RadioGroup` behave as a group for
+the keyboard, but nothing names that group. A screen reader announces "Express,
+radio button, 2 of 2" with no question attached. Wrap them in a `RadioGroup`, or
+in your own `<fieldset>` + `<legend>`.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role        |                                Pairing |   Light |    Dark |
+| ----------- | -------------------------------------: | ------: | ------: |
+| Label       |       `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Label       |          `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Description | `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Error       |           `--danger` on `--background` |  6.26:1 |  8.22:1 |
+
+### Circle, dot and focus (needs 3:1)
+
+| Role             |                                 Pairing |  Light |    Dark |
+| ---------------- | --------------------------------------: | -----: | ------: |
+| Unchecked border | `--border-strong` on `--surface-raised` | 6.36:1 |  4.50:1 |
+| Unchecked border |     `--border-strong` on `--background` | 4.16:1 |  4.41:1 |
+| Unchecked border |        `--border-strong` on `--surface` | 5.93:1 |  4.83:1 |
+| Checked fill     |            `--accent` on `--background` | 6.19:1 |  8.87:1 |
+| Checked fill     |               `--accent` on `--surface` | 8.82:1 |  9.72:1 |
+| Dot              |     `--accent-foreground` on `--accent` | 9.32:1 | 10.19:1 |
+| Invalid border   |        `--danger` on `--surface-raised` | 9.56:1 |  8.38:1 |
+| Focus ring       |        `--focus-ring` on `--background` | 6.19:1 |  8.87:1 |
+
+`--border` (1.75–2.67:1) is never used for the circle: it fails 1.4.11.
+
+## Aria
+
+| Attribute          | On    | Set when                          | Value                                                     |
+| ------------------ | ----- | --------------------------------- | --------------------------------------------------------- |
+| `id`               | input | always                            | the `id` prop, or a generated `…-input`                   |
+| `htmlFor`          | label | always                            | matches the input's `id`                                  |
+| `name`             | input | always in a group, else if passed | the group's `name`; the radio's own is ignored in a group |
+| `aria-invalid`     | input | `error`, or the group has one     | `true`; omitted otherwise                                 |
+| `aria-describedby` | input | `error` or `description` present  | error id, description id, then the caller's               |
+| `aria-hidden`      | SVG   | always                            | `true` — the dot is decorative                            |
+| `aria-hidden`      | `*`   | `required` on a standalone radio  | `true` — the native `required` is announced               |

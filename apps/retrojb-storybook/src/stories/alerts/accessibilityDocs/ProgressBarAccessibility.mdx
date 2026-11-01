@@ -1,0 +1,187 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Alerts/ProgressBar/Accessibility" />
+
+# ProgressBar Accessibility
+
+Extracted from `packages/ui/src/components/alerts/progressBar/styles.ts`, plus
+the wiring in `ProgressBar.tsx`, the prop contract in `types.ts` and the
+`animate-progress-indeterminate` keyframes in
+`packages/ui/src/styles/theme.css`. Ratios are measured with `checkContrast`
+from `@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                        |
+| --------------------------------- | ----- | ----------------------------------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships      | A     | The label is tied to the bar with `aria-labelledby`, the description with `aria-describedby`                      |
+| 1.4.1 Use of Color                | A     | `tone` only recolours the fill; the status has to be in the label, `valueText` or description, as in every story  |
+| 1.4.3 Contrast (Minimum)          | AA    | Label, readout and description clear 4.5:1 on `--background` and `--surface` in both themes                       |
+| 1.4.11 Non-text Contrast          | AA    | The track edge clears 3:1 against the page; every tone's fill clears 3:1 against the empty track                  |
+| 2.2.2 Pause, Stop, Hide           | A     | See the note below: no pause control; treated as an essential loading indicator, and stilled under reduced motion |
+| 2.3.1 Three Flashes or Below      | A     | The indeterminate state is a smooth slide, one pass every 1.8s; nothing flashes                                   |
+| 2.3.3 Animation from Interactions | AAA   | `motion-reduce:` stops the slide (replaced by still stripes) and the width transition                             |
+| 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `labelHidden` hides it visually but keeps it as the name                              |
+| 4.1.2 Name, Role, Value           | A     | `role="progressbar"`, named by the label; `aria-valuenow` / `min` / `max` when determinate, plus `aria-valuetext` |
+| 4.1.3 Status Messages             | AA    | Not a live region by design; completion should be announced with an `InlineAlert` live region (see below)         |
+
+2.4.7, 2.4.13 and 2.5.8 do not apply: the bar is not focusable and is not a
+pointer target.
+
+### Why a `div` with `role="progressbar"` and not `<progress>`
+
+`<progress>` has the right role built in, but its parts can only be styled
+through engine-specific pseudo-elements (`::-webkit-progress-bar`,
+`::-webkit-progress-value`, `::-moz-progress-bar`), and the engine draws its
+indeterminate state. The reduced-motion and forced-colors behaviour described
+here could not be made consistent across browsers. It also has no `min`, so a
+range that does not start at 0 would have to be rescaled and assistive
+technology would report the rescaled number. It takes no input and is not
+form-associated, so there is no keyboard or `FormData` behaviour to give up.
+
+The trade is that the semantics are now hand-written, and so they are listed in
+full in the Aria table below.
+
+### Determinate and indeterminate
+
+- **Determinate** (`value` is a finite number): the value is clamped to
+  `min`–`max` and exposed as `aria-valuenow`, with `aria-valuemin` and
+  `aria-valuemax`. The fill's `inline-size` is the matching percentage.
+- **Indeterminate** (`value` is `undefined`, `null` or not finite):
+  `aria-valuenow`, `aria-valuemin` and `aria-valuemax` are all omitted. ARIA
+  treats a progressbar with no `aria-valuenow` as indeterminate. `valueText` is
+  still passed through, so "Connecting…" can be announced.
+
+`valueText` sets `aria-valuetext`. Use it whenever the number alone does not say
+what is counted ("3 of 10 files"). A custom `formatValue` with no `valueText` is
+used for both the readout and `aria-valuetext`, so they always match. The
+default readout (a whole percentage, rounded down) is not copied into
+`aria-valuetext`; the screen reader phrases `aria-valuenow` itself.
+
+How each screen reader phrases a progressbar (percentage or raw value, and
+whether it announces updates while focused in browse mode) varies, and has not
+been verified for this component.
+
+### Live updates: why the bar stays quiet
+
+A progressbar is not a live region, and this one does not make itself one.
+Announcing every step would talk over the page for as long as the work ran.
+Recommended pattern, shown in the **Simulated Progress** story:
+
+1. Put `aria-busy="true"` on the region whose content is loading (a list, a
+   table, a panel) and remove it when the content is in place. Keep the bar
+   outside that region, because assistive technology may hold back a busy
+   region's content.
+2. Announce the outcome once, as a status message (4.1.3): an `InlineAlert` with
+   `live="polite"` for success or `live="assertive"` for a failure that blocks
+   the user. Render the `InlineAlert` before the work starts, with no message,
+   so its live region already exists when the message arrives.
+
+There is no built-in completion announcement. The package's existing pattern for
+announcements is the always-mounted `InlineAlert` / `ToastRegion`, and a second
+mechanism inside the bar would duplicate it.
+
+### Motion
+
+- **Indeterminate**: a segment 40% of the track wide slides from the inline
+  start to the inline end, once every 1.8s, eased. It is a translation with no
+  luminance change in place, so 2.3.1 does not come into it.
+- **Determinate**: the fill eases between values over 300ms.
+- **`prefers-reduced-motion: reduce`**: the slide stops, and the indicator
+  becomes a still, full-width band of 45° stripes in the tone colour. It does
+  not move, and it cannot be mistaken for an empty bar ("not started") or a
+  solid full one ("done"). The width transition is also removed, so determinate
+  values jump.
+
+  2.2.2 asks for a way to pause moving content that starts automatically and
+  runs longer than five seconds, unless the movement is essential. The bar has
+  no pause control. It is treated as an essential loading indicator: stopping it
+  would hide that work is still going on. A user who needs it still can stop the
+  movement with the reduced-motion setting. Whether that judgement holds for a
+  given page is a call for the page's author, especially for a bar that stays on
+  screen for a long time next to content the user is reading.
+
+### Right-to-left
+
+The fill is a block with an `inline-size`, so under `dir="rtl"` it starts at the
+right on its own. The indeterminate segment is placed at `start-0` and moved
+with a physical `translateX`, which the keyframes multiply by
+`--retrojb-progress-direction`. That variable is `-1` under `rtl:`, so the
+segment travels right to left. The readout sits at the inline end (`ms-auto`).
+Checked visually in the **Right To Left** story; not verified with a
+right-to-left screen reader.
+
+### Forced colors
+
+The track and the indicator opt out of forced-color repainting
+(`forced-color-adjust: none`). Without that, the browser repaints backgrounds to
+`Canvas` and the fill disappears. The track becomes a `CanvasText` edge on
+`Canvas`, and the fill (or the reduced-motion stripes) is `Highlight`. The
+label, readout and description are left to the browser. Not yet verified in
+Windows High Contrast; that needs a manual pass.
+
+### Known gaps
+
+- No pause control for the indeterminate animation; see the 2.2.2 note.
+- `tone` cannot check that the label actually states the status. That is the
+  caller's job.
+- A `max` at or below `min` is raised to `min`, and the bar draws empty with
+  `aria-valuenow` equal to both ends.
+- Screen-reader phrasing, forced colors and the reduced-motion pattern have not
+  been tested with real assistive technology.
+
+## Colors
+
+Measured against the default palette.
+
+### Text (needs 4.5:1)
+
+| Role                    |                                    Pairing |   Light |    Dark |
+| ----------------------- | -----------------------------------------: | ------: | ------: |
+| Label                   |           `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Label                   |              `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Readout and description |     `--foreground-muted` on `--background` |  6.25:1 |  6.62:1 |
+| Readout and description |        `--foreground-muted` on `--surface` |  8.91:1 |  7.25:1 |
+| Readout and description | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
+
+### Track and indicator (needs 3:1)
+
+| Role                           |                                 Pairing |  Light |   Dark |
+| ------------------------------ | --------------------------------------: | -----: | -----: |
+| Track edge, on the page        |     `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Track edge, on a card          |        `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
+| Track edge, on a raised fill   | `--border-strong` on `--surface-raised` | 6.36:1 | 4.50:1 |
+| `info` fill vs. empty track    |               `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| `success` fill vs. empty track |              `--success` on `--surface` | 8.99:1 | 9.77:1 |
+| `danger` fill vs. empty track  |               `--danger` on `--surface` | 8.91:1 | 9.00:1 |
+
+The reduced-motion stripes use the same tone colour on the same `--surface`
+track, so the fill ratios apply to them.
+
+Two pairings that do not clear 3:1, and why they do not need to:
+
+- The track fill against the page, `--surface` on `--background`, is 1.42 /
+  1.09:1. That is why the track has a `--border-strong` edge: the edge, not the
+  fill, shows the total extent. `--border` (1.75 / 2.02:1 on `--background`)
+  would fail, and is not used.
+- The fill against the track edge, `--accent` on `--border-strong`, is 1.48 /
+  2.00:1. They meet only at the ends, and that boundary carries nothing. The
+  range is read from the edge against the page, and the value from the fill
+  against the empty track.
+
+## Aria
+
+| Attribute          | On      | Set when                               | Value                                             |
+| ------------------ | ------- | -------------------------------------- | ------------------------------------------------- |
+| `role`             | track   | always                                 | `progressbar`                                     |
+| `aria-labelledby`  | track   | always                                 | the generated `…-label` id of the label           |
+| `aria-describedby` | track   | `description`, or caller-supplied      | `…-description`, then any caller-supplied ids     |
+| `aria-valuenow`    | track   | determinate                            | the clamped `value`, on the `min`–`max` scale     |
+| `aria-valuemin`    | track   | determinate                            | `min` (default `0`)                               |
+| `aria-valuemax`    | track   | determinate                            | `max` (default `100`)                             |
+| `aria-valuetext`   | track   | `valueText`, or a custom `formatValue` | `valueText`, else the `formatValue` result        |
+| `aria-hidden`      | readout | `showValue` and determinate            | `true` — the bar already exposes the value        |
+| `aria-busy`        | not set | —                                      | set it on the region being loaded, not on the bar |

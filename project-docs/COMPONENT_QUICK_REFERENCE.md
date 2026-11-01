@@ -15,6 +15,7 @@ Status key:
 | ---------------- | ------------ | ------- | ------------------------------------ |
 | BrowserAlert     | Alerts       | Shipped | `alerts/browserAlert`                |
 | InlineAlert      | Alerts       | Shipped | `alerts/inlineAlert`                 |
+| ProgressBar      | Alerts       | Shipped | `alerts/progressBar`                 |
 | ToastAlert       | Alerts       | Shipped | `alerts/toastAlert`                  |
 | Card             | Containers   | Shipped | `containers/card`                    |
 | DynamicContainer | Containers   | Shipped | `containers/dynamicContainer`        |
@@ -22,12 +23,15 @@ Status key:
 | InteractiveCard  | Containers   | Shipped | `containers/card`                    |
 | Avatar           | Content      | Planned | `content/avatar`                     |
 | Chips            | Content      | Planned | `content/chips`                      |
+| Icon             | Content      | Shipped | `content/icon`                       |
 | Tags             | Content      | Planned | `content/tags`                       |
 | Table            | Data         | Shipped | `data/Table`                         |
 | Checkbox         | Forms        | Shipped | `forms/Checkbox`                     |
 | CheckboxGroup    | Forms        | Shipped | `forms/CheckboxGroup`                |
 | ComboBox         | Forms        | Shipped | `forms/ComboBox`                     |
 | Input            | Forms        | Shipped | `forms/Input`                        |
+| Radio            | Forms        | Shipped | `forms/Radio`                        |
+| RadioGroup       | Forms        | Shipped | `forms/RadioGroup`                   |
 | SearchBox        | Forms        | Shipped | `forms/SearchBox`                    |
 | SegmentedControl | Forms        | Shipped | `forms/SegmentedControl`             |
 | Toggle           | Forms        | Shipped | `forms/Toggle`                       |
@@ -53,6 +57,10 @@ Status key:
   - InlineAlert
     - `InlineAlert`
     - `inlineAlertStyles`
+  - ProgressBar
+    - `ProgressBar` (`<div role="progressbar">`; determinate with `value`,
+      indeterminate without)
+    - `progressBarStyles`
   - ToastAlert
     - `ToastAlert`
     - `ToastRegion`
@@ -83,6 +91,12 @@ Status key:
 - Content
   - Avatar
   - Chips
+  - Icon
+    - `Icon` (wraps a Lucide component; decorative unless `label` is set)
+    - `iconStyles`
+    - `ICON_SIZE_PX`, `ICON_STROKE_WIDTH` (internal)
+    - `@retrojb/ui/icons` (subpath re-exporting `lucide-react`, with `Icon`
+      shadowing Lucide's own)
   - Tags
 - Data
   - Table
@@ -112,6 +126,14 @@ Status key:
   - Input
     - `Input`
     - `inputStyle`
+  - Radio
+    - `Radio` (native radio drawn with `appearance-none`)
+    - `radioStyles`
+  - RadioGroup
+    - `RadioGroup` (`<fieldset role="radiogroup">`, lays out with
+      `DynamicContainer`)
+    - `RadioGroupContext` (internal)
+    - `radioGroupStyles`
   - SearchBox
     - `SearchBox` (built on `useComboBox`, shares `comboBoxStyle`)
   - SegmentedControl
@@ -184,6 +206,7 @@ CSV, one row per component. Paste into a spreadsheet and split on commas.
 Component,Category,Subcategory,Status,Path,Parts
 BrowserAlert,Alerts,,Shipped,alerts/browserAlert,BrowserAlert; browserAlertStyles
 InlineAlert,Alerts,,Shipped,alerts/inlineAlert,InlineAlert; inlineAlertStyles
+ProgressBar,Alerts,,Shipped,alerts/progressBar,ProgressBar; progressBarStyles
 ToastAlert,Alerts,,Shipped,alerts/toastAlert,ToastAlert; ToastRegion; toastAlertStyles; toastRegionStyles
 Card,Containers,,Shipped,containers/card,Card; CardHeader; CardTitle; CardBody; CardFooter; CardContext; cardStyles
 DynamicContainer,Containers,,Shipped,containers/dynamicContainer,DynamicContainer; dynamicContainerStyles
@@ -191,12 +214,15 @@ GraphicCard,Containers,,Shipped,containers/card,GraphicCard; CardHeader; CardTit
 InteractiveCard,Containers,,Shipped,containers/card,InteractiveCard; cardStyles
 Avatar,Content,,Planned,content/avatar,
 Chips,Content,,Planned,content/chips,
+Icon,Content,,Shipped,content/icon,Icon; iconStyles; ICON_SIZE_PX; ICON_STROKE_WIDTH; @retrojb/ui/icons
 Tags,Content,,Planned,content/tags,
 Table,Data,,Shipped,data/Table,Table; TableHead; TableHeaderCell; TableBody; TableRow; TableCell; TableFoot; TableEmpty; tableStyle
 Checkbox,Forms,,Shipped,forms/Checkbox,Checkbox; checkboxStyles
 CheckboxGroup,Forms,,Shipped,forms/CheckboxGroup,CheckboxGroup; CheckboxGroupContext; checkboxGroupStyles
 ComboBox,Forms,,Shipped,forms/ComboBox,ComboBox; OptionContent; comboBoxStyle; useComboBox; comboBoxFilter; highlightSegments
 Input,Forms,,Shipped,forms/Input,Input; inputStyle
+Radio,Forms,,Shipped,forms/Radio,Radio; radioStyles
+RadioGroup,Forms,,Shipped,forms/RadioGroup,RadioGroup; RadioGroupContext; radioGroupStyles
 SearchBox,Forms,,Shipped,forms/SearchBox,SearchBox
 SegmentedControl,Forms,,Shipped,forms/SegmentedControl,SegmentedControl; segmentedControlStyles
 Toggle,Forms,,Shipped,forms/Toggle,Toggle; toggleStyles

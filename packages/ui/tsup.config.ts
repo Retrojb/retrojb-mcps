@@ -28,6 +28,8 @@ export default defineConfig({
    */
   entry: [
     "src/index.ts",
+    // The `@retrojb/ui/icons` subpath; the reasoning is at the top of that file.
+    "src/icons.ts",
     "src/lib/*.ts",
     "src/hooks/*.ts",
     "src/components/**/*.ts",
@@ -84,7 +86,17 @@ export default defineConfig({
 
   // React is a peer, not a bundled dependency. Two copies of React in one tree
   // breaks hooks with an error that does not name the cause.
-  external: ["react", "react-dom"],
+  /*
+   * `lucide-react` is listed for the same kind of reason, even though nothing
+   * would bundle it today: with `bundle: false` esbuild copies every import
+   * through untouched, and tsup externalises `dependencies` by default anyway.
+   * Naming it here keeps it external if either of those ever changes. Inlined,
+   * `export * from "lucide-react"` in `src/icons.ts` would become one module
+   * holding every icon, and consumers' bundlers could no longer drop the ones
+   * an app does not import. It would also be a second copy beside any
+   * `lucide-react` the app depends on itself.
+   */
+  external: ["react", "react-dom", "lucide-react"],
 
   // No `banner` with `"use client"`. A banner applies to every output file, which
   // would put the directive on the `styles.ts` modules too and reintroduce

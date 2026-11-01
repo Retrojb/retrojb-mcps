@@ -152,6 +152,45 @@ export {
 } from "./components/forms/SegmentedControl";
 
 /*
+ * The radio pair.
+ *
+ * `Radio` is a native `<input type="radio">` drawn with `appearance-none`, as
+ * `Checkbox` is, with a dot as well as a fill for the checked state. `label`
+ * and `value` are required. It is meant to sit inside a `RadioGroup`, which
+ * gives it its `name`, required and invalid state, and size.
+ *
+ * `RadioGroup` is a `<fieldset role="radiogroup">` + `<legend>` holding one
+ * `string` value, built from an `options` array, from `<Radio>` children, or
+ * both. Controlled with `value` / `onValueChange`; uncontrolled with
+ * `defaultValue`, in which case the DOM owns the selection and `form.reset()`
+ * restores it — unlike `CheckboxGroup` and `SegmentedControl`. Arrow keys are
+ * the browser's; Home / End are added, as on `SegmentedControl`. `name` is
+ * generated when omitted. `orientation` is `"vertical"` by default.
+ *
+ * RadioGroup, SegmentedControl, or a select: all three choose one value. A
+ * radio group shows every option with room for a description, and suits up to
+ * about seven options a user should compare before choosing. A segmented
+ * control is a compact row of two to five short labels that switch a view or
+ * mode, usually with an immediate effect. Past that, or where space is tight
+ * and the options need no comparison, a select-style control (`ComboBox`) keeps
+ * the list out of the way until it is needed.
+ */
+export {
+  Radio,
+  radioStyles,
+  type IRadioProps,
+  type RadioVariants,
+} from "./components/forms/Radio";
+
+export {
+  RadioGroup,
+  radioGroupStyles,
+  type IRadioGroupOption,
+  type IRadioGroupProps,
+  type RadioGroupVariants,
+} from "./components/forms/RadioGroup";
+
+/*
  * The combobox pair.
  *
  * Two components rather than one with a `variant` prop, for the same reason the
@@ -294,6 +333,54 @@ export {
 } from "./components/alerts/browserAlert";
 
 export { ALERT_TONE_LABELS, type AlertTone } from "./components/alerts/tone";
+
+/*
+ * ProgressBar — a labelled bar for work in progress, determinate with `value`
+ * (on a `min`–`max` range, 0–100 by default, clamped) and indeterminate without.
+ *
+ * Here with the alerts because it is the same kind of thing — status, not
+ * input — and takes the same `tone` union. A `<div role="progressbar">`
+ * rather than `<progress>`, for styling, reduced-motion and forced-colors
+ * control and a real `min`; the reasoning is in `ProgressBar.tsx`. `label` is
+ * required and is the accessible name; `valueText` sets `aria-valuetext`, and
+ * `showValue` / `formatValue` draw a readout. It is deliberately not a live
+ * region: announce completion with an `InlineAlert`, and mark the loading
+ * region `aria-busy`.
+ */
+export {
+  ProgressBar,
+  progressBarStyles,
+  type IProgressBarProps,
+  type IProgressBarValue,
+  type ProgressBarVariants,
+} from "./components/alerts/progressBar";
+/*
+ * Icon — a Lucide icon at the package's 16 / 20 / 24px scale (`sm` / `md` /
+ * `lg`), coloured with `currentColor` unless `tone` is set.
+ *
+ * Decorative by default: `aria-hidden="true"` and `focusable="false"`. Pass
+ * `label` to make it meaningful, which renders `role="img"` + `aria-label`;
+ * the props are a union, so `aria-label` cannot be set any other way. An
+ * icon-only button takes its name from `aria-label` on the button, with the
+ * icon left decorative. `icon` takes a component, not a string name, so only
+ * the icons an app imports are bundled. `mirrorInRtl` flips directional icons
+ * under `dir="rtl"`.
+ *
+ * The icons themselves come from the `@retrojb/ui/icons` subpath, which
+ * re-exports `lucide-react`. They are not in this barrel because Lucide's
+ * names collide with ours (`Link`, `Table`, `Radio`, `Code`, `List`, `Icon`);
+ * see `src/icons.ts`.
+ */
+export {
+  Icon,
+  iconStyles,
+  type IIconDecorativeProps,
+  type IIconLabelledProps,
+  type IIconProps,
+  type IconTone,
+  type IconVariants,
+} from "./components/content/icon";
+
 /*
  * The cards.
  *
