@@ -1,0 +1,7 @@
+/*
+ * Space after each paragraph. `Paragraph` sets `m-0`, which `@retrojb/ui`
+ * emits unlayered, so the `:is(p)` keeps this selector one step more specific.
+ */
+.paragraph:is(p) {
+  margin-block: 0 1rem;
+}

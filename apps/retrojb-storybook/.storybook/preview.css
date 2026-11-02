@@ -5,10 +5,22 @@
  * by the a11y addon against a page colour they never actually land on.
  *
  * `.docs-story` is the story frame inside a docs page. The surrounding docs
- * prose keeps Storybook's own docs theme.
+ * page keeps Storybook's own (light) docs theme, and docs pages are pinned to
+ * the light tokens to match (see `LightDocsContainer.tsx`).
  */
 body,
 .docs-story {
   background: var(--background);
   color: var(--foreground);
+}
+
+/*
+ * The package sets no `font-family` on any element (it ships no preflight);
+ * a consumer sets `--font-sans` on its page once, as this does. Storybook's
+ * docs styles give each element its own font, but `<Unstyled>` opts the `Doc*`
+ * components out of those, so without this they fall back to the browser's
+ * default serif.
+ */
+body {
+  font-family: var(--font-sans);
 }

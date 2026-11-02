@@ -1,0 +1,12 @@
+/*
+ * Space after a list. `List` sets `m-0`, emitted unlayered by `@retrojb/ui`, so
+ * `:is(ul, ol)` keeps this one step more specific. A list nested in an item
+ * keeps the package's own top margin and gets no bottom gap.
+ */
+.list:is(ul, ol) {
+  margin-block: 0 1rem;
+}
+
+:is(li) > .list:is(ul, ol) {
+  margin-block-end: 0;
+}

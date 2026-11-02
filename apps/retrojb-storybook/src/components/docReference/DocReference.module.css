@@ -1,0 +1,13 @@
+/*
+ * Space around a quotation. `Reference` sets `m-0` on its `<figure>`, emitted
+ * unlayered by `@retrojb/ui`, so `:is(figure)` keeps this one step more
+ * specific.
+ */
+.reference:is(figure) {
+  margin-block: 1.5rem;
+}
+
+/* A markdown blockquote's paragraphs carry their own bottom margin. */
+.reference :is(blockquote) > :last-child > p {
+  margin-block-end: 0;
+}

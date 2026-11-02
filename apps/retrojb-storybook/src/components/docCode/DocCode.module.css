@@ -1,0 +1,7 @@
+/*
+ * Space after a code block. `CodeBlock` sets `m-0` on its `<pre>`, emitted
+ * unlayered by `@retrojb/ui`, so `:is(pre)` keeps this one step more specific.
+ */
+.block:is(pre) {
+  margin-block: 0 1.5rem;
+}

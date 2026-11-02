@@ -1,0 +1,24 @@
+/*
+ * Vertical rhythm for headings on MDX docs pages. The design-system headings
+ * reset their margins (`m-0`), and `<Unstyled>` removes Storybook's, so the
+ * spacing lives here. Larger headings open a bigger gap above them.
+ *
+ * `@retrojb/ui/styles.css` emits its utilities unlayered, so a single-class
+ * rule here would tie with `.m-0` and win or lose on stylesheet order. The
+ * selectors below are one step more specific so they win either way.
+ */
+.heading:is(h1, h2, h3, h4, h5, h6) {
+  margin-block: 1.5rem 0.75rem;
+}
+
+.heading.h1 {
+  margin-block: 0 1.5rem;
+}
+
+.heading.h2 {
+  margin-block-start: 3rem;
+}
+
+.heading.h3 {
+  margin-block-start: 2rem;
+}

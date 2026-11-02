@@ -1,12 +1,17 @@
 import { Meta } from "@storybook/addon-docs/blocks";
+import { DocCode, DocCodeBlock } from "../components/docCode";
+import { DocHeading } from "../components/docHeading";
+import { DocParagraph } from "../components/docParagraph";
 
 <Meta title="Component Categorizations" />
 
-# RetroJB UI Component Cateogorizations
+{/* Plain markdown here already renders with the design system (parameters.docs.components). Doc components are imported only for what markdown cannot say. */}
+
+# RetroJB UI Component Categorizations
 
 Purpose of this is to explain component categorization for consumers
 
-## Actions
+<DocHeading level={2}>Actions</DocHeading>
 
 Actions are defined as
 
@@ -14,9 +19,13 @@ Examples of actions include
 
 ### Button
 
-Status: Developed
+<DocParagraph tone="muted">Status: Developed</DocParagraph>
 
 Brief use case for buttons
+
+<DocCodeBlock label="Button usage example">{`<Button>Press Me</Button>`}</DocCodeBlock>
+
+Import <DocCode>Button</DocCode> from <DocCode>@retrojb/ui</DocCode>.
 
 [Documentation](/docs/interactions-button--docs) |
 [Story](/story/content-icon--primary)

@@ -10,6 +10,8 @@ import type { Decorator, Preview } from "@storybook/react-vite";
  */
 import "@retrojb/ui/styles.css";
 import "./preview.css";
+import { docsMdxComponents } from "../src/components/docsMdx";
+import { LightDocsContainer } from "./LightDocsContainer";
 
 type Theme = "system" | "light" | "dark";
 
@@ -27,6 +29,11 @@ type Theme = "system" | "light" | "dark";
  * region — follow the theme too.
  */
 const withTheme: Decorator = (Story, context) => {
+  // Docs pages are pinned to light by `LightDocsContainer`; a story rendered
+  // inline on one must not switch the whole page back.
+  if (context.viewMode === "docs") {
+    return <Story />;
+  }
   const theme = (context.globals.theme ?? "system") as Theme;
   const root = document.documentElement;
   if (theme === "system") {
@@ -61,6 +68,13 @@ const preview: Preview = {
     // The background comes from the theme's `--background` token (see
     // `preview.css`); the backgrounds addon would paint over it.
     backgrounds: { disable: true },
+    docs: {
+      // Plain markdown in MDX docs renders with the design system's typography
+      // (see `src/components/docsMdx`).
+      components: docsMdxComponents,
+      // Docs pages always use the light tokens; see `LightDocsContainer.tsx`.
+      container: LightDocsContainer,
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,
