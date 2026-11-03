@@ -54,7 +54,7 @@ const tabsFor = (items: typeof sections) => (
 );
 
 const meta = {
-  title: "Navigation/Tabs",
+  title: "Navigation/TabGroup",
   component: TabGroup,
   subcomponents: { TabList, Tab, TabPanel },
   parameters: {
