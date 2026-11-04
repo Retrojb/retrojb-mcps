@@ -1,0 +1,125 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: inlineAlert
+name: InlineAlert
+category: alerts
+status: shipped
+complexity: molecule
+description: >-
+  A notice in the page flow, beside the thing it is about, with an optional live
+  region. Render it unconditionally and change `children`; mounting it together
+  with its text usually means nothing is announced.
+
+files:
+  component: packages/ui/src/components/alerts/inlineAlert/InlineAlert.tsx
+  types: packages/ui/src/components/alerts/inlineAlert/types.ts
+  styles: packages/ui/src/components/alerts/inlineAlert/styles.ts
+  barrel: packages/ui/src/components/alerts/inlineAlert/index.ts
+  story: apps/retrojb-storybook/src/stories/alerts/InlineAlert.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/alerts/accessibilityDocs/InlineAlertAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: InlineAlert
+    kind: component
+  - name: inlineAlertStyles
+    kind: styles
+    note: >-
+      Callable from a server component, for a notice in prose that should look
+      like an alert without being announced. Slots: root, box, content, label,
+      message, dismiss.
+  - name: IInlineAlertProps
+    kind: type
+  - name: InlineAlertLiveness
+    kind: type
+    note: '"off" | "polite" | "assertive".'
+  - name: InlineAlertVariants
+    kind: type
+  - name: AlertTone
+    kind: type
+    note: Shared by all alerts and ProgressBar. Defined in alerts/tone.ts.
+  - name: ALERT_TONE_LABELS
+    kind: constant
+    note: Default visible word per tone, used when `label` is not given.
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+  required: []
+  variants:
+    tone:
+      values: [info, success, danger]
+      default: info
+      note: Shared AlertTone union; there is no warning tone.
+    size:
+      values: [sm, md]
+      default: md
+  props:
+    live:
+      values: [off, polite, assertive]
+      default: off
+      note: >-
+        off renders no role. polite is role="status", assertive is role="alert".
+        Use off for a notice already present at page load.
+  defaults:
+    dismissLabel: Dismiss
+
+accessibility:
+  element: div
+  role: "none, status or alert (from `live`)"
+  keyboard: [Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.4.6",
+      "2.4.7",
+      "2.5.8",
+      "4.1.2",
+      "4.1.3",
+    ]
+  notes:
+    - The live-region wrapper is always rendered, even with no children, so a
+      later message is announced.
+    - role carries the liveness alone; aria-live is not also set, because
+      engines disagree when the two conflict.
+    - The tone is visible text (label), so colour is never the only signal.
+    - The dismiss button is 24px, the 2.5.8 floor, and is named by aria-label.
+      Enter and Space apply to it only when onDismiss is given.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: toastAlert
+      when: The message floats and disappears, so it must not shift the layout.
+    - id: browserAlert
+      when: The message must interrupt and get a response.
+  guidance:
+    do:
+      - Keep it mounted and pass the message as children so it can be announced.
+      - Set dismissLabel when several alerts can be on screen.
+    dont:
+      - Use live="assertive" for anything but errors that block the user.
+
+tokens:
+  - surface
+  - foreground
+  - border-strong
+  - accent
+  - accent-text
+  - success
+  - danger
+  - foreground-muted
+  - focus
+  - radius-control
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

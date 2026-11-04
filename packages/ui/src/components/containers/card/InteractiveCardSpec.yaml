@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: interactiveCard
+name: InteractiveCard
+category: containers
+status: shipped
+complexity: molecule
+description: >-
+  A card that is one click target with one real control: an <a> when href is
+  set, a <button> when it is not. The control sits in the heading, is named by
+  title alone, and its overlay covers the card. Secondary controls go in
+  actions.
+
+files:
+  component: packages/ui/src/components/containers/card/InteractiveCard.tsx
+  context: packages/ui/src/components/containers/card/context.ts
+  types: packages/ui/src/components/containers/card/types.ts
+  styles: packages/ui/src/components/containers/card/styles.ts
+  barrel: packages/ui/src/components/containers/card/index.ts
+  story: apps/retrojb-storybook/src/stories/containers/InteractiveCard.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/containers/accessibilityDocs/CardAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: InteractiveCard
+    kind: component
+  - name: IInteractiveCardProps
+    kind: type
+    note: A union of the link and button modes; href picks the mode.
+  - name: IInteractiveCardLinkProps
+    kind: type
+  - name: IInteractiveCardButtonProps
+    kind: type
+
+api:
+  extends:
+    "ComponentPropsWithRef<'a'> with href, or ComponentPropsWithRef<'button'>
+    without"
+  required: [title]
+  variants:
+    size:
+      values: [sm, md]
+      default: md
+    orientation:
+      values: [vertical, horizontal]
+      default: vertical
+    mediaRatio:
+      values: ["16/9", "4/3", "3/2", "1/1"]
+      default: "16/9"
+  props:
+    as:
+      values: [div, article, section, li]
+      default: div
+    headingLevel:
+      values: [2, 3, 4, 5, 6]
+      default: 3
+  defaults:
+    type: button
+
+accessibility:
+  element: "a | button, inside a heading in a div | article | section | li"
+  role: "link | button"
+  keyboard: [Tab, Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.11",
+      "2.1.1",
+      "2.3.3",
+      "2.4.4",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "4.1.2",
+    ]
+  notes:
+    - title is required because it is the control's accessible name.
+    - children are wired to aria-describedby, so they are read after the title.
+    - Enter activates both modes; Space activates button mode only.
+    - disabled exists in button mode only, because an <a> has no disabled state.
+    - The focus ring is drawn on the overlay, so it outlines the whole card.
+    - Text under the overlay cannot be drag-selected. That is the trade-off of
+      this pattern.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: card
+      when: The card is not itself a single link or button.
+  guidance:
+    do:
+      - Put secondary controls in actions, which sits above the overlay and
+        after the primary control in tab order.
+      - Use cardStyles().raised() for a nested link outside actions.
+    dont:
+      - Put links or buttons in children. They sit under the overlay and cannot
+        be clicked.
+
+tokens:
+  - border-strong
+  - accent
+  - surface
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - focus
+  - radius-control
+
+versioning: {}
+
+figma:
+  syncedWith: null

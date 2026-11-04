@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component — see the
- * note in `interactions/Button/styles.ts`. `Paragraph` itself has no
+ * note in `actions/Button/styles.ts`. `Paragraph` itself has no
  * `"use client"` either, so both render and run in a server component.
  *
  * One element, so a base class list rather than slots.

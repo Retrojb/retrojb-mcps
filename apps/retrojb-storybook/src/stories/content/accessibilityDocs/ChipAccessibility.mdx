@@ -1,0 +1,138 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Content/Chip/Accessibility" />
+
+# Chip Accessibility
+
+Extracted from `packages/ui/src/components/content/chip/styles.ts`, plus the
+markup in `Chip.tsx`. Ratios are measured with `checkContrast` from
+`@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+## WCAG Standard and Expectations
+
+| Criterion                         | Level | How the component meets it                                                                                                                     |
+| --------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.4.1 Use of Color                | A     | A selected chip draws a check icon as well as the accent fill, and `aria-pressed` carries the state for assistive technology                   |
+| 1.4.3 Contrast (Minimum)          | AA    | Unselected text clears 4.5:1 on `--surface`, `--background` and the hover fill (13.30:1 at the lowest). Selected text is 9.32:1 at the lowest  |
+| 1.4.11 Non-text Contrast          | AA    | The unselected border is `--border-strong`, 4.16:1 at the lowest. The selected fill and the check icon clear 3:1 (6.19:1 and 9.32:1 at lowest) |
+| 2.3.3 Animation from Interactions | AAA   | The colour transition is paired with `motion-reduce:transition-none`                                                                           |
+| 2.4.7 Focus Visible               | AA    | `focus-visible:outline-2 focus-visible:outline-focus` with a 2px offset                                                                        |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus 2px offset                                                                                                                  |
+| 2.5.5 Target Size (Enhanced)      | AAA   | Not met. `sm` is 24px tall and `md` is 32px, both under 44px                                                                                   |
+| 2.5.8 Target Size (Minimum)       | AA    | `sm` is 24px and `md` is 32px, so both clear the 24px minimum                                                                                  |
+| 4.1.2 Name, Role, Value           | A     | A native `<button>` named by `text`, with `aria-pressed="true"` or `"false"` always present                                                    |
+
+### A toggle button, not a checkbox or a switch
+
+`Chip` renders `<button type="button" aria-pressed>`. A screen reader announces
+it as "Open, toggle button, pressed". `aria-pressed` is written as `true` or
+`false` on every render; a missing attribute would make the control read as a
+plain button. The type is fixed so a chip inside a form never submits it.
+
+Use `Toggle` for a setting that applies at once (announced as a switch),
+`Checkbox` for a choice submitted with a form, and `SegmentedControl` for
+exactly one of a few options.
+
+### Selected is not colour alone
+
+The filled style does not carry the state by itself (1.4.1). A selected chip
+also shows a check icon, which is decorative and `aria-hidden` because
+`aria-pressed` already says it. The icon is drawn in `--accent-foreground`, and
+it survives greyscale. In forced-colors mode the browser repaints the fill and
+text in system colours, and the icon still marks the selected chip.
+
+Unselected chips reserve no space for the icon, so a chip grows by one icon and
+its gap when it is selected. In a wrapping row that can move the chips after it.
+Reserving the space would leave a gap on every unselected chip.
+
+### Grouping a set of chips
+
+There is no `ChipGroup`. A set of chips is a group, and the caller names it with
+a `role="group"` and an accessible name:
+
+```tsx
+<span id="status-label">Status</span>
+<div role="group" aria-labelledby="status-label">
+  <Chip text="Open" />
+  <Chip text="Closed" />
+</div>
+```
+
+A `<fieldset>` with a `<legend>` does the same job and also passes `disabled`
+down to every chip. Without a name, a screen reader user hears a row of toggle
+buttons with no context for what they filter. The `FilterGroup` story shows the
+markup.
+
+### Removable chips are out of scope
+
+A chip with an "x" inside it is two controls with two names and two tab stops.
+That is a different contract, so `Chip` has no `onRemove`.
+
+### Target size
+
+Both sizes are pointer targets. `sm` is 24px tall (`h-6`) and `md` is 32px
+(`h-8`), so both clear the 24px minimum in 2.5.8. Neither reaches the 44px
+target in 2.5.5 (AAA). A product that must meet 2.5.5 has to add height or
+padding through `className`, or space the chips so the 24px circles around them
+do not overlap.
+
+### Disabled
+
+The native `disabled` attribute removes the chip from the tab order. The chip is
+dimmed to 60% and shows a `not-allowed` cursor, so colour is not the only
+signal. Contrast drops below 4.5:1, which 1.4.3 permits for disabled controls.
+The hover fill is also switched off.
+
+### Known gaps
+
+- The ratios cover `--surface` and `--background`. A chip on `--surface-raised`
+  needs its own check, although the unselected border measures 6.36 / 4.50:1 on
+  it.
+- Forced-colors behaviour follows from using a real border and outline, and has
+  not been checked in Windows High Contrast.
+- Screen-reader output has not been tested with real assistive technology.
+
+## Colors
+
+Measured against the default palette. Text needs 4.5:1 (1.4.3). Borders, fills
+that mark the control, the check icon and the focus outline need 3:1 (1.4.11,
+2.4.7).
+
+### Text and icon (needs 4.5:1 for text, 3:1 for the icon)
+
+| State           |                                   Pairing |   Light |    Dark |
+| --------------- | ----------------------------------------: | ------: | ------: |
+| Unselected      |             `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Unselected      |          `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Hover           |      `--foreground` on `--surface-raised` | 20.31:1 | 16.04:1 |
+| Selected        |       `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
+| Selected, hover | `--accent-foreground` on `--accent-hover` | 16.21:1 | 15.21:1 |
+
+### Border, fill and focus (needs 3:1)
+
+| State      |                                 Pairing |  Light |   Dark |
+| ---------- | --------------------------------------: | -----: | -----: |
+| Unselected |        `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
+| Unselected |     `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Unselected | `--border-strong` on `--surface-raised` | 6.36:1 | 4.50:1 |
+| Selected   |               `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| Selected   |            `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| Focus      |        `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
+| Focus      |           `--focus-ring` on `--surface` | 8.82:1 | 9.72:1 |
+
+The unselected border uses `--border-strong`. `--border` is decorative only and
+fails 1.4.11 on every surface.
+
+## Aria
+
+| Attribute      | On       | Set when             | Value                                     |
+| -------------- | -------- | -------------------- | ----------------------------------------- |
+| `aria-pressed` | `button` | always               | `true` when selected, `false` when not    |
+| `disabled`     | `button` | `disabled` is passed | the native attribute, not `aria-disabled` |
+
+The check icon is rendered by `Icon` with `aria-hidden="true"`. Any other
+`aria-*` attribute the caller passes goes to the `<button>`, except
+`aria-pressed`, which the component owns.

@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: list
+name: List
+category: typography
+subcategory: body
+status: shipped
+complexity: molecule
+description: >-
+  A bulleted or numbered list in running text, with ListItem as its items. Pick
+  ordered by meaning, not by look; it switches the element between ul and ol.
+
+files:
+  component: packages/ui/src/components/typography/body/lists/List.tsx
+  parts: packages/ui/src/components/typography/body/lists/ListItem.tsx
+  types: packages/ui/src/components/typography/body/lists/types.ts
+  styles: packages/ui/src/components/typography/body/lists/styles.ts
+  barrel: packages/ui/src/components/typography/body/lists/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/List.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: List
+    kind: component
+  - name: ListItem
+    kind: part
+    note:
+      A li. Takes size and marker from the list through CSS inheritance, not
+      context.
+  - name: listStyles
+    kind: styles
+  - name: listItemStyles
+    kind: styles
+  - name: IListProps
+    kind: type
+  - name: IListItemProps
+    kind: type
+  - name: ListVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithoutRef<'ol'> with ref typed as HTMLElement"
+  variants:
+    size:
+      values: [lg, md, sm]
+      default: md
+      note:
+        Body roles. Items inherit it, so a List matches a Paragraph with the
+        same size.
+    ordered:
+      values: [true, false]
+      default: false
+      note: true renders ol with numbers, false renders ul with bullets.
+
+accessibility:
+  element: ul or ol (ordered)
+  role: list
+  keyboard: []
+  wcag: ["1.3.1", "1.4.3", "1.4.4", "1.4.10"]
+  notes:
+    - Markers stay (list-disc or list-decimal), which also keeps list semantics
+      in Safari. No role="list" is needed.
+    - Use ordered when sequence matters so a screen reader announces each item's
+      position.
+    - Markers use --foreground-muted, which still clears 4.5:1.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: dynamicContainer
+      when:
+        The list is used for layout, such as a row of chips or a group of cards,
+        and the markers should go.
+
+tokens:
+  - foreground
+  - foreground-muted
+
+versioning: {}
+
+figma:
+  syncedWith: null

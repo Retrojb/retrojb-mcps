@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * Slots: `root` is the `<fieldset role="radiogroup">`; `legend` is its label;
  * `track` is the bordered strip the segments sit in; `segment` is the `<label>`

@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: "24.x"
@@ -18,5 +20,13 @@ jobs:
           cache: "npm"
       - run: npm ci
       - run: npx sherif@latest
+      - name: Component specs
+        run: npm run check:specs --workspace=@retrojb/ui
+      - name: Component changesets
+        run:
+          npm run check:spec-changesets --workspace=@retrojb/ui -- --base
+          "origin/${BASE_REF:-main}"
+        env:
+          BASE_REF: ${{ github.base_ref }}
       - run: npm run build
       - run: npm test

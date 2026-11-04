@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: link
+name: Link
+category: navigation
+status: shipped
+complexity: atom
+description: >-
+  A text link that renders an anchor. It does not do client-side routing: for
+  that, apply linkStyle() to the router's own link component.
+
+files:
+  component: packages/ui/src/components/navigation/Link/Link.tsx
+  types: packages/ui/src/components/navigation/Link/types.ts
+  styles: packages/ui/src/components/navigation/Link/styles.ts
+  barrel: packages/ui/src/components/navigation/Link/index.ts
+  story: apps/retrojb-storybook/src/stories/navigation/Link.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/navigation/accessibilityDocs/LinksAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Link
+    kind: component
+  - name: linkStyle
+    kind: styles
+    note: >-
+      Importable from server components, which Link is not. Apply it to a
+      router's link component for client-side routing.
+  - name: ILinkProps
+    kind: type
+  - name: LinkVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'a'>"
+  required: []
+  variants:
+    intent:
+      values: [inline, standalone, muted]
+      default: inline
+  props:
+    external:
+      values: [true, false]
+      default: false
+      note: >-
+        Sets target="_blank" and rel="noreferrer noopener" unless the call site
+        passes its own, and appends visually hidden warning text.
+    externalLabel:
+      values: ["(opens in a new tab)"]
+      default: "(opens in a new tab)"
+      note: The announced warning. Override to translate it.
+
+accessibility:
+  element: a
+  role: link
+  keyboard: [Enter]
+  wcag:
+    ["1.4.1", "1.4.3", "1.4.11", "2.3.3", "2.4.7", "2.4.13", "3.2.5", "4.1.2"]
+  notes:
+    - external appends sr-only text to the accessible name, so opening a new tab
+      is announced first (3.2.5).
+    - Focus is a 2px outline at a 2px offset.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+
+tokens:
+  - accent-text
+  - accent-hover
+  - foreground
+  - foreground-muted
+  - focus
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

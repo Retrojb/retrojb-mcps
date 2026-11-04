@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * Slots for the frame only, as in `CheckboxGroup`. The radios draw themselves
  * with `radioStyles`, and the layout between them is `DynamicContainer`'s, so

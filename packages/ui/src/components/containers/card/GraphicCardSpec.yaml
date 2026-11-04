@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: graphicCard
+name: GraphicCard
+category: containers
+status: shipped
+complexity: molecule
+description: >-
+  A Card with a required media region (image, picture, video or SVG) and content
+  beside or below it. Horizontal orientation collapses to vertical by the card's
+  own container width, not the viewport. Alt text is the caller's decision.
+
+files:
+  component: packages/ui/src/components/containers/card/GraphicCard.tsx
+  context: packages/ui/src/components/containers/card/context.ts
+  types: packages/ui/src/components/containers/card/types.ts
+  styles: packages/ui/src/components/containers/card/styles.ts
+  barrel: packages/ui/src/components/containers/card/index.ts
+  story: apps/retrojb-storybook/src/stories/containers/GraphicCard.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/containers/accessibilityDocs/CardAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: GraphicCard
+    kind: component
+    note:
+      Takes CardHeader, CardTitle, CardBody and CardFooter as children; those
+      parts belong to the Card spec.
+  - name: IGraphicCardProps
+    kind: type
+
+api:
+  extends:
+    "ComponentPropsWithoutRef<'div'> without title, with ref typed as
+    HTMLElement"
+  required: [media]
+  variants:
+    size:
+      values: [sm, md]
+      default: md
+    orientation:
+      values: [vertical, horizontal]
+      default: vertical
+      note: Horizontal switches at the card's @md container width.
+    mediaRatio:
+      values: ["16/9", "4/3", "3/2", "1/1"]
+      default: "16/9"
+  props:
+    as:
+      values: [div, article, section, li]
+      default: div
+
+accessibility:
+  element: "div | article | section | li"
+  wcag: ["1.1.1", "1.3.1", "1.3.2", "1.4.10", "1.4.11"]
+  notes:
+    - Meaningful media needs alt text that says what it shows; decorative media
+      takes alt="".
+    - A decorative inline SVG takes aria-hidden="true"; a meaningful one takes
+      role="img" and aria-label.
+    - Media comes first in the DOM as well as on screen, so reading and visual
+      order agree.
+
+usage:
+  standalone: true
+  # Shares cardStyles and CardContext with Card but does not render a Card.
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: card
+      when: There is no media.
+    - id: interactiveCard
+      when:
+        The whole card should be one link or button. It also has a media slot.
+  guidance:
+    dont:
+      - Leave alt off an <img>. Screen readers fall back to reading the file
+        name.
+
+tokens:
+  - border-strong
+  - surface
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - radius-control
+  - spacing-1000
+
+versioning: {}
+
+figma:
+  syncedWith: null

@@ -1,7 +1,7 @@
 /*
  * The variant definitions for `Code` (inline) and `CodeBlock` (a `<pre>`), in
  * their own module beside the components — see the note in
- * `interactions/Button/styles.ts`. Neither component has `"use client"`.
+ * `actions/Button/styles.ts`. Neither component has `"use client"`.
  *
  *
  * FONT SIZE IN `em`

@@ -1,0 +1,90 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: subHeading
+name: SubHeading
+category: typography
+subcategory: headings
+status: shipped
+complexity: atom
+description: >-
+  The heading of a subsection, an h3 drawn at heading-sm, for use under an h2
+  section. Deeper outlines pass level={4} or below.
+
+files:
+  component: packages/ui/src/components/typography/headings/subHeading/SubHeading.tsx
+  types: packages/ui/src/components/typography/headings/subHeading/types.ts
+  styles: packages/ui/src/components/typography/headings/subHeading/styles.ts
+  barrel: packages/ui/src/components/typography/headings/subHeading/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/SubHeading.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: SubHeading
+    kind: component
+  - name: subHeadingStyles
+    kind: styles
+    note: >-
+      Callable from a server component, for markup this package does not own (a
+      router link styled as a heading, a legend).
+  - name: ISubHeadingProps
+    kind: type
+  - name: SubHeadingVariants
+    kind: type
+  - name: IHeadingProps
+    kind: type
+    note: Shared base props for all five headings.
+  - name: HeadingLevel
+    kind: type
+  - name: HeadingSize
+    kind: type
+  - name: HeadingBase
+    kind: component
+    internal: true
+    note: Renders h{level}. Shared by all five headings; not exported.
+  - name: headingStyles
+    kind: styles
+    internal: true
+    note: >-
+      Shared recipe in headings/styles.ts that each named heading extends with
+      its own default size.
+
+api:
+  extends: "ComponentPropsWithRef<'h1'>"
+  variants:
+    size:
+      values:
+        [display, heading-xl, heading-lg, heading-md, heading-sm, heading-xs]
+      default: heading-sm
+      note: Visual type role only. It never changes the element.
+  props:
+    level:
+      values: [1, 2, 3, 4, 5, 6]
+      default: 3
+      note: >-
+        Renders h1 to h6. Set it from the document outline, not from how large
+        the heading should look (1.3.1).
+
+accessibility:
+  element: h1 to h6 (level)
+  role: heading
+  keyboard: []
+  wcag: ["1.3.1", "1.4.3", "1.4.4", "1.4.6", "1.4.10", "1.4.12", "2.4.6"]
+  notes:
+    - Deeper outlines may pass level 4 or below and size heading-xs.
+    - Size and level are independent props. Do not pick a level to get a size.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+
+tokens:
+  - foreground
+
+versioning: {}
+
+figma:
+  syncedWith: null

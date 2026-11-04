@@ -4,8 +4,8 @@ import { productHeadingStyles } from "./styles";
 import type { IProductHeadingProps } from "./types";
 
 /**
- * The largest heading: a product name or a hero headline. Drawn at `text-
- * display`.
+ * The largest heading: a product name or a hero headline. Drawn at
+ * `text-display`.
  *
  * ```tsx
  * <ProductHeading>Retro Studio</ProductHeading>

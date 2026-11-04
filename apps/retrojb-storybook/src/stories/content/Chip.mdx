@@ -1,0 +1,67 @@
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as ChipStories from "./Chip.stories";
+import specSource from "../../../../../packages/ui/src/components/content/chip/ChipSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={ChipStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### Selected
+
+<Description of={ChipStories.Selected} />
+<Canvas of={ChipStories.Selected} />
+
+### Sizes
+
+<Description of={ChipStories.Sizes} />
+<Canvas of={ChipStories.Sizes} />
+
+### Disabled
+
+<Description of={ChipStories.Disabled} />
+<Canvas of={ChipStories.Disabled} />
+
+### Filter group
+
+<Description of={ChipStories.FilterGroup} />
+<Canvas of={ChipStories.FilterGroup} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/content-chip-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

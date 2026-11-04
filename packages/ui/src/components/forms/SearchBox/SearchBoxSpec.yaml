@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: searchBox
+name: SearchBox
+category: forms
+status: shipped
+complexity: molecule
+description: >-
+  A search field with suggestions, rendered as a search landmark. The query
+  itself is a valid result, so Enter submits it; there is no committed value, so
+  value, name and onValueChange are not props. Set landmark={false} for any
+  filter box that is not the page's search.
+
+files:
+  component: packages/ui/src/components/forms/SearchBox/SearchBox.tsx
+  types: packages/ui/src/components/forms/SearchBox/types.ts
+  styles: null
+  barrel: packages/ui/src/components/forms/SearchBox/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/SearchBox.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/SearchBoxAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: SearchBox
+    kind: component
+  - name: ISearchBoxProps
+    kind: type
+  - name: useComboBox
+    kind: hook
+    note: >-
+      Lives in packages/ui/src/hooks/useComboBox.ts. SearchBox sets
+      onSubmitQuery and blurBehaviour "keep" on it.
+  - name: comboBoxStyle
+    kind: styles
+    note: >-
+      Defined in forms/ComboBox/styles.ts. There is deliberately no styles.ts
+      here, so the two controls cannot drift visually.
+
+api:
+  extends:
+    "IUseComboBoxOptions<TOption> without inputRef, onSubmitQuery,
+    blurBehaviour, name, value, defaultValue, onValueChange and required, plus
+    the size, labelHidden and placement variants"
+  required: [label]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+    labelHidden:
+      values: [true]
+    placement:
+      values: [auto, bottom, top]
+      default: auto
+  defaults:
+    landmark: true
+    showClear: true
+    showToggle: false
+
+accessibility:
+  element: "search | div"
+  role: search
+  pattern: Combobox (WAI-ARIA APG)
+  keyboard: [ArrowDown, ArrowUp, Enter, Escape]
+  wcag: ["1.3.1", "2.1.1", "2.4.1", "2.4.3", "3.2.2", "4.1.2"]
+  notes:
+    - The root is a real search element, with no redundant role attribute.
+      landmark={false} renders a div instead.
+    - The input is type="text" with inputMode and enterKeyHint set to search,
+      not type="search", which adds an unlabelled browser clear button.
+    - The submit button only renders when submitLabel is given, and then is a
+      tab stop; clear is not.
+    - Everything on the ComboBox accessibility page also applies.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: comboBox
+      when: >-
+        The user must end on one of the options and the choice is submitted as a
+        form value. ComboBox reverts free text on blur and has a committed
+        value.
+  guidance:
+    do:
+      - Use onSubmit for the raw query and onSelect for a chosen suggestion;
+        they usually go to different places.
+    dont:
+      - Expect onSubmit to submit a form. No form element is rendered.
+
+versioning: {}
+
+figma:
+  syncedWith: null

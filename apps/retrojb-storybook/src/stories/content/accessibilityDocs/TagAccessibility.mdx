@@ -1,0 +1,96 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Content/Tag/Accessibility" />
+
+# Tag Accessibility
+
+Extracted from `packages/ui/src/components/content/tag/styles.ts`, plus the
+markup in `Tag.tsx`. Ratios are measured with `checkContrast` from
+`@retrojb/wcag-a11y-scanner` against the tokens in
+`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
+
+## WCAG Standard and Expectations
+
+| Criterion                | Level | How the component meets it                                                                                                          |
+| ------------------------ | ----- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| 1.4.1 Use of Color       | A     | The required `text` prop is the signal. `tone` only reinforces it, and the status stories use the word ("deprecated"), not just red |
+| 1.4.3 Contrast (Minimum) | AA    | Every tone's text clears 4.5:1 on `--surface` and on `--background` in both themes (6.26:1 at the lowest)                           |
+| 1.4.11 Non-text Contrast | AA    | Every tone's border clears 3:1 on `--surface` and on `--background` in both themes (4.16:1 at the lowest)                           |
+
+Not applicable to a tag:
+
+- **2.4.7 Focus Visible and 2.4.13 Focus Appearance.** A tag is not focusable,
+  so it has no focus indicator.
+- **2.5.8 Target Size (Minimum).** A tag is not a pointer target: it has no
+  handler and no role. Its height (about 20px at `sm`, 28px at `md`) comes from
+  the text. A tag that can be pressed is a `Chip`, and the size rule applies
+  there.
+- **4.1.2 Name, Role, Value.** The `<span>` has no role and no state. Its text
+  is read in the flow of the surrounding content.
+
+### Static text, not a control
+
+`Tag` renders a `<span>` with no `role`, `tabIndex` or event handlers. A screen
+reader reads it as part of the line it sits in ("Button, deprecated"). Adding
+`onClick` would put a click target on an element announced as plain text, so use
+`Chip` for anything that can be pressed.
+
+### Forced colors
+
+The edge is a real `border`, not a box-shadow. In forced-colors mode the browser
+repaints a border in a system colour and drops shadows, so the tag keeps its
+outline. The fill and text are repainted too, and the word still carries the
+meaning. This has not been checked in Windows High Contrast itself.
+
+### Known gaps
+
+- The ratios cover `--surface` and `--background`. A tag on `--surface-raised`
+  or on a coloured fill needs its own check.
+- A long label wraps rather than overflows, but has not been tested at 320 CSS
+  px with real assistive technology.
+- Screen-reader output has not been tested with real assistive technology.
+
+## Colors
+
+Measured against the default palette. Text needs 4.5:1 (1.4.3) and the border
+needs 3:1 (1.4.11).
+
+### Text (needs 4.5:1)
+
+| Tone      |                           Pairing |   Light |    Dark |
+| --------- | --------------------------------: | ------: | ------: |
+| `neutral` |     `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| `neutral` |  `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| `info`    |    `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
+| `info`    | `--accent-text` on `--background` | 10.76:1 | 13.24:1 |
+| `success` |        `--success` on `--surface` |  8.99:1 |  9.77:1 |
+| `success` |     `--success` on `--background` |  6.31:1 |  8.92:1 |
+| `danger`  |         `--danger` on `--surface` |  8.91:1 |  9.00:1 |
+| `danger`  |      `--danger` on `--background` |  6.26:1 |  8.22:1 |
+
+### Border (needs 3:1)
+
+| Tone      |                             Pairing |  Light |   Dark |
+| --------- | ----------------------------------: | -----: | -----: |
+| `neutral` |    `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
+| `neutral` | `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| `info`    |           `--accent` on `--surface` | 8.82:1 | 9.72:1 |
+| `info`    |        `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| `success` |          `--success` on `--surface` | 8.99:1 | 9.77:1 |
+| `success` |       `--success` on `--background` | 6.31:1 | 8.92:1 |
+| `danger`  |           `--danger` on `--surface` | 8.91:1 | 9.00:1 |
+| `danger`  |        `--danger` on `--background` | 6.26:1 | 8.22:1 |
+
+The neutral border uses `--border-strong`. `--border` is decorative only and
+fails 1.4.11 on every surface.
+
+## Aria
+
+A `Tag` sets no ARIA attributes. Any `aria-*` attribute the caller passes goes
+to the `<span>`.
+
+| Attribute | On     | Set when | Value |
+| --------- | ------ | -------- | ----- |
+| none      | `span` | never    | none  |

@@ -17,13 +17,21 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  tags: ["autodocs"],
+  // No `autodocs` tag when the component has a docs page (`$COMPONENT.mdx`);
+  // Storybook cannot index both.
   argTypes: {},
 } satisfies Meta<typeof $COMPONENT>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 ```
+
+### Component docs page
+
+Copy `apps/retrojb-storybook/templates/Component.mdx` to
+`apps/retrojb-storybook/src/stories/$CATEGORY/$COMPONENT.mdx` and follow the
+header comment in the template. How the page gets its content is in
+`project-docs/STORYBOOK_DOCS.md`.
 
 ### Accessibility Documentation.
 

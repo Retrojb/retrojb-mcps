@@ -12,7 +12,7 @@ A component is a directory, not a file. `Button` is the template:
 
 ```
 src/components/
-  interactions/Button/
+  actions/Button/
     Button.tsx    the React layer, and the only file with "use client"
     styles.ts     the tv() definition — buttonStyle, ButtonVariants
     types.ts      the props interface — IButtonProps

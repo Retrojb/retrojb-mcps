@@ -1,6 +1,6 @@
 /*
  * The variant definition for `Reference`, in its own module beside the
- * component — see the note in `interactions/Button/styles.ts`. No
+ * component — see the note in `actions/Button/styles.ts`. No
  * `"use client"`.
  *
  * Slotted: the `<figure>` root, the `<blockquote>`, and the `<figcaption>`

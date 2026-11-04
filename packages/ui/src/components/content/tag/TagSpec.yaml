@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: tag
+name: Tag
+category: content
+status: shipped
+complexity: atom
+description: >-
+  A short, non-interactive label attached to an item to categorise it or state
+  its status. It is not a control; use Chip for a toggle or filter.
+
+files:
+  component: packages/ui/src/components/content/tag/Tag.tsx
+  types: packages/ui/src/components/content/tag/types.ts
+  styles: packages/ui/src/components/content/tag/styles.ts
+  barrel: packages/ui/src/components/content/tag/index.ts
+  story: apps/retrojb-storybook/src/stories/content/Tag.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/content/accessibilityDocs/TagAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/content/Tag.mdx
+
+exports:
+  - name: Tag
+    kind: component
+  - name: tagStyles
+    kind: styles
+    note: >-
+      Callable from a server component, to style an element this package does
+      not own.
+  - name: ITagProps
+    kind: type
+  - name: TagVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'span'>"
+  required: [text]
+  variants:
+    tone:
+      values: [neutral, info, success, danger]
+      default: neutral
+      note: There is no warning tone; the palette has no --warning token.
+    size:
+      values: [sm, md]
+      default: sm
+      note: label-sm and label-md type roles.
+
+accessibility:
+  element: span
+  keyboard: []
+  wcag: ["1.4.1", "1.4.3", "1.4.11"]
+  notes:
+    - Not interactive. It is not focusable and has no handlers, so there is no
+      keyboard behaviour and no focus indicator.
+    - The text is the signal, so colour is never the only cue.
+    - The border is a real border, so it survives forced-colors mode.
+    - Target size (2.5.8) does not apply because a tag is not a target.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: chip
+      when: The label can be pressed, such as a filter or a toggle.
+  guidance:
+    do:
+      - Make the text state the meaning, such as "Deprecated", and treat the
+        tone as reinforcement.
+      - Keep the text short, a word or two.
+    dont:
+      - Add an onClick or make a tag look pressable. Use Chip.
+      - Rely on tone alone to say what a tag means.
+
+tokens:
+  - surface
+  - foreground
+  - border-strong
+  - accent
+  - accent-text
+  - success
+  - danger
+  - radius-control
+  - label-sm
+  - label-md
+
+figma:
+  syncedWith: null

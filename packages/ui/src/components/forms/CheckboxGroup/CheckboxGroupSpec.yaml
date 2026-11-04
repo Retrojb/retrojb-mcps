@@ -1,0 +1,112 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: checkboxGroup
+name: CheckboxGroup
+category: forms
+status: shipped
+complexity: molecule
+description: >-
+  A fieldset and legend holding several checkboxes with one string[] value,
+  built from an options array, Checkbox children, or both. Its required means
+  "at least one", not "every box".
+
+files:
+  component: packages/ui/src/components/forms/CheckboxGroup/CheckboxGroup.tsx
+  context: packages/ui/src/components/forms/CheckboxGroup/context.ts
+  types: packages/ui/src/components/forms/CheckboxGroup/types.ts
+  styles: packages/ui/src/components/forms/CheckboxGroup/styles.ts
+  barrel: packages/ui/src/components/forms/CheckboxGroup/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/CheckboxGroup.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/CheckboxGroupAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: CheckboxGroup
+    kind: component
+  - name: checkboxGroupStyles
+    kind: styles
+  - name: ICheckboxGroupProps
+    kind: type
+  - name: ICheckboxGroupOption
+    kind: type
+  - name: CheckboxGroupVariants
+    kind: type
+  - name: CheckboxGroupContext
+    kind: context
+    internal: true
+    note: Falls back to null, so a Checkbox outside a group still works.
+  - name: useCheckboxGroupContext
+    kind: hook
+    internal: true
+  - name: ICheckboxGroupContextValue
+    kind: type
+    internal: true
+
+api:
+  extends:
+    "Omit<ComponentPropsWithRef<'fieldset'>, 'children' | 'defaultValue' |
+    'name'>"
+  required: [label]
+  props:
+    direction:
+      values: [responsive]
+      default: responsive
+      note: >-
+        Passed to DynamicContainer, which defines the full set. Responsive
+        stacks below sm and wraps in a row from sm up.
+    value:
+      type: "string[]"
+      note: Controlled. Pair with onValueChange.
+    defaultValue:
+      type: "string[]"
+      note: Uncontrolled. Read once, on mount.
+    onValueChange:
+      type: "function"
+      note: Called with a new string[] on every change, controlled or not.
+    required:
+      values: [true, false]
+      default: false
+      note: >-
+        At least one box must be checked. Native required is set on every member
+        only while none is checked.
+    selectAllLabel:
+      type: "ReactNode"
+      note: >-
+        Adds a parent checkbox, indeterminate while some options are checked. It
+        covers options only, not children.
+
+accessibility:
+  element: fieldset
+  role: group
+  keyboard: [Tab, Space]
+  wcag:
+    ["1.3.1", "1.3.2", "1.4.1", "1.4.3", "1.4.10", "3.3.1", "3.3.2", "4.1.2"]
+  notes:
+    - The legend is the group's accessible name; label is required.
+    - A disabled fieldset disables every control inside it, including children
+      the group knows nothing about.
+    - A group error turns every member invalid, so it is announced on each box.
+    - The browser message for required reads as if the first box were mandatory.
+      Pair it with a description saying "Choose at least one".
+
+usage:
+  standalone: true
+  composes: [checkbox, dynamicContainer]
+  nativeElement: true
+  guidance:
+    do:
+      - Give composed Checkbox children a value so they join the group.
+
+tokens:
+  - foreground
+  - foreground-muted
+  - danger
+  - label-md
+  - body-sm
+
+versioning: {}
+
+figma:
+  syncedWith: null

@@ -8,7 +8,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build": "storybook build"
   },
   "dependencies": {
     "@retrojb/ui": "*",
@@ -45,6 +45,7 @@
     "typescript": "6.0.3",
     "typescript-eslint": "8.68.0",
     "vite": "^8.2.2",
-    "vitest": "latest"
+    "vitest": "latest",
+    "yaml": "2.9.1"
   }
 }

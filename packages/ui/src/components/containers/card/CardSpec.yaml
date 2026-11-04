@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: card
+name: Card
+category: containers
+status: shipped
+complexity: molecule
+description: >-
+  A static bordered box for related content, built from optional header, title,
+  body and footer parts that take their type size from the card. It has no role;
+  use as="li" inside a list, and never wrap it in a link or button (that is
+  InteractiveCard).
+
+files:
+  component: packages/ui/src/components/containers/card/Card.tsx
+  parts: packages/ui/src/components/containers/card/parts.tsx
+  context: packages/ui/src/components/containers/card/context.ts
+  types: packages/ui/src/components/containers/card/types.ts
+  styles: packages/ui/src/components/containers/card/styles.ts
+  barrel: packages/ui/src/components/containers/card/index.ts
+  story: apps/retrojb-storybook/src/stories/containers/Card.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/containers/accessibilityDocs/CardAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Card
+    kind: component
+  - name: CardHeader
+    kind: part
+  - name: CardTitle
+    kind: part
+  - name: CardBody
+    kind: part
+  - name: CardFooter
+    kind: part
+    note: Pins to the bottom with mt-auto, so cards in a grid row line up.
+  - name: CardContext
+    kind: context
+    internal: true
+    note: Carries size from the card to CardTitle and CardBody.
+  - name: cardStyles
+    kind: styles
+    note: >-
+      One slot recipe shared with GraphicCard and InteractiveCard. Callable from
+      server components; cardStyles().raised() lifts a nested control above an
+      InteractiveCard overlay.
+  - name: ICardProps
+    kind: type
+  - name: ICardHeaderProps
+    kind: type
+  - name: ICardTitleProps
+    kind: type
+  - name: ICardBodyProps
+    kind: type
+  - name: ICardFooterProps
+    kind: type
+  - name: CardElement
+    kind: type
+  - name: CardHeadingLevel
+    kind: type
+  - name: CardVariants
+    kind: type
+
+api:
+  extends:
+    "ComponentPropsWithoutRef<'div'> without title, with ref typed as
+    HTMLElement"
+  required: []
+  variants:
+    size:
+      values: [sm, md]
+      default: md
+  props:
+    as:
+      values: [div, article, section, li]
+      default: div
+      note:
+        article for a self-contained item, section for a titled region, li when
+        the cards are a list.
+  parts:
+    CardTitle:
+      props:
+        level:
+          values: [2, 3, 4, 5, 6]
+          default: 3
+          note: Pick the level that keeps the page outline unbroken.
+
+accessibility:
+  element: "div | article | section | li"
+  wcag: ["1.3.1", "1.4.3", "1.4.6", "1.4.10", "1.4.11"]
+  notes:
+    - No ARIA role on a static card; semantics come from as.
+    - Put cards in a ul with as="li" so screen readers announce the count.
+    - The boundary uses border-strong (4.17 / 4.42:1); the fill alone has no
+      visible edge.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: interactiveCard
+      when: The whole card should be one link or button.
+    - id: graphicCard
+      when: The card leads with an image, video or SVG.
+  guidance:
+    do:
+      - Set CardTitle level from the heading above the cards.
+    dont:
+      - Wrap a Card in <a> or <button>.
+
+tokens:
+  - border-strong
+  - surface
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - radius-control
+  - title-md
+  - title-lg
+  - body-md
+  - spacing-10
+  - spacing-20
+  - spacing-30
+  - spacing-40
+
+# Not released yet: the 0.1.0 tree only had the Card template. Set
+# introducedIn when the next @retrojb/ui version ships.
+versioning: {}
+
+figma:
+  syncedWith: null

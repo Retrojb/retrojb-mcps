@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * Single element: the `<svg>` that the Lucide component renders. There are no
  * slots, because there is nothing to wrap — a wrapper `<span>` would only add a

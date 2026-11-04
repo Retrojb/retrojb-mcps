@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: checkbox
+name: Checkbox
+category: forms
+status: shipped
+complexity: atom
+description: >-
+  A labelled native checkbox with description and error text wired up. Inside a
+  CheckboxGroup it only joins the group if it has a value; without one it
+  behaves as a standalone checkbox.
+
+files:
+  component: packages/ui/src/components/forms/Checkbox/Checkbox.tsx
+  types: packages/ui/src/components/forms/Checkbox/types.ts
+  styles: packages/ui/src/components/forms/Checkbox/styles.ts
+  barrel: packages/ui/src/components/forms/Checkbox/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/Checkbox.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/CheckboxAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Checkbox
+    kind: component
+  - name: checkboxStyles
+    kind: styles
+  - name: ICheckboxProps
+    kind: type
+  - name: CheckboxVariants
+    kind: type
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'input'>, 'type' | 'value' | 'children'>"
+  required: [label]
+  variants:
+    invalid:
+      values: [true, false]
+      default: false
+      note:
+        Set from the error prop or from the parent CheckboxGroup, not passed
+        directly.
+  props:
+    indeterminate:
+      values: [true, false]
+      default: false
+      note: >-
+        Written to the DOM property after every render, since HTML has no
+        attribute for it. The input reports mixed natively.
+  defaults:
+    indeterminate: false
+
+accessibility:
+  element: input
+  role: checkbox
+  keyboard: [Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "3.3.1",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - The real input is drawn with appearance-none, so focus, clicks, FormData
+      and the reported state stay native.
+    - The label wraps the box and the text, so the whole row toggles it and is
+      at least 24px tall.
+    - Checked and error states do not rely on colour alone; a glyph and an
+      aria-invalid message accompany them.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: toggle
+      when: The change takes effect the moment it is flipped, with no Save step.
+
+tokens:
+  - accent
+  - accent-foreground
+  - border-strong
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - danger
+  - focus
+  - body-sm
+
+versioning: {}
+
+figma:
+  syncedWith: null

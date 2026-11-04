@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "@retrojb/ui component spec",
+  "description": "One component's entry in the component index. One file per exported component, named <Name>Spec.yaml and kept in the component's folder. All paths are relative to the repository root. Change history is not stored here: it lives in changesets and packages/ui/CHANGELOG.md.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "specVersion",
+    "id",
+    "name",
+    "category",
+    "status",
+    "complexity",
+    "description",
+    "files"
+  ],
+  "properties": {
+    "specVersion": {
+      "description": "Version of this file format. Bump when the schema changes shape.",
+      "const": 1
+    },
+    "id": {
+      "description": "Stable camelCase identifier: the exported name with a lower-case first letter. Other specs reference this in usage.composes and usage.alternatives.",
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9]*$"
+    },
+    "name": {
+      "description": "The exported component name, exactly as in packages/ui/src/index.ts. Must match the file name: <name>Spec.yaml.",
+      "type": "string",
+      "pattern": "^[A-Z][a-zA-Z0-9]*$"
+    },
+    "category": {
+      "description": "Top-level folder under packages/ui/src/components.",
+      "enum": [
+        "actions",
+        "alerts",
+        "containers",
+        "content",
+        "data",
+        "forms",
+        "navigation",
+        "typography"
+      ]
+    },
+    "subcategory": {
+      "description": "Second-level grouping, where one exists (typography: body, headings).",
+      "type": "string",
+      "pattern": "^[a-z][a-zA-Z0-9]*$"
+    },
+    "status": {
+      "description": "planned: empty scaffold. stub: markup but not exported. experimental: exported, API may change without a major bump. shipped: exported and stable. deprecated: still exported, scheduled for removal.",
+      "enum": ["planned", "stub", "experimental", "shipped", "deprecated"]
+    },
+    "complexity": {
+      "description": "Atomic design level. atom: one element. molecule: a few parts working together. organism: a section built from molecules.",
+      "enum": ["atom", "molecule", "organism"]
+    },
+    "description": {
+      "description": "One or two sentences: what the component is for, and the one thing a caller is most likely to get wrong.",
+      "type": "string",
+      "minLength": 1
+    },
+    "files": {
+      "description": "Where each artifact lives, relative to the repo root. null means it does not exist yet. The CI check fails when a non-null path is missing.",
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/pathOrNull" },
+      "properties": {
+        "component": { "$ref": "#/$defs/pathOrNull" },
+        "parts": { "$ref": "#/$defs/pathOrNull" },
+        "context": { "$ref": "#/$defs/pathOrNull" },
+        "types": { "$ref": "#/$defs/pathOrNull" },
+        "styles": { "$ref": "#/$defs/pathOrNull" },
+        "barrel": { "$ref": "#/$defs/pathOrNull" },
+        "story": { "$ref": "#/$defs/pathOrNull" },
+        "accessibilityDoc": { "$ref": "#/$defs/pathOrNull" },
+        "unitTests": { "$ref": "#/$defs/pathOrNull" },
+        "visualTests": { "$ref": "#/$defs/pathOrNull" },
+        "storybookDocComponent": { "$ref": "#/$defs/pathOrNull" }
+      }
+    },
+    "exports": {
+      "description": "Everything this component contributes to the package's public surface, plus internals worth knowing about.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "kind": {
+            "enum": [
+              "component",
+              "part",
+              "styles",
+              "type",
+              "context",
+              "hook",
+              "utility",
+              "constant"
+            ]
+          },
+          "internal": {
+            "description": "true when the symbol is not exported from @retrojb/ui.",
+            "type": "boolean",
+            "default": false
+          },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "api": {
+      "description": "The props a caller has to know about. Not every native attribute.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "extends": {
+          "description": "The native props type the component spreads, e.g. ComponentPropsWithRef<'button'>.",
+          "type": "string"
+        },
+        "required": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "variants": {
+          "description": "tailwind-variants keys from styles.ts.",
+          "$ref": "#/$defs/propMap"
+        },
+        "props": {
+          "description": "Non-variant props with a fixed set of values.",
+          "$ref": "#/$defs/propMap"
+        },
+        "defaults": {
+          "description": "Native props the component overrides the default of, e.g. type: button.",
+          "type": "object",
+          "additionalProperties": {
+            "type": ["string", "number", "boolean"]
+          }
+        },
+        "parts": {
+          "description": "Props for each compound part, keyed by the part's export name.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "required": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "props": { "$ref": "#/$defs/propMap" }
+            }
+          }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "element": {
+          "description": "The rendered root element, or a union when `as` changes it.",
+          "type": "string"
+        },
+        "role": {
+          "description": "The ARIA role, implicit or explicit.",
+          "type": "string"
+        },
+        "pattern": {
+          "description": "The WAI-ARIA APG pattern followed, if any.",
+          "type": "string"
+        },
+        "keyboard": {
+          "type": "array",
+          "items": { "type": "string" },
+          "uniqueItems": true
+        },
+        "wcag": {
+          "description": "WCAG 2.2 success criteria the implementation addresses.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[1-4]\\.[0-9]+\\.[0-9]+$"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "standalone": {
+          "description": "false when the component only makes sense inside a parent, e.g. Radio inside RadioGroup.",
+          "type": "boolean"
+        },
+        "composes": {
+          "description": "ids of the components this one renders. usedBy is derived from these, so it is not stored.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "nativeElement": {
+          "description": "true when the component renders the native element for its role rather than an ARIA re-implementation.",
+          "type": "boolean"
+        },
+        "alternatives": {
+          "description": "Components to use instead, and when.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "when"],
+            "properties": {
+              "id": { "$ref": "#/$defs/id" },
+              "when": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "guidance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "do": { "type": "array", "items": { "type": "string" } },
+            "dont": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "tokens": {
+      "description": "Semantic design tokens the styles use, without the utility prefix (accent, not bg-accent).",
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true
+    },
+    "versioning": {
+      "description": "Lifecycle markers only. Per-change history comes from changesets: name the component in the changeset summary and it shows up in packages/ui/CHANGELOG.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "introducedIn": { "$ref": "#/$defs/semver" },
+        "deprecatedIn": { "$ref": "#/$defs/semver" },
+        "replacedBy": { "$ref": "#/$defs/id" }
+      }
+    },
+    "figma": {
+      "description": "Figma linkage. Only syncedWith for now; node ids and edit history come later.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "syncedWith": {
+          "description": "The @retrojb/ui version the Figma component was last checked against. null when it has never been checked.",
+          "oneOf": [{ "$ref": "#/$defs/semver" }, { "type": "null" }]
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": { "enum": ["experimental", "shipped", "deprecated"] }
+        }
+      },
+      "then": {
+        "required": ["exports"],
+        "properties": {
+          "files": {
+            "type": "object",
+            "required": ["component"],
+            "properties": { "component": { "type": "string" } }
+          },
+          "exports": { "type": "array", "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "status": { "const": "deprecated" } } },
+      "then": {
+        "required": ["versioning"],
+        "properties": {
+          "versioning": {
+            "type": "object",
+            "required": ["deprecatedIn"],
+            "properties": { "deprecatedIn": { "$ref": "#/$defs/semver" } }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z][a-zA-Z0-9]*$" },
+    "semver": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$"
+    },
+    "pathOrNull": {
+      "type": ["string", "null"],
+      "pattern": "^(?!/)(?!.*\\.\\./).+$"
+    },
+    "propMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "oneOf": [
+          { "required": ["values"], "properties": { "values": {} } },
+          { "required": ["type"], "properties": { "type": {} } }
+        ],
+        "properties": {
+          "values": {
+            "description": "The allowed literal values, for a prop with a fixed set. Use `type` instead for a prop that takes any value of a type.",
+            "type": "array",
+            "items": { "type": ["string", "number", "boolean"] },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "type": {
+            "description": "The TypeScript type, for a prop that is not a fixed set of values: string, ReactNode, string[], (value: string) => void. Give exactly one of `values` or `type`.",
+            "type": "string",
+            "minLength": 1
+          },
+          "default": { "type": ["string", "number", "boolean"] },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

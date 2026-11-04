@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, type ReactElement } from "react";
 
-import { Button } from "../../interactions/Button";
+import { Button } from "../../actions/Button";
 import { ALERT_TONE_LABELS } from "../tone";
 import { browserAlertStyles } from "./styles";
 import type { IBrowserAlertProps } from "./types";

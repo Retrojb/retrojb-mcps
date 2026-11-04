@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * More slots than `Input` because there is more markup: the bordered box is a
  * wrapper rather than the input itself, so the clear and toggle buttons can sit

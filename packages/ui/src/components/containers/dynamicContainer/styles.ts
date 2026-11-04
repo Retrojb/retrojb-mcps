@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * One element, so a base class list rather than slots. `dynamicContainerStyles()`
  * is callable from a server component, which is the point of exporting it: a

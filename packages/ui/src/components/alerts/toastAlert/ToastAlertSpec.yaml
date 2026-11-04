@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: toastAlert
+name: ToastAlert
+category: alerts
+status: shipped
+complexity: molecule
+description: >-
+  A floating message that lives inside a ToastRegion. A toast cannot announce
+  itself, so mount the region once and append toasts into it; a ToastAlert
+  outside a region is never read out.
+
+files:
+  component: packages/ui/src/components/alerts/toastAlert/ToastAlert.tsx
+  parts: packages/ui/src/components/alerts/toastAlert/ToastRegion.tsx
+  types: packages/ui/src/components/alerts/toastAlert/types.ts
+  styles: packages/ui/src/components/alerts/toastAlert/styles.ts
+  barrel: packages/ui/src/components/alerts/toastAlert/index.ts
+  story: apps/retrojb-storybook/src/stories/alerts/ToastAlert.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/alerts/accessibilityDocs/ToastAlertAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: ToastAlert
+    kind: component
+  - name: ToastRegion
+    kind: part
+    note: >-
+      The live-region container, fixed to a viewport corner. Mount it once near
+      the app root and keep it mounted.
+  - name: toastAlertStyles
+    kind: styles
+  - name: toastRegionStyles
+    kind: styles
+  - name: IToastAlertProps
+    kind: type
+  - name: IToastRegionProps
+    kind: type
+  - name: ToastAlertVariants
+    kind: type
+  - name: ToastRegionVariants
+    kind: type
+  - name: AlertTone
+    kind: type
+    note: Shared by all alerts and ProgressBar. Defined in alerts/tone.ts.
+  - name: ALERT_TONE_LABELS
+    kind: constant
+    note: Default visible word per tone, used when `label` is not given.
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'div'>, 'children'>"
+  required: []
+  variants:
+    tone:
+      values: [info, success, danger]
+      default: info
+      note: Shared AlertTone union; there is no warning tone.
+  props:
+    duration:
+      type: "number | null"
+      note: >-
+        Milliseconds before the toast calls onDismiss. Omitted means it never
+        dismisses itself. Needs onDismiss to do anything.
+  defaults:
+    dismissLabel: Dismiss
+  parts:
+    ToastRegion:
+      required: [label]
+      props:
+        placement:
+          values: [top-start, top-end, bottom-start, bottom-end]
+          default: bottom-end
+        live:
+          values: [polite, assertive]
+          default: polite
+
+accessibility:
+  element: div
+  role: "none on the toast; region (with aria-live) on ToastRegion"
+  keyboard: [Tab, Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.2.1",
+      "2.4.6",
+      "2.4.7",
+      "2.5.8",
+      "4.1.2",
+      "4.1.3",
+    ]
+  notes:
+    - The toast has no role of its own. A role on it would nest a live region
+      inside the region's and the message would be read twice.
+    - ToastRegion uses aria-live with aria-atomic="false" and
+      aria-relevant="additions", not role="status", which would re-read every
+      toast when one changes.
+    - The region is a landmark only when named, so label is required.
+    - Auto-dismiss is off by default (2.2.1). When set, the timer pauses on
+      pointer hover and while focus is inside; touch users get no pause.
+
+usage:
+  standalone: false
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: inlineAlert
+      when: The message belongs next to its subject and should stay in the flow.
+    - id: browserAlert
+      when: >-
+        The user must deal with it before continuing; assertive toasts can
+        scroll off screen.
+  guidance:
+    do:
+      - Append new toasts to the end of the region's children.
+      - Keep errors until dismissed rather than setting a duration.
+
+tokens:
+  - surface
+  - foreground
+  - border-strong
+  - accent
+  - accent-text
+  - success
+  - danger
+  - foreground-muted
+  - focus
+  - radius-control
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

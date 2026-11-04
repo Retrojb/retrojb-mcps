@@ -1,0 +1,91 @@
+specVersion: 1
+package:
+  name: "@retrojb/ui"
+  version: "0.1.0"
+  sourceRoot: packages/ui/src/components
+  storiesRoot: apps/retrojb-storybook/src/stories
+components:
+  actions:
+    button:
+      id: button
+      name: Button
+      complexity: atom
+      status: shipped
+      description: >-
+        Triggers an action on the current page. Defaults to type="button" so it
+        never submits a surrounding form by accident.
+      parts: ["What Its made up of"]
+      files:
+        component: interactions/Button/Button.tsx
+        types: interactions/Button/types.ts
+        styles: interactions/Button/styles.ts
+        barrel: interactions/Button/index.ts
+        story: interactions/Button.stories.ts
+        accessibilityDoc: interactions/accessibilityDocs/ButtonAccessibility.mdx
+        unitTests: null
+        visualTests: null
+        storybookDocComponent: null
+      exports:
+        - { name: Button, kind: component }
+        - {
+            name: buttonStyle,
+            kind: styles,
+            note:
+              "Callable from server components; lives outside the 'use client'
+              module.",
+          }
+        - { name: IButtonProps, kind: type }
+        - { name: ButtonVariants, kind: type }
+      api:
+        extends: "ComponentPropsWithRef<'button'>"
+        required: [text]
+        variants:
+          intent:
+            { values: [primary, secondary, ghost, danger], default: primary }
+          size: { values: [sm, md, lg], default: md }
+          fullWidth: { values: [true, false], default: false }
+        defaults:
+          type: button
+      accessibility:
+        element: button
+        role: button
+        keyboard: [Enter, Space]
+        wcag: ["1.4.3", "1.4.11", "2.4.7", "2.4.13", "2.5.8"]
+        notes:
+          - "Only size lg (48px) meets the 44px AAA target in 2.5.5."
+      usages:
+        standalone: true
+        composes: []
+        nativeElement: true
+        guidance:
+          do:
+            - 'Pass type="submit" explicitly inside forms when submitting is
+              intended.'
+          dont:
+            - "Use Button for navigation. Use Link."
+      versioning:
+        introducedIn: "0.1.0"
+        changes:
+          - {
+              date: "2026-10-19",
+              version: "0.1.0",
+              breaking: false,
+              summary: "Initial release.",
+            }
+      figma:
+        fileKey: null
+        componentSetId: null
+        variantNodeIds: {}
+        syncedWith: null
+        changes: []
+      tokens:
+        [
+          accent,
+          accent-foreground,
+          accent-hover,
+          surface,
+          surface-raised,
+          border-strong,
+          danger,
+          focus,
+        ]

@@ -1,0 +1,178 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: tabGroup
+name: TabGroup
+category: navigation
+status: shipped
+complexity: molecule
+description: >-
+  A set of panels, one shown at a time, chosen from a row or column of tabs (APG
+  Tabs pattern). Pass defaultValue, or no tab is selected and no panel shows; no
+  part takes an id, because tab and panel ids are derived from value.
+
+files:
+  component: packages/ui/src/components/navigation/TabGroup/TabGroup.tsx
+  parts: packages/ui/src/components/navigation/TabGroup/parts.tsx
+  context: packages/ui/src/components/navigation/TabGroup/context.ts
+  types: packages/ui/src/components/navigation/TabGroup/types.ts
+  styles: packages/ui/src/components/navigation/TabGroup/styles.ts
+  barrel: packages/ui/src/components/navigation/TabGroup/index.ts
+  story: apps/retrojb-storybook/src/stories/navigation/TabGroup.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/navigation/accessibilityDocs/TabGroupAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: TabGroup
+    kind: component
+    note: Plain container with no role. Owns the selection.
+  - name: TabList
+    kind: part
+    note: The role="tablist" element, inside a scroll wrapper.
+  - name: Tab
+    kind: part
+    note: A button with role="tab". Defined in Tab.tsx, not parts.tsx.
+  - name: TabPanel
+    kind: part
+  - name: TabGroupContext
+    kind: context
+    internal: true
+    note: >-
+      Carries selection, variants and the generated base id to the parts. Parts
+      throw when rendered outside a TabGroup.
+  - name: tabGroupStyles
+    kind: styles
+  - name: ITabGroupProps
+    kind: type
+  - name: ITabListProps
+    kind: type
+  - name: ITabProps
+    kind: type
+  - name: ITabPanelProps
+    kind: type
+  - name: TabActivation
+    kind: type
+  - name: TabGroupVariants
+    kind: type
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'div'>, 'defaultValue'>"
+  required: [label]
+  variants:
+    orientation:
+      values: [horizontal, vertical]
+      default: horizontal
+    size:
+      values: [sm, md, lg]
+      default: md
+    fullWidth:
+      values: [true, false]
+      default: false
+      note: Only has an effect when horizontal.
+  props:
+    activation:
+      values: [automatic, manual]
+      default: automatic
+      note: >-
+        manual only moves focus on arrow keys; Enter or Space selects. Use it
+        when showing a panel is slow.
+    keepMounted:
+      values: [true, false]
+      default: true
+      note: >-
+        false renders inactive panels as nothing, and unselected tabs drop
+        aria-controls.
+    value:
+      type: "string"
+      note: >-
+        Controlled selected tab value, with onValueChange. defaultValue is the
+        uncontrolled form. onValueChange does not fire when the selected tab is
+        activated again.
+  parts:
+    TabList:
+      props:
+        rootClassName:
+          type: "string"
+          note: Class for the scroll wrapper; className goes to the tablist.
+    Tab:
+      required: [value]
+      props:
+        value:
+          type: "string"
+          note: Unique within the group; links the tab to its TabPanel.
+    TabPanel:
+      required: [value]
+      props:
+        value:
+          type: "string"
+          note: The value of the Tab that shows this panel.
+        tabIndex:
+          values: [0, -1]
+          default: 0
+          note: Pass -1 for a panel that starts with a control.
+
+accessibility:
+  element: "div > div[role=tablist] > button[role=tab]; div[role=tabpanel]"
+  role: tablist
+  pattern: Tabs (WAI-ARIA APG)
+  keyboard: [ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Home, End, Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.10",
+      "1.4.11",
+      "1.4.12",
+      "2.1.1",
+      "2.3.3",
+      "2.4.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "4.1.2",
+    ]
+  notes:
+    - label is the tablist's aria-label. Pass aria-labelledby to TabList when a
+      visible heading already names the tabs; it outranks aria-label.
+    - One tab stop (roving tabIndex). Arrow keys wrap and skip disabled tabs; Up
+      and Down replace Left and Right when vertical, and Left and Right swap
+      under dir="rtl".
+    - Inactive panels stay in the DOM with hidden by default, so aria-controls
+      always points at a real element.
+    - A tab's children render twice (visible and a hidden width reserver), so
+      avoid content with ids.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: segmentedControl
+      when: >-
+        The choices select a value (a view, a unit, a filter) rather than each
+        revealing a different panel of content.
+
+tokens:
+  - foreground-muted
+  - foreground
+  - accent
+  - accent-text
+  - border
+  - border-strong
+  - focus
+  - radius-control
+  - label-md
+  - label-lg
+  - spacing-10
+  - spacing-20
+  - spacing-30
+  - spacing-40
+  - spacing-60
+
+# The 0.1.0 tree only had navigation/Tabs/types.ts.
+versioning: {}
+
+figma:
+  syncedWith: null

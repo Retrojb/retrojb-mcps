@@ -1,0 +1,128 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: radioGroup
+name: RadioGroup
+category: forms
+status: shipped
+complexity: molecule
+description: >-
+  A fieldset with role="radiogroup" and a legend, holding native radios with one
+  string value, built from an options array, Radio children, or both. A name is
+  generated when omitted, and is submitted too; pass name when the value belongs
+  in FormData.
+
+files:
+  component: packages/ui/src/components/forms/RadioGroup/RadioGroup.tsx
+  context: packages/ui/src/components/forms/RadioGroup/context.ts
+  types: packages/ui/src/components/forms/RadioGroup/types.ts
+  styles: packages/ui/src/components/forms/RadioGroup/styles.ts
+  barrel: packages/ui/src/components/forms/RadioGroup/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/RadioGroup.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/RadioGroupAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: RadioGroup
+    kind: component
+  - name: radioGroupStyles
+    kind: styles
+  - name: IRadioGroupProps
+    kind: type
+  - name: IRadioGroupOption
+    kind: type
+  - name: RadioGroupVariants
+    kind: type
+  - name: RadioGroupContext
+    kind: context
+    internal: true
+    note: Falls back to null, so a Radio outside a group still renders.
+  - name: useRadioGroupContext
+    kind: hook
+    internal: true
+  - name: IRadioGroupContextValue
+    kind: type
+    internal: true
+
+api:
+  extends:
+    "Omit<ComponentPropsWithRef<'fieldset'>, 'children' | 'defaultValue' |
+    'name' | 'role'>"
+  required: [label]
+  variants:
+    labelHidden:
+      values: [true]
+      note: Hides the legend visually (sr-only). It stays the accessible name.
+  props:
+    orientation:
+      values: [vertical, horizontal]
+      default: vertical
+      note: Layout only. Arrow keys follow DOM order either way.
+    size:
+      values: [sm, md, lg]
+      note: Applies to every member Radio that does not set its own.
+    value:
+      type: "string | null"
+      note:
+        Controlled; null means nothing selected. undefined means uncontrolled.
+    defaultValue:
+      type: "string | null"
+      note: >-
+        Uncontrolled. Applied as each radio's defaultChecked, so form.reset()
+        restores it.
+    onValueChange:
+      type: "function"
+      note: Not called by form.reset(), which fires no change event.
+    required:
+      values: [true, false]
+      note: One radio must be selected.
+
+accessibility:
+  element: fieldset
+  role: radiogroup
+  keyboard: [Tab, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Home, End]
+  wcag:
+    [
+      "1.3.1",
+      "1.3.2",
+      "1.4.1",
+      "1.4.3",
+      "1.4.10",
+      "2.1.1",
+      "3.3.1",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - One tab stop; arrows are the browser's, Home and End are added.
+    - The legend is the accessible name, wired with aria-labelledby.
+    - A group error turns every member invalid, so it is announced on each
+      radio.
+
+usage:
+  standalone: true
+  composes: [dynamicContainer, radio]
+  nativeElement: true
+  alternatives:
+    - id: segmentedControl
+      when:
+        Two to five short labels that switch a view or mode, usually with an
+        immediate effect.
+    - id: comboBox
+      when: Many options, or space is tight and the options need no comparison.
+  guidance:
+    do:
+      - Use for up to about seven options a user should compare before choosing.
+
+tokens:
+  - foreground
+  - foreground-muted
+  - danger
+  - label-md
+  - body-sm
+
+versioning: {}
+
+figma:
+  syncedWith: null

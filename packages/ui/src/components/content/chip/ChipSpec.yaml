@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: chip
+name: Chip
+category: content
+status: shipped
+complexity: atom
+description: >-
+  A small toggle button for filter-style selection: pressing it switches it on
+  and off. It is the interactive sibling of Tag, which is a static label. It
+  only toggles; a removable chip with an "x" is a different contract and is not
+  built here.
+files:
+  component: packages/ui/src/components/content/chip/Chip.tsx
+  types: packages/ui/src/components/content/chip/types.ts
+  styles: packages/ui/src/components/content/chip/styles.ts
+  barrel: packages/ui/src/components/content/chip/index.ts
+  story: apps/retrojb-storybook/src/stories/content/Chip.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/content/accessibilityDocs/ChipAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/content/Chip.mdx
+exports:
+  - name: Chip
+    kind: component
+  - name: chipStyles
+    kind: styles
+    note: >-
+      Callable from a server component, to style an element this package does
+      not own.
+  - name: IChipProps
+    kind: type
+  - name: ChipVariants
+    kind: type
+api:
+  extends:
+    "ComponentPropsWithRef<'button'> without type, aria-pressed and children"
+  required: [text]
+  variants:
+    size:
+      values: [sm, md]
+      default: sm
+      note: >-
+        24 / 32px tall. Both meet the 24px minimum (2.5.8); neither meets the
+        44px target (2.5.5).
+  props:
+    selected:
+      values: [true, false]
+      note: >-
+        Controlled state. Pair it with onSelectedChange. Leave it undefined for
+        an uncontrolled chip.
+    defaultSelected:
+      values: [true, false]
+      default: false
+      note: Initial state of an uncontrolled chip. Defaults to false.
+    onSelectedChange:
+      type: "(selected: boolean) => void"
+      note: >-
+        Called with the next boolean on each toggle, controlled or not. Not
+        called when the caller's onClick calls preventDefault.
+  defaults:
+    type: button
+accessibility:
+  element: button
+  role: button
+  keyboard: [Enter, Space]
+  wcag:
+    [
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.5",
+      "2.5.8",
+      "4.1.2",
+    ]
+  notes:
+    - A native button with aria-pressed always set to true or false, so a screen
+      reader announces a toggle button and its state. The type is fixed at
+      button.
+    - The accessible name is the text prop.
+    - Selected is shown by a check icon as well as the accent fill, so colour is
+      not the only cue. The icon is decorative and hidden from assistive
+      technology.
+    - Unselected chips reserve no space for the icon, so a chip grows when it is
+      selected.
+    - There is no ChipGroup. A set of chips needs a role="group" (or a fieldset
+      with a legend) with an accessible name, supplied by the caller.
+    - Removable or input chips are out of scope. A chip with an "x" is two
+      controls with two names, and there is no onRemove.
+    - Disabled chips drop below 4.5:1, which 1.4.3 permits; the disabled
+      attribute also removes them from the tab order.
+    - Focus is a 2px outline at a 2px offset, which survives forced-colors mode.
+usage:
+  standalone: true
+  composes: [icon]
+  nativeElement: true
+  alternatives:
+    - id: tag
+      when: The label is static and cannot be pressed.
+    - id: toggle
+      when: >-
+        An on/off setting takes effect immediately and should be announced as a
+        switch.
+    - id: checkbox
+      when: The user makes a choice that is submitted with a form.
+    - id: segmentedControl
+      when: Exactly one of a few options must be chosen.
+    - id: button
+      when: Pressing runs an action rather than changing a state.
+  guidance:
+    do:
+      - Put a set of chips in an element with role="group" and an accessible
+        name, such as aria-labelledby pointing at a visible label.
+      - Make the text say what the chip filters by, such as "Open".
+    dont:
+      - Use a chip to run an action or navigate. Use Button or Link.
+      - Add a remove "x" inside a chip. That is a different component.
+      - Rely on the fill alone to show the state. The check icon is part of it.
+tokens:
+  - surface
+  - surface-raised
+  - foreground
+  - border-strong
+  - accent
+  - accent-hover
+  - accent-foreground
+  - focus
+  - radius-control
+  - label-sm
+  - label-md
+figma:
+  syncedWith: null

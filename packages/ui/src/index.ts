@@ -1,34 +1,9 @@
-/**
- * Shared React primitives, styled with Tailwind.
- *
- * The stylesheet is not imported by this module — a JS import cannot reliably
- * pull CSS into every bundler, and doing it here would make the package
- * unusable in any app that processes CSS separately. Import it once, at the
- * app's entry point:
- *
- * ```ts
- * import "@retrojb/ui/styles.css";
- * ```
- *
- * Each component is a directory under `components/<group>/<name>` holding the
- * component, its `styles.ts`, its `types.ts` and a barrel. The components are
- * client modules; the `styles.ts` beside them are not, so `buttonStyle()`,
- * `linkStyle()`, `inputStyle()`, `tableStyle()` and the `*AlertStyles()` can be
- * called from a server component to style an element this package does not own — a
- * router's `<Link>`, a `<textarea>` that has to match the inputs around it, a static
- * `<table>` with no TanStack instance behind it.
- *
- * Specifiers below are explicit files rather than directories. `./…/Button`
- * resolves under a bundler and nowhere else; `./…/Button/index.js` resolves
- * everywhere, and is what the emitted ESM in `dist` needs.
- */
-
 export {
   Button,
   buttonStyle,
   type IButtonProps,
   type ButtonVariants,
-} from "./components/interactions/Button";
+} from "./components/actions/Button";
 
 export {
   Link,
@@ -37,26 +12,6 @@ export {
   type LinkVariants,
 } from "./components/navigation/Link";
 
-/*
- * Tabs — the WAI-ARIA APG Tabs pattern, as compound parts.
- *
- * `TabGroup` is the container and owns the selection, controlled (`value` /
- * `onValueChange`) or not (`defaultValue`). Inside it, one `TabList` holds the
- * `Tab` elements and each `TabPanel` names the `value` of the tab that shows
- * it. No part takes an `id`: every tab and panel id is derived from the
- * group's `useId` and the shared `value`, so `aria-controls` and
- * `aria-labelledby` cannot drift. `label` is required — it is the tablist's
- * accessible name.
- *
- * One tab stop, arrow keys with wrap (Up / Down when `orientation="vertical"`,
- * swapped under `dir="rtl"`), Home / End, disabled tabs skipped.
- * `activation="manual"` makes the arrows move focus only, for panels that are
- * slow to show. Inactive panels stay mounted with `hidden` unless
- * `keepMounted={false}`.
- *
- * Tabs or SegmentedControl: see the note on `SegmentedControl` below. Tabs
- * reveal different panels of content; segments choose a value.
- */
 export {
   Tab,
   TabGroup,
@@ -69,7 +24,7 @@ export {
   type ITabProps,
   type TabActivation,
   type TabGroupVariants,
-} from "./components/navigation/Tabs";
+} from "./components/navigation/TabGroup";
 
 export {
   Input,
@@ -78,20 +33,6 @@ export {
   type InputVariants,
 } from "./components/forms/Input";
 
-/*
- * The checkbox pair.
- *
- * `Checkbox` is a native `<input type="checkbox">` drawn with `appearance-none`,
- * so focus, clicks, `FormData` and the reported state — `mixed` included, for
- * `indeterminate` — stay native. `label` is required, as on `Input`.
- *
- * `CheckboxGroup` is a `<fieldset>` + `<legend>` holding one `string[]` value,
- * controlled (`value` / `onValueChange`) or not (`defaultValue`). Build it from
- * an `options` array, from `<Checkbox value>` children joined through context,
- * or both. Its `required` means "at least one", which native `required` on the
- * individual boxes does not — see the note in `CheckboxGroup.tsx`. The layout is
- * `DynamicContainer`'s, below.
- */
 export {
   Checkbox,
   checkboxStyles,
@@ -107,20 +48,6 @@ export {
   type ICheckboxGroupProps,
 } from "./components/forms/CheckboxGroup";
 
-/*
- * Toggle — an on/off switch.
- *
- * A native `<input type="checkbox" role="switch">` drawn as the track, the same
- * `appearance-none` pattern as `Checkbox`, so `name`, `value`, `required`,
- * `checked` / `defaultChecked` / `onChange` and `form.reset()` are all native.
- * `label` is required; `labelPosition` defaults to `"start"`, the settings-list
- * layout with the switch at the end of the row.
- *
- * Toggle or Checkbox: a switch takes effect the moment it is flipped — Wi-Fi
- * on, dark mode off — and is announced as "on" / "off". A checkbox is a choice
- * the user makes and then submits with a form, and is announced as "checked".
- * If nothing happens until a Save button is pressed, use a `Checkbox`.
- */
 export {
   Toggle,
   toggleStyles,
@@ -128,21 +55,6 @@ export {
   type ToggleVariants,
 } from "./components/forms/Toggle";
 
-/*
- * SegmentedControl — one choice from a short row of mutually exclusive
- * segments, "Day | Week | Month".
- *
- * A `<fieldset role="radiogroup">` of native radios drawn with
- * `appearance-none`, so one tab stop, wrapping arrow keys that skip disabled
- * segments, `FormData` and `disabled` on the whole group are the browser's;
- * Home / End is added on top. `label` is required — it is the group's
- * accessible name — and `labelHidden` hides it visually. Controlled with
- * `value` / `onValueChange` or uncontrolled with `defaultValue`, as on
- * `CheckboxGroup`.
- *
- * SegmentedControl or Tabs: segments choose a value — a view, a unit, a filter.
- * If each choice reveals a different panel of content, that is a tab list.
- */
 export {
   SegmentedControl,
   segmentedControlStyles,
@@ -151,30 +63,6 @@ export {
   type SegmentedControlVariants,
 } from "./components/forms/SegmentedControl";
 
-/*
- * The radio pair.
- *
- * `Radio` is a native `<input type="radio">` drawn with `appearance-none`, as
- * `Checkbox` is, with a dot as well as a fill for the checked state. `label`
- * and `value` are required. It is meant to sit inside a `RadioGroup`, which
- * gives it its `name`, required and invalid state, and size.
- *
- * `RadioGroup` is a `<fieldset role="radiogroup">` + `<legend>` holding one
- * `string` value, built from an `options` array, from `<Radio>` children, or
- * both. Controlled with `value` / `onValueChange`; uncontrolled with
- * `defaultValue`, in which case the DOM owns the selection and `form.reset()`
- * restores it — unlike `CheckboxGroup` and `SegmentedControl`. Arrow keys are
- * the browser's; Home / End are added, as on `SegmentedControl`. `name` is
- * generated when omitted. `orientation` is `"vertical"` by default.
- *
- * RadioGroup, SegmentedControl, or a select: all three choose one value. A
- * radio group shows every option with room for a description, and suits up to
- * about seven options a user should compare before choosing. A segmented
- * control is a compact row of two to five short labels that switch a view or
- * mode, usually with an immediate effect. Past that, or where space is tight
- * and the options need no comparison, a select-style control (`ComboBox`) keeps
- * the list out of the way until it is needed.
- */
 export {
   Radio,
   radioStyles,
@@ -190,24 +78,6 @@ export {
   type RadioGroupVariants,
 } from "./components/forms/RadioGroup";
 
-/*
- * The combobox pair.
- *
- * Two components rather than one with a `variant` prop, for the same reason the
- * alerts below are three. What differs is not appearance — they draw the same
- * box from the same `comboBoxStyle` — but the contract:
- *
- *   - `ComboBox` is a form control. The user has to end up on one of the
- *     options, free text is reverted on blur, and the committed value reaches
- *     `FormData` through a hidden input.
- *   - `SearchBox` is navigational. The raw query is a valid outcome, so Enter
- *     submits it, text survives a blur, and there is no committed value at all —
- *     `value` and `name` are not on its props. It is a `search` landmark, which a
- *     form control must never be.
- *
- * A style variant cannot switch between those. The behaviour they do share lives
- * in `useComboBox`, and both are built on it.
- */
 export {
   ComboBox,
   comboBoxStyle,
@@ -218,19 +88,6 @@ export {
 
 export { SearchBox, type ISearchBoxProps } from "./components/forms/SearchBox";
 
-/*
- * The behavioural core, exported so the markup can be replaced without
- * reimplementing the keyboard and ARIA contract — grouped options under
- * headings, multi-select with removable chips, a command palette whose popup is a
- * dialog. It returns prop getters rather than rendering anything, and is the
- * behavioural counterpart to exporting `comboBoxStyle` for markup this package
- * does not own.
- *
- * `comboBoxFilter` and `highlightSegments` come with it. The matcher is a pure
- * module with no React in it, so a server component ranking a static result list
- * can call it directly; `highlightSegments` turns the ranges it returns into runs
- * of text to mark up.
- */
 export {
   useComboBox,
   DEFAULT_LABELS as COMBOBOX_DEFAULT_LABELS,
@@ -254,17 +111,6 @@ export {
   type IMatchRange,
 } from "./lib/filter";
 
-/*
- * The parts are exported flat as well as on `Table` itself. `<Table.Head>` reads
- * better in markup; the named exports are what you want when a part has to be
- * passed somewhere or wrapped.
- *
- * `@tanstack/react-table` is a peer dependency, not a bundled one. The instance
- * type crosses this boundary — `table` is a `Table<TFeatures, TData>` built by
- * the app's own `useTable` call — and two copies of the package in one tree means
- * two structurally identical types that TypeScript will not accept for each
- * other, with an error that does not name the cause.
- */
 export {
   Table,
   TableBody,
@@ -286,26 +132,6 @@ export {
   type TableVariants,
 } from "./components/data/Table";
 
-/*
- * The alerts.
- *
- * Three components rather than one with a `variant` prop, because the thing that
- * differs between them is not appearance — they draw the same box — but how and
- * whether a message reaches assistive technology. That is not something a style
- * variant can switch between:
- *
- *   - `InlineAlert` sits in the page flow. Its live region stays mounted while there
- *     is nothing to say, which is what makes a message that arrives later
- *     announceable at all.
- *   - `ToastAlert` floats, and cannot announce itself — a live region only reports
- *     changes inside a region already being watched. `ToastRegion` is that region,
- *     mounted once and kept, with toasts appended into it.
- *   - `BrowserAlert` interrupts. A real `<dialog>` opened with `showModal()`, so the
- *     focus trap, the inert background, Escape-to-close and focus restoration come
- *     from the platform rather than from a `keydown` handler.
- *
- * `AlertTone` is shared by all three and is the union their `tone` props accept.
- */
 export {
   InlineAlert,
   inlineAlertStyles,
@@ -334,19 +160,6 @@ export {
 
 export { ALERT_TONE_LABELS, type AlertTone } from "./components/alerts/tone";
 
-/*
- * ProgressBar — a labelled bar for work in progress, determinate with `value`
- * (on a `min`–`max` range, 0–100 by default, clamped) and indeterminate without.
- *
- * Here with the alerts because it is the same kind of thing — status, not
- * input — and takes the same `tone` union. A `<div role="progressbar">`
- * rather than `<progress>`, for styling, reduced-motion and forced-colors
- * control and a real `min`; the reasoning is in `ProgressBar.tsx`. `label` is
- * required and is the accessible name; `valueText` sets `aria-valuetext`, and
- * `showValue` / `formatValue` draw a readout. It is deliberately not a live
- * region: announce completion with an `InlineAlert`, and mark the loading
- * region `aria-busy`.
- */
 export {
   ProgressBar,
   progressBarStyles,
@@ -354,23 +167,7 @@ export {
   type IProgressBarValue,
   type ProgressBarVariants,
 } from "./components/alerts/progressBar";
-/*
- * Icon — a Lucide icon at the package's 16 / 20 / 24px scale (`sm` / `md` /
- * `lg`), coloured with `currentColor` unless `tone` is set.
- *
- * Decorative by default: `aria-hidden="true"` and `focusable="false"`. Pass
- * `label` to make it meaningful, which renders `role="img"` + `aria-label`;
- * the props are a union, so `aria-label` cannot be set any other way. An
- * icon-only button takes its name from `aria-label` on the button, with the
- * icon left decorative. `icon` takes a component, not a string name, so only
- * the icons an app imports are bundled. `mirrorInRtl` flips directional icons
- * under `dir="rtl"`.
- *
- * The icons themselves come from the `@retrojb/ui/icons` subpath, which
- * re-exports `lucide-react`. They are not in this barrel because Lucide's
- * names collide with ours (`Link`, `Table`, `Radio`, `Code`, `List`, `Icon`);
- * see `src/icons.ts`.
- */
+
 export {
   Icon,
   iconStyles,
@@ -382,25 +179,38 @@ export {
 } from "./components/content/icon";
 
 /*
- * The cards.
+ * Tag — a short, non-interactive label that categorises an item or states its
+ * status.
  *
- * Three components on one `cardStyles` slot recipe, split where the contract
- * differs and not where only the layout does:
- *
- *   - `Card` is a static box. No role; `as` supplies `article`, `section` or `li`
- *     semantics where they apply.
- *   - `InteractiveCard` is one click target with one real control in it — an `<a>`
- *     with `href`, a `<button>` without — whose `::after` is stretched over the
- *     card. `title` is required because it is that control's accessible name;
- *     secondary controls go in `actions`, above the overlay.
- *   - `GraphicCard` adds a media region and an `orientation` variant. Horizontal
- *     collapses to vertical by *container* width, so the card lays out for the
- *     space it is given rather than for the viewport.
- *
- * `CardHeader`, `CardTitle`, `CardBody` and `CardFooter` are optional parts for
- * `Card` and `GraphicCard`. The specifier names the barrel file explicitly, per the
- * note at the top of this module; `tsc-alias` adds the `.js` on the way to `dist`.
+ * Renders a plain `<span>`: no role, no tab stop, no handlers. `Chip` is the
+ * interactive sibling for filters and toggles; reach for it when the label can
+ * be pressed. There is no `warning` tone because the palette has no `--warning`
+ * token.
  */
+export {
+  Tag,
+  tagStyles,
+  type ITagProps,
+  type TagVariants,
+} from "./components/content/tag";
+
+/*
+ * Chip — a small toggle button for filter-style selection.
+ *
+ * Renders one `<button type="button">` with `aria-pressed`, and a check icon
+ * when selected so the state is not colour alone. `Tag` is the static sibling:
+ * use it for a label that cannot be pressed. There is no `onRemove` (a
+ * removable chip is a different contract) and no `ChipGroup`; wrap a set of
+ * chips in a `role="group"` with an accessible name. `selected` and
+ * `onSelectedChange` control it, `defaultSelected` leaves the state to the chip.
+ */
+export {
+  Chip,
+  chipStyles,
+  type ChipVariants,
+  type IChipProps,
+} from "./components/content/chip";
+
 export {
   Card,
   CardBody,
@@ -424,15 +234,6 @@ export {
   type IInteractiveCardProps,
 } from "./components/containers/card/index";
 
-/*
- * DynamicContainer — a flex layout that stacks below the `sm` breakpoint and
- * lays out in a wrapping row from `sm` up.
- *
- * `direction` pins it to one axis instead; `gap` and `align` map to the spacing
- * tokens and `items-*`. The breakpoint is the viewport's by default and the
- * nearest `@container` ancestor's with `responsiveTo="container"`. `as` renders
- * a `ul` or `ol` (with `role="list"` restored) when the items are a list.
- */
 export {
   DynamicContainer,
   dynamicContainerStyles,
@@ -441,23 +242,6 @@ export {
   type IDynamicContainerProps,
 } from "./components/containers/dynamicContainer";
 
-/*
- * Typography — headings and body text on the semantic type roles.
- *
- * The exception to "the components are client modules" above: nothing in this
- * group has `"use client"`, because none of it uses a hook. Each renders in a
- * server component as-is.
- *
- * Five named headings rather than one `<Heading size>`. Each fixes a level and
- * a role that belong together — `PageHeading` is an `<h1>` at `heading-xl`,
- * `SubHeading` an `<h3>` at `heading-sm` — and takes `level` and `size` to
- * override either independently. Choose `level` from the outline and never to
- * get a size (1.3.1); the reasoning is in `components/typography/index.ts`.
- *
- * `CodeBlock` requires `label`: it is a keyboard-focusable scroll region, and
- * the label is its accessible name. `Reference` is an attributed quotation —
- * `<figure>`, `<blockquote>`, `<figcaption>` — not an inline `<cite>`.
- */
 export {
   Code,
   CodeBlock,

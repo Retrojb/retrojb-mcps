@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * This one is the clearest case for the split. `Link` renders a plain `<a>`,
  * which in a Next.js app means a full page load rather than a client-side

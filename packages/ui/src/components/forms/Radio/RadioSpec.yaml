@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: radio
+name: Radio
+category: forms
+status: shipped
+complexity: atom
+description: >-
+  A labelled native radio button, meant to sit inside a RadioGroup. value is
+  required, because a radio without one submits "on" and cannot be told apart
+  from its siblings.
+
+files:
+  component: packages/ui/src/components/forms/Radio/Radio.tsx
+  types: packages/ui/src/components/forms/Radio/types.ts
+  styles: packages/ui/src/components/forms/Radio/styles.ts
+  barrel: packages/ui/src/components/forms/Radio/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/Radio.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/RadioAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Radio
+    kind: component
+  - name: radioStyles
+    kind: styles
+  - name: IRadioProps
+    kind: type
+  - name: RadioVariants
+    kind: type
+
+api:
+  extends:
+    "Omit<ComponentPropsWithRef<'input'>, 'type' | 'value' | 'children' |
+    'size'>"
+  required: [label, value]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note:
+        Inside a RadioGroup it falls back to the group's size; set on the Radio,
+        it wins.
+    invalid:
+      values: [true, false]
+      default: false
+      note: Derived from error or from the group, not a prop on Radio.
+
+accessibility:
+  element: input
+  role: radio
+  keyboard: [Tab, ArrowUp, ArrowDown, ArrowLeft, ArrowRight]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.1.1",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - Radios outside a group that share a name still form a native group, but
+      have no group label for a screen reader user.
+    - The label wraps the circle and the text, so the whole row selects it.
+
+usage:
+  standalone: false
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Render inside a RadioGroup, which supplies name, label, required,
+        invalid and size.
+    dont:
+      - Put an error on a single Radio inside a group. Use the group's error.
+
+tokens:
+  - accent
+  - accent-foreground
+  - border-strong
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - danger
+  - focus
+  - body-sm
+  - body-md
+
+versioning: {}
+
+figma:
+  syncedWith: null

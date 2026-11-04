@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: icon
+name: Icon
+category: content
+status: shipped
+complexity: atom
+description: >-
+  Draws a Lucide icon at 16, 20 or 24px. It is decorative (hidden from assistive
+  technology) unless label is set, which makes it a named image.
+
+files:
+  component: packages/ui/src/components/content/icon/Icon.tsx
+  types: packages/ui/src/components/content/icon/types.ts
+  styles: packages/ui/src/components/content/icon/styles.ts
+  barrel: packages/ui/src/components/content/icon/index.ts
+  story: apps/retrojb-storybook/src/stories/content/Icon.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/content/accessibilityDocs/IconAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Icon
+    kind: component
+    note: >-
+      Also re-exported from the @retrojb/ui/icons subpath, replacing Lucide's
+      own low-level Icon there.
+  - name: iconStyles
+    kind: styles
+  - name: IIconProps
+    kind: type
+    note: Union of IIconDecorativeProps and IIconLabelledProps.
+  - name: IIconDecorativeProps
+    kind: type
+  - name: IIconLabelledProps
+    kind: type
+  - name: IconTone
+    kind: type
+  - name: IconVariants
+    kind: type
+  - name: ICON_SIZE_PX
+    kind: constant
+    internal: true
+    note:
+      Edge length in CSS pixels per size, set as width and height attributes.
+  - name: ICON_STROKE_WIDTH
+    kind: constant
+    internal: true
+    note:
+      Stroke width per size in Lucide's 24-unit grid. sm is 2.25, md and lg are
+      2.
+
+api:
+  extends:
+    "ComponentPropsWithRef<'svg'> without role, tabIndex, children, focusable
+    and the aria-label, aria-labelledby and aria-hidden attributes"
+  required: [icon]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: 16 / 20 / 24px.
+    tone:
+      values: [inherit, muted, info, success, danger]
+      default: inherit
+      note: inherit leaves the stroke as the surrounding text colour.
+    mirrorInRtl:
+      values: [true, false]
+      default: false
+      note:
+        Flips the icon under dir="rtl". For icons that point along the reading
+        order.
+  props:
+    label:
+      type: "string"
+      note: >-
+        Optional. When set, the icon is role="img" with this as aria-label.
+        Blank or whitespace-only counts as no label.
+
+accessibility:
+  element: svg
+  role: img (only when label is set; otherwise aria-hidden)
+  wcag: ["1.1.1", "1.3.3", "1.4.1", "1.4.11", "2.4.7", "2.5.8", "4.1.2"]
+  notes:
+    - Decorative by default, with aria-hidden="true" and focusable="false".
+    - aria-label, aria-labelledby and aria-hidden are typed as never. label is
+      the only way to name an icon.
+    - The icon is never a tab stop. An icon-only button takes its name from
+      aria-label on the button, and the icon inside stays decorative.
+    - Pass an already-translated label; aria-label is not picked up by some
+      page-translation tools.
+    - forced-colors:text-current makes toned icons follow the forced system
+      colour.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  guidance:
+    do:
+      - Import the icon component from @retrojb/ui/icons and pass it as icon.
+      - Leave the icon decorative when text or a labelled control already says
+        the same thing.
+    dont:
+      - Pass a string name as icon. It takes a component, so only imported icons
+        are bundled.
+
+tokens:
+  - foreground-muted
+  - accent
+  - success
+  - danger
+  - spacing-40
+  - spacing-50
+  - spacing-60
+
+# Not released yet: the 0.1.0 tree had no icon folder.
+versioning: {}
+
+figma:
+  syncedWith: null

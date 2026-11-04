@@ -1,6 +1,6 @@
 /*
  * The variant definitions for `List` and `ListItem`, in their own module beside
- * the components — see the note in `interactions/Button/styles.ts`. Neither
+ * the components — see the note in `actions/Button/styles.ts`. Neither
  * component has `"use client"`.
  *
  *

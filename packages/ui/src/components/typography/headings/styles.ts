@@ -5,7 +5,7 @@
  *
  * No `"use client"` here or anywhere in `typography/`. None of these components
  * uses a hook, so they render in a server component as-is, and the style
- * functions are callable from one too — see `interactions/Button/styles.ts` for
+ * functions are callable from one too — see `actions/Button/styles.ts` for
  * why the directive would get in the way of that.
  *
  *

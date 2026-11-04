@@ -1,0 +1,71 @@
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as ButtonStories from "./Button.stories";
+import specSource from "../../../../../packages/ui/src/components/actions/Button/ButtonSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={ButtonStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### Intents
+
+<Description of={ButtonStories.Intents} />
+
+<Canvas of={ButtonStories.Intents} />
+
+### Sizes
+
+<Description of={ButtonStories.Sizes} />
+
+<Canvas of={ButtonStories.Sizes} />
+
+### Full width
+
+<Description of={ButtonStories.FullWidth} />
+
+<Canvas of={ButtonStories.FullWidth} />
+
+### Disabled
+
+<Description of={ButtonStories.Disabled} />
+
+<Canvas of={ButtonStories.Disabled} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/actions-button-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

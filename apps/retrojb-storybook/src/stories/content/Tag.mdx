@@ -1,0 +1,65 @@
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as TagStories from "./Tag.stories";
+import specSource from "../../../../../packages/ui/src/components/content/tag/TagSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={TagStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### Tones
+
+<Description of={TagStories.Tones} />
+
+<Canvas of={TagStories.Tones} />
+
+### Sizes
+
+<Description of={TagStories.Sizes} />
+
+<Canvas of={TagStories.Sizes} />
+
+### Statuses
+
+<Description of={TagStories.Statuses} />
+
+<Canvas of={TagStories.Statuses} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/content-tag-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

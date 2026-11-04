@@ -1,0 +1,63 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: code
+name: Code
+category: typography
+subcategory: body
+status: shipped
+complexity: atom
+description: >-
+  Inline code for an identifier, a command or a value. It is for a fragment
+  inside a line; use CodeBlock for anything longer.
+
+files:
+  component: packages/ui/src/components/typography/body/code/Code.tsx
+  types: packages/ui/src/components/typography/body/code/types.ts
+  styles: packages/ui/src/components/typography/body/code/styles.ts
+  barrel: packages/ui/src/components/typography/body/code/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Code.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Code
+    kind: component
+  - name: codeStyles
+    kind: styles
+  - name: ICodeProps
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'code'>"
+
+accessibility:
+  element: code
+  keyboard: []
+  wcag: ["1.3.1", "1.4.3", "1.4.4", "1.4.10", "1.4.11"]
+  notes:
+    - Font size is 0.9em, so it follows the surrounding text, including inside a
+      heading.
+    - The border is decorative (--border, below 3:1) on purpose. The monospace
+      face identifies the code, so 1.4.11 does not apply.
+    - Wraps with wrap-break-word so a long identifier does not overflow at 320
+      CSS px.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: codeBlock
+      when: The code spans more than a line or needs its whitespace preserved.
+
+tokens:
+  - surface-raised
+  - foreground
+  - border
+
+versioning: {}
+
+figma:
+  syncedWith: null

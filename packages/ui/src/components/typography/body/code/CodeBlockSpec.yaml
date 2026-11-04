@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: codeBlock
+name: CodeBlock
+category: typography
+subcategory: body
+status: shipped
+complexity: atom
+description: >-
+  A block of code in a pre and code pair that scrolls sideways. It is always a
+  keyboard-focusable region, so label is required to name it.
+
+files:
+  component: packages/ui/src/components/typography/body/code/CodeBlock.tsx
+  types: packages/ui/src/components/typography/body/code/types.ts
+  styles: packages/ui/src/components/typography/body/code/styles.ts
+  barrel: packages/ui/src/components/typography/body/code/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Code.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: CodeBlock
+    kind: component
+  - name: codeBlockStyles
+    kind: styles
+    note: Slots are root (the pre) and code (the inner code element).
+  - name: ICodeBlockProps
+    kind: type
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'pre'>, 'children'>"
+  required: [label]
+  props:
+    tabIndex:
+      values: [0, -1]
+      default: 0
+      note: Pass -1 only for a block known never to scroll.
+
+accessibility:
+  element: pre
+  role: region
+  keyboard: [Tab, Arrow keys (scroll while focused)]
+  wcag:
+    ["1.3.1", "1.4.3", "1.4.10", "1.4.11", "2.1.1", "2.4.7", "2.4.13", "4.1.2"]
+  notes:
+    - tabIndex 0 lets a keyboard user focus the pre and scroll it (2.1.1). It is
+      focusable even when it does not overflow, because overflow depends on
+      viewport and text size.
+    - role region with aria-label from label gives the added tab stop a name.
+    - Scrolls sideways instead of wrapping. 1.4.10 exempts code as content that
+      needs two-dimensional layout.
+    - The edge uses --border-strong because the block is a focusable region.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: code
+      when: The code is a fragment inside a line of text.
+  guidance:
+    do:
+      - Give label a description of the contents, such as Install command.
+    dont:
+      - Leave the block focusable if you know it never scrolls. Pass tabIndex -1
+        instead.
+
+tokens:
+  - surface-raised
+  - foreground
+  - border-strong
+  - focus
+  - radius-control
+
+versioning: {}
+
+figma:
+  syncedWith: null

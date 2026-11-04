@@ -1,0 +1,180 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: comboBox
+name: ComboBox
+category: forms
+status: shipped
+complexity: molecule
+description: >-
+  A labelled text field with a filtered listbox, for choosing one option from a
+  set. It is a form control, not a search field: the user must end on an option,
+  free text is reverted on blur, and Enter commits the active option instead of
+  submitting.
+
+files:
+  component: packages/ui/src/components/forms/ComboBox/ComboBox.tsx
+  parts: packages/ui/src/components/forms/ComboBox/OptionContent.tsx
+  types: packages/ui/src/components/forms/ComboBox/types.ts
+  styles: packages/ui/src/components/forms/ComboBox/styles.ts
+  barrel: packages/ui/src/components/forms/ComboBox/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/ComboBox.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/ComboBoxAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: ComboBox
+    kind: component
+  - name: OptionContent
+    kind: component
+    internal: true
+    note:
+      Default option row; hides highlighted fragments from assistive technology.
+  - name: comboBoxStyle
+    kind: styles
+    note: >-
+      Shared with SearchBox. Use comboBoxStyle().control() on the input and the
+      other slots on your own markup when building on useComboBox.
+  - name: useComboBox
+    kind: hook
+    note: >-
+      Lives in packages/ui/src/hooks/useComboBox.ts. Returns prop getters for
+      the keyboard and ARIA contract; ComboBox and SearchBox are built on it.
+  - name: comboBoxFilter
+    kind: utility
+    note: >-
+      Lives in packages/ui/src/lib/filter.ts. A pure matcher with no React, so a
+      server component can rank a static list.
+  - name: highlightSegments
+    kind: utility
+    note: >-
+      Lives in packages/ui/src/lib/filter.ts. Turns the match ranges into runs
+      of text to mark up.
+  - name: IComboBoxProps
+    kind: type
+  - name: IComboBoxOptionState
+    kind: type
+  - name: ComboBoxVariants
+    kind: type
+  - name: IUseComboBoxOptions
+    kind: type
+  - name: IUseComboBoxResult
+    kind: type
+  - name: ComboBoxFilter
+    kind: type
+  - name: IComboBoxMatch
+    kind: type
+
+api:
+  extends:
+    "IUseComboBoxOptions<TOption> without inputRef, plus the size, labelHidden
+    and placement variants"
+  required: [label]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: 32 / 40 / 48px tall, matching Button and Input. Only lg meets 2.5.5.
+    labelHidden:
+      values: [true]
+      note: Hides the label visually; it stays the input's accessible name.
+    placement:
+      values: [auto, bottom, top]
+      default: auto
+      note: >-
+        auto uses CSS anchor positioning to flip where supported; bottom and top
+        pin the popup.
+  props:
+    autocomplete:
+      values: [none, list, both]
+    blurBehaviour:
+      values: [revert, clear, keep]
+      note: What happens to an uncommitted query on blur.
+  defaults:
+    showClear: true
+    showToggle: true
+
+accessibility:
+  element: input
+  role: combobox
+  pattern: Combobox (WAI-ARIA APG)
+  keyboard:
+    [
+      ArrowDown,
+      ArrowUp,
+      Alt+ArrowDown,
+      Alt+ArrowUp,
+      PageDown,
+      PageUp,
+      Enter,
+      Escape,
+      Tab,
+    ]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "1.4.13",
+      "2.1.1",
+      "2.1.2",
+      "2.3.3",
+      "2.4.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.5",
+      "2.5.8",
+      "3.2.2",
+      "3.3.1",
+      "3.3.2",
+      "4.1.2",
+      "4.1.3",
+    ]
+  notes:
+    - DOM focus stays on the input; the highlighted option is named by
+      aria-activedescendant.
+    - Value and inputValue are separate state. value is the committed selection
+      and reaches FormData through a hidden input when name is set.
+    - Clear and toggle buttons are tabIndex -1, so the field is one tab stop.
+    - A permanently mounted role="status" region announces the result count.
+    - Escape and Enter only stop the event when they act, so a ComboBox inside a
+      BrowserAlert does not trap the dialog's Escape.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: searchBox
+      when: >-
+        The raw query is a valid outcome (site search, filter box): Enter
+        submits it, text survives blur and there is no committed value.
+  guidance:
+    do:
+      - Reach for useComboBox when the markup does not fit (grouped options,
+        multi-select, a popup rendered as a dialog).
+    dont:
+      - Use it as a search field.
+
+tokens:
+  - surface
+  - surface-raised
+  - border-strong
+  - foreground
+  - foreground-muted
+  - accent
+  - accent-text
+  - primary-3
+  - danger
+  - focus
+  - radius-control
+  - label-md
+  - body-sm
+  - body-md
+
+versioning: {}
+
+figma:
+  syncedWith: null

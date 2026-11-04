@@ -1,0 +1,87 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: reference
+name: Reference
+category: typography
+subcategory: body
+status: shipped
+complexity: molecule
+description: >-
+  An attributed quotation: a figure around a blockquote and a figcaption. Put
+  the person in attribution and the title of the work in work, since the cite
+  element is for titles and not names.
+
+files:
+  component: packages/ui/src/components/typography/body/reference/Reference.tsx
+  types: packages/ui/src/components/typography/body/reference/types.ts
+  styles: packages/ui/src/components/typography/body/reference/styles.ts
+  barrel: packages/ui/src/components/typography/body/reference/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Reference.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Reference
+    kind: component
+  - name: referenceStyles
+    kind: styles
+    note: Slots are root, quote, attribution and work.
+  - name: IReferenceProps
+    kind: type
+  - name: ReferenceVariants
+    kind: type
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'figure'>, 'children'>"
+  required: [children]
+  variants:
+    size:
+      values: [lg, md]
+      default: md
+      note: Sizes the quotation only. The attribution stays body-sm.
+  props:
+    attribution:
+      type: "ReactNode"
+      note: Who said it. Rendered in the figcaption, outside the quotation.
+    work:
+      type: "ReactNode"
+      note: Title of the work, rendered in a cite element.
+    cite:
+      type: "string"
+      note: Source URL on the blockquote. Not exposed to users.
+
+accessibility:
+  element: figure
+  keyboard: []
+  wcag: ["1.3.1", "1.4.1", "1.4.3", "1.4.11"]
+  notes:
+    - The attribution sits outside the blockquote so it is not read or copied as
+      part of the quotation.
+    - Without attribution or work there is no figcaption.
+    - The leading dash is aria-hidden.
+    - The cite URL is machine-readable only. Put a visible Link in work or
+      attribution if readers should follow it.
+    - The start-edge bar uses --border-strong (4.17:1 or more) and is logical,
+      so it flips in right-to-left documents.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: paragraph
+      when:
+        You only need a muted source line (size sm, tone muted), not a
+        quotation.
+
+tokens:
+  - border-strong
+  - foreground
+  - foreground-muted
+
+versioning: {}
+
+figma:
+  syncedWith: null

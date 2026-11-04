@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: dynamicContainer
+name: DynamicContainer
+category: containers
+status: shipped
+complexity: atom
+description: >-
+  A flex layout that stacks below the sm breakpoint and lays out in a wrapping
+  row from sm up. The breakpoint follows the viewport unless
+  responsiveTo="container" is set.
+
+files:
+  component: packages/ui/src/components/containers/dynamicContainer/DynamicContainer.tsx
+  types: packages/ui/src/components/containers/dynamicContainer/types.ts
+  styles: packages/ui/src/components/containers/dynamicContainer/styles.ts
+  barrel: packages/ui/src/components/containers/dynamicContainer/index.ts
+  story: apps/retrojb-storybook/src/stories/containers/DynamicContainer.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/containers/accessibilityDocs/DynamicContainerAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: DynamicContainer
+    kind: component
+  - name: dynamicContainerStyles
+    kind: styles
+    note: >-
+      Callable from a server component, so a server-rendered list can take the
+      same layout without becoming a client module.
+  - name: IDynamicContainerProps
+    kind: type
+  - name: DynamicContainerElement
+    kind: type
+  - name: DynamicContainerVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithoutRef<'div'> with ref typed as HTMLElement"
+  required: []
+  variants:
+    direction:
+      values: [responsive, vertical, horizontal]
+      default: responsive
+      note: >-
+        responsive is a column below sm and a wrapping row from sm up. vertical
+        and horizontal pin one axis; horizontal wraps.
+    responsiveTo:
+      values: [viewport, container]
+      default: viewport
+      note: >-
+        container switches at @sm of the nearest @container ancestor. With no
+        such ancestor it stays a column.
+    gap:
+      values: [none, xs, sm, md, lg, xl]
+      default: md
+      note: 0 / 4 / 8 / 12 / 16 / 24px, on both axes.
+    align:
+      values: [start, center, end, baseline, stretch]
+      default: stretch
+  props:
+    as:
+      values: [div, ul, ol, section]
+      default: div
+      note: fieldset is deliberately not accepted; put the container inside it.
+
+accessibility:
+  element: "div | ul | ol | section"
+  role: list (set only when as is ul or ol and no role is passed)
+  wcag: ["1.3.1", "1.3.2", "1.4.10", "2.4.3"]
+  notes:
+    - The root has list-style none, which makes WebKit drop list semantics, so
+      ul and ol roots get role="list". A role you pass wins.
+    - Only flex-col and flex-row are used, never a reversed direction or order,
+      so visual order is DOM order.
+    - Draws no colour of its own, so there is no contrast to measure.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Use as="ul" or "ol" when the items are a list, so the count is
+        announced.
+      - Put the container inside a fieldset, after the legend, for form groups.
+
+tokens:
+  - spacing-0
+  - spacing-10
+  - spacing-20
+  - spacing-30
+  - spacing-40
+  - spacing-60
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

@@ -1,0 +1,116 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: toggle
+name: Toggle
+category: forms
+status: shipped
+complexity: atom
+description: >-
+  An on/off switch that takes effect the moment it is flipped. If nothing
+  happens until a Save button is pressed, use Checkbox. Name the setting, not
+  the state: "Wi-Fi", not "Turn Wi-Fi on".
+
+files:
+  component: packages/ui/src/components/forms/Toggle/Toggle.tsx
+  types: packages/ui/src/components/forms/Toggle/types.ts
+  styles: packages/ui/src/components/forms/Toggle/styles.ts
+  barrel: packages/ui/src/components/forms/Toggle/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/Toggle.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/ToggleAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Toggle
+    kind: component
+  - name: toggleStyles
+    kind: styles
+  - name: IToggleProps
+    kind: type
+  - name: ToggleVariants
+    kind: type
+
+api:
+  extends:
+    "ComponentPropsWithRef<'input'> without type, role, value, size and children"
+  required: [label]
+  variants:
+    size:
+      values: [sm, md]
+      default: md
+    labelPosition:
+      values: [start, end]
+      default: start
+      note: >-
+        start puts the label first and the switch at the end of the row, as
+        settings lists do. end is the checkbox-like layout.
+  props:
+    checked:
+      values: [true, false]
+      note: >-
+        Native controlled use with onChange; defaultChecked for uncontrolled.
+        onCheckedChange is a convenience that receives the boolean.
+
+accessibility:
+  element: input
+  role: switch
+  keyboard: [Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.3.2",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "3.3.1",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - A native checkbox with role="switch", drawn with appearance-none. The
+      native checked state maps to on/off, so no aria-checked is written.
+    - The label wraps the track and the text, so the whole row is the click
+      target.
+    - error sets aria-invalid and the danger border together.
+    - Uncontrolled state stays in the DOM, so form.reset() works.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: checkbox
+      when: >-
+        The user makes a choice and then submits it with a form. A checkbox is
+        announced as "checked"; a toggle as "on" / "off".
+  guidance:
+    do:
+      - Use for settings that apply immediately.
+    dont:
+      - Use for a value that waits for a Save button.
+
+tokens:
+  - border-strong
+  - surface-raised
+  - accent
+  - accent-foreground
+  - danger
+  - foreground
+  - foreground-muted
+  - focus
+  - body-sm
+  - body-md
+  - spacing-10
+  - spacing-20
+  - spacing-200
+  - spacing-400
+
+versioning: {}
+
+figma:
+  syncedWith: null

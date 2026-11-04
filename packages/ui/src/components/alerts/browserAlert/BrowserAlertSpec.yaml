@@ -1,0 +1,124 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: browserAlert
+name: BrowserAlert
+category: alerts
+status: shipped
+complexity: molecule
+description: >-
+  A modal alert dialog that replaces window.alert() and window.confirm(), built
+  on a real <dialog> opened with showModal(). The caller owns `open`, and
+  onConfirm does not close the dialog; call onClose yourself when done.
+
+files:
+  component: packages/ui/src/components/alerts/browserAlert/BrowserAlert.tsx
+  types: packages/ui/src/components/alerts/browserAlert/types.ts
+  styles: packages/ui/src/components/alerts/browserAlert/styles.ts
+  barrel: packages/ui/src/components/alerts/browserAlert/index.ts
+  story: apps/retrojb-storybook/src/stories/alerts/BrowserAlert.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/alerts/accessibilityDocs/BrowserAlertAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: BrowserAlert
+    kind: component
+  - name: browserAlertStyles
+    kind: styles
+    note: >-
+      Slots: shell (the <dialog>), box, label, title, message, actions. The
+      shell is a transparent positioning box because <dialog> has user-agent
+      styles and the package ships no preflight.
+  - name: IBrowserAlertProps
+    kind: type
+  - name: BrowserAlertVariants
+    kind: type
+  - name: AlertTone
+    kind: type
+    note: Shared by all alerts and ProgressBar. Defined in alerts/tone.ts.
+  - name: ALERT_TONE_LABELS
+    kind: constant
+    note: Default visible word per tone, used when `label` is not given.
+
+api:
+  extends:
+    "Omit<ComponentPropsWithRef<'dialog'>, 'children' | 'open' | 'title'>"
+  required: [open, onClose, title]
+  variants:
+    tone:
+      values: [info, success, danger]
+      default: info
+      note: >-
+        danger also gives the confirm button the danger intent. Shared AlertTone
+        union; there is no warning tone.
+  props:
+    cancelLabel:
+      type: "string"
+      note: >-
+        Giving cancelLabel or onCancel switches the dialog from an
+        acknowledgement to a confirmation with a Cancel button.
+  defaults:
+    confirmLabel: OK
+
+accessibility:
+  element: dialog
+  role: alertdialog
+  keyboard: [Escape, Tab, Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.10",
+      "1.4.11",
+      "2.1.2",
+      "2.4.3",
+      "2.4.6",
+      "2.4.7",
+      "2.5.8",
+      "3.3.4",
+      "4.1.2",
+    ]
+  notes:
+    - showModal() supplies the focus trap, inert background, Escape and focus
+      restore, so none of it is hand-written.
+    - Focus lands on Cancel when there is one, otherwise on the confirm button.
+    - The name is the tone label plus the title (aria-labelledby); the message
+      is the description. aria-modal is deliberately not set.
+    - An alertdialog needs a focusable control, so the confirm button always
+      renders.
+    - Escape closes the element whether or not React knows, so onClose is
+      required to keep `open` in step.
+
+usage:
+  standalone: true
+  composes: [button]
+  nativeElement: true
+  alternatives:
+    - id: inlineAlert
+      when: The message sits in the page flow and does not need to interrupt.
+    - id: toastAlert
+      when: The message is transient and needs no response.
+  guidance:
+    do:
+      - Phrase title as the question or problem, such as "Delete workspace?".
+    dont:
+      - Use it for a merely modal dialog such as a form or picker; that wants
+        role="dialog".
+
+tokens:
+  - surface
+  - foreground
+  - border-strong
+  - accent
+  - accent-text
+  - success
+  - danger
+  - radius-control
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

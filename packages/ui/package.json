@@ -28,6 +28,8 @@
     "dev": "tsup --watch",
     "lint": "eslint . --max-warnings 0",
     "check-types": "tsc --noEmit",
+    "check:specs": "node scripts/check-component-specs.mjs",
+    "check:spec-changesets": "node scripts/check-component-changesets.mjs",
     "publish": "npm stage publish"
   },
   "dependencies": {
@@ -47,11 +49,14 @@
     "@tanstack/react-table": "9.2.4",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.5",
+    "ajv": "8.20.0",
     "eslint": "10.9.1",
+    "eslint-plugin-tsdoc": "0.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwindcss": "4.3.3",
     "tsc-alias": "1.9.4",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "yaml": "2.9.1"
   }
 }

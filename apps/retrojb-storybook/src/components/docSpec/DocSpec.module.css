@@ -1,0 +1,20 @@
+/*
+ * Space after the facts row. `DynamicContainer` sets its own margin, emitted
+ * unlayered by `@retrojb/ui`, so `:is(ul)` keeps this selector one step more
+ * specific.
+ */
+.facts:is(ul) {
+  margin-block: 0 1rem;
+  padding: 0;
+}
+
+/* No markers; the wrapper above keeps Storybook's list styles off, and this
+   keeps them off if the wrapper is ever dropped. */
+.facts:is(ul) {
+  list-style: none;
+}
+.facts > li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

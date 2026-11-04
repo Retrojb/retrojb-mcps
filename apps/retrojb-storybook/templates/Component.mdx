@@ -1,0 +1,82 @@
+{/\* COMPONENT DOCS PAGE TEMPLATE
+
+Copy to apps/retrojb-storybook/src/stories/<category>/<Name>.mdx, next to
+
+  <Name>.stories.tsx, then:
+
+1. Replace `Component` with the exported name (`Button`) and `category` with the
+   lower-case group folder (`actions`) in the imports below.
+2. Remove `tags: ["autodocs"]` from the stories file. Storybook refuses to index
+   a docs page and an autodocs tag for the same file.
+3. Replace the Examples section with one block per story, in the order a reader
+   needs them. Write each story's explanation as the JSDoc above the story in
+   the stories file; <Description of> shows it here.
+4. Set `files.storybookDocComponent` in <Name>Spec.yaml to this file's path, and
+   add it as an `@see` in the component's TSDoc.
+
+Written here: the section order and the examples. Everything else comes from a
+single source and is not retyped:
+
+- the summary and the prop table: TSDoc (project-docs/TSDOC.md)
+- status, guidance, accessibility facts, exports: <Name>Spec.yaml
+- the long-form accessibility write-up: the component's accessibility page
+
+This file lives outside src/ so Storybook does not index it. See
+project-docs/STORYBOOK_DOCS.md. \*/}
+
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as ComponentStories from "./Component.stories";
+import specSource from "../../../../../packages/ui/src/components/category/Component/ComponentSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={ComponentStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+{/_ Compound component? Add one <ArgTypes of={...} /> per part under Controls,
+importing ArgTypes from "@storybook/addon-docs/blocks". _/}
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### Variant or state name
+
+<Description of={ComponentStories.Example} />
+
+<Canvas of={ComponentStories.Example} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/category-component-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

@@ -1,0 +1,214 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: table
+name: Table
+category: data
+status: shipped
+complexity: molecule
+description: >-
+  A data table rendered from a TanStack Table v9 instance, which is passed in as
+  the table prop. @tanstack/react-table is a peer dependency, so the app builds
+  the instance with its own useTable call. caption is required because it names
+  the table.
+
+files:
+  component: packages/ui/src/components/data/Table/Table.tsx
+  parts: packages/ui/src/components/data/Table/parts.tsx
+  context: packages/ui/src/components/data/Table/context.ts
+  types: packages/ui/src/components/data/Table/types.ts
+  styles: packages/ui/src/components/data/Table/styles.ts
+  barrel: packages/ui/src/components/data/Table/index.ts
+  story: apps/retrojb-storybook/src/stories/data/Table.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/data/accessibilityDocs/TableAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Table
+    kind: component
+    note:
+      The parts are also attached to it, as Table.Head, Table.Body and so on.
+  - name: TableHead
+    kind: part
+    note: A thead. Renders one row per header group when given no children.
+  - name: TableHeaderCell
+    kind: part
+    note: >-
+      A th. With header, it sets scope, spans and becomes a sort button when the
+      column can sort.
+  - name: TableBody
+    kind: part
+  - name: TableRow
+    kind: part
+  - name: TableCell
+    kind: part
+  - name: TableFoot
+    kind: part
+    note: Renders nothing when no column defines a footer.
+  - name: TableEmpty
+    kind: part
+    note: A row with one td spanning every column.
+  - name: TableContext
+    kind: context
+    internal: true
+    note: Carries the instance, column count and shared variants to the parts.
+  - name: useTableContext
+    kind: hook
+    internal: true
+    note: Throws when a part is rendered outside Table.
+  - name: tableStyle
+    kind: styles
+    note: >-
+      Slot recipe for a static table with no TanStack instance that must look
+      like the data tables. Callable from server components.
+  - name: ITableProps
+    kind: type
+  - name: ITableHeadProps
+    kind: type
+  - name: ITableHeaderCellProps
+    kind: type
+  - name: ITableBodyProps
+    kind: type
+  - name: ITableRowProps
+    kind: type
+  - name: ITableCellProps
+    kind: type
+  - name: ITableFootProps
+    kind: type
+  - name: ITableEmptyProps
+    kind: type
+  - name: TableVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'table'>"
+  required: [table, caption]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: Rows are roughly 36 / 40 / 48px tall.
+    bordered:
+      values: [true, false]
+      note: Adds vertical rules between cells.
+    striped:
+      values: [true, false]
+      note: Zebra striping on body rows.
+    stickyHeader:
+      values: [true, false]
+      note:
+        Only has an effect when the scroll container has a constrained height.
+    captionHidden:
+      values: [true, false]
+      note: Hides the caption visually (sr-only). It still names the table.
+  props:
+    table:
+      values: [TanStack Table instance]
+      note:
+        The result of useTable. A peer-dependency type, so one copy must be
+        installed.
+    caption:
+      type: "ReactNode"
+      note: Rendered as the first child of the table by Table itself.
+  parts:
+    TableHeaderCell:
+      props:
+        header:
+          values: [TanStack Header]
+          note: Takes the place of children.
+        align:
+          values: [start, center, end]
+          default: start
+          note: Falls back to columnDef.meta.align when the app declares it.
+    TableCell:
+      props:
+        cell:
+          values: [TanStack Cell]
+          note: Takes the place of children.
+        footer:
+          values: [TanStack Header]
+          note: Renders a footer instead.
+        align:
+          values: [start, center, end]
+          default: start
+    TableRow:
+      props:
+        selected:
+          values: [true, false]
+          note: >-
+            Tints the row and sets data-selected. Does not announce anything;
+            put a checkbox or radio in the row.
+    TableBody:
+      props:
+        emptyState:
+          type: "ReactNode"
+          note: Shown by the generated body when the row model is empty.
+    TableEmpty:
+      props:
+        rowClassName:
+          type: "string"
+          note: Class for the tr; className goes to the td.
+
+accessibility:
+  element: "div (role region) > table"
+  role: region on the scroll container, named by the caption
+  keyboard: [Tab, Enter, Space]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.1.1",
+      "2.3.3",
+      "2.4.6",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "2.5.5",
+      "4.1.2",
+    ]
+  notes:
+    - The scroll container has tabIndex 0 so a wide table can be scrolled from
+      the keyboard.
+    - Sorting is a real button inside the th. aria-sort carries the state, with
+      "none" on sortable columns that are not sorted.
+    - scope on each th is col, or colgroup when the header spans several
+      columns.
+    - aria-selected is not used on rows, because ARIA does not support it on a
+      table. A selectable table needs a checkbox in the row.
+    - The rule under the header uses border-strong; vertical rules are
+      decorative only.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Omit children for a generated table, or compose the parts to add a
+        checkbox column or a row click handler.
+      - Use captionHidden when there is no room for visible caption text.
+    dont:
+      - Rely on the selected tint alone to show selection.
+
+tokens:
+  - border
+  - border-strong
+  - surface
+  - surface-raised
+  - foreground
+  - foreground-muted
+  - accent
+  - accent-text
+  - focus
+  - radius-control
+  - body-sm
+  - body-md
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

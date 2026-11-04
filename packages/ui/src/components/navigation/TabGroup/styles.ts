@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the components rather than
- * inside them — see the note in `interactions/Button/styles.ts`.
+ * inside them — see the note in `actions/Button/styles.ts`.
  *
  * One slot recipe for the whole compound, as `cardStyles` is for the cards.
  * `TabGroup` sets the variants once and every part reads them from context, so
@@ -80,7 +80,7 @@
  */
 import { tv, type VariantProps } from "../../../lib/tv";
 
-/** The package-wide focus indicator — see `interactions/Button/styles.ts`. */
+/** The package-wide focus indicator — see `actions/Button/styles.ts`. */
 const FOCUS_RING =
   "outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus";
 

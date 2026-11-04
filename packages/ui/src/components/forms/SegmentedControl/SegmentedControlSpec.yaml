@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: segmentedControl
+name: SegmentedControl
+category: forms
+status: shipped
+complexity: molecule
+description: >-
+  One choice from a short row of mutually exclusive segments, such as Day, Week
+  or Month. Segments choose a value; if each choice reveals its own panel, use
+  TabGroup instead.
+
+files:
+  component: packages/ui/src/components/forms/SegmentedControl/SegmentedControl.tsx
+  types: packages/ui/src/components/forms/SegmentedControl/types.ts
+  styles: packages/ui/src/components/forms/SegmentedControl/styles.ts
+  barrel: packages/ui/src/components/forms/SegmentedControl/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/SegmentedControl.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/SegmentedControlAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: SegmentedControl
+    kind: component
+  - name: segmentedControlStyles
+    kind: styles
+  - name: ISegmentedControlProps
+    kind: type
+  - name: ISegmentedControlOption
+    kind: type
+  - name: SegmentedControlVariants
+    kind: type
+
+api:
+  extends:
+    "ComponentPropsWithRef<'fieldset'> without children, defaultValue, name and
+    role"
+  required: [label, options]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: Segments are 24 / 32 / 40px tall; none reaches the 44px of 2.5.5.
+    fullWidth:
+      values: [true, false]
+      default: false
+      note: Stretches the track and shares the width equally between segments.
+    labelHidden:
+      values: [true]
+      note: Hides the legend visually; it stays the group's accessible name.
+  props:
+    value:
+      type: "string | null"
+      note: >-
+        Controlled selection; null is nothing selected, undefined is
+        uncontrolled. Paired with onValueChange, which only fires with a real
+        value. defaultValue sets the initial one.
+    name:
+      type: "string"
+      note: >-
+        Shared by every radio. A generated name is used when omitted, and is
+        submitted too inside a form: pass name when the value belongs in
+        FormData.
+
+accessibility:
+  element: fieldset
+  role: radiogroup
+  pattern: Radio Group (WAI-ARIA APG)
+  keyboard: [ArrowLeft, ArrowRight, ArrowUp, ArrowDown, Home, End]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.1.1",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.8",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - Each segment is a native radio drawn with appearance-none, so one tab stop
+      and arrow-key selection with wrap come from the browser. Home and End are
+      added by the component.
+    - The legend is also wired with aria-labelledby, because role="radiogroup"
+      can replace the fieldset's own naming in some engines.
+    - Selected is shown by shape, fill and weight together, not colour alone.
+    - Unlike RadioGroup, the selection is React state in both modes, so
+      form.reset() does not restore defaultValue.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: tabGroup
+      when: Each choice reveals a different panel of content.
+    - id: radioGroup
+      when: >-
+        Every option should be visible with room for a description, up to about
+        seven options a user compares before choosing.
+    - id: comboBox
+      when: There are more than about five options, or space is tight.
+  guidance:
+    do:
+      - Keep to two to five short labels that switch a view, unit or filter.
+    dont:
+      - Use it for a choice that reveals different content panels.
+
+tokens:
+  - accent
+  - accent-foreground
+  - surface
+  - surface-raised
+  - border-strong
+  - foreground
+  - focus
+  - radius-control
+  - label-md
+  - label-lg
+  - spacing-10
+  - spacing-20
+  - spacing-30
+  - spacing-40
+
+versioning: {}
+
+figma:
+  syncedWith: null

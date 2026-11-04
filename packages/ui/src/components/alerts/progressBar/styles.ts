@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * Slots: `root` wraps everything; `header` is the row holding the `label` and
  * the visible `value` readout; `track` is the `role="progressbar"` element and

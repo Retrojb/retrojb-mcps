@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: progressBar
+name: ProgressBar
+category: alerts
+status: shipped
+complexity: molecule
+description: >-
+  A labelled bar for work in progress, determinate with `value` and
+  indeterminate without it. It is not a live region; announce completion or
+  failure with an InlineAlert, and put the status in text because `tone` only
+  recolours the fill.
+
+files:
+  component: packages/ui/src/components/alerts/progressBar/ProgressBar.tsx
+  types: packages/ui/src/components/alerts/progressBar/types.ts
+  styles: packages/ui/src/components/alerts/progressBar/styles.ts
+  barrel: packages/ui/src/components/alerts/progressBar/index.ts
+  story: apps/retrojb-storybook/src/stories/alerts/ProgressBar.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/alerts/accessibilityDocs/ProgressBarAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: ProgressBar
+    kind: component
+  - name: progressBarStyles
+    kind: styles
+    note: >-
+      Slots: root, header, label, value, track, indicator, description. Also
+      takes the computed showValue and indeterminate variants, which are not
+      caller props.
+  - name: IProgressBarProps
+    kind: type
+  - name: IProgressBarValue
+    kind: type
+    note:
+      The clamped value, min, max and unrounded percent passed to formatValue.
+  - name: ProgressBarVariants
+    kind: type
+  - name: AlertTone
+    kind: type
+    note: The tone union, shared with the alerts. Defined in alerts/tone.ts.
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'div'>, 'children' | 'role'>"
+  required: [label]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: Track is 8 / 12 / 16px tall.
+    tone:
+      values: [info, success, danger]
+      default: info
+      note:
+        Recolours the fill only. Say the status in label, valueText or
+        description.
+    fullWidth:
+      values: [true, false]
+      default: true
+      note: false gives a 20rem bar capped at the container.
+    labelHidden:
+      values: [true, false]
+      default: false
+      note: Hides the label visually; it stays as the accessible name.
+  props:
+    value:
+      type: "number | null"
+      note: >-
+        Clamped to min..max. Omitted, null or non-finite makes the bar
+        indeterminate and drops aria-valuenow, valuemin and valuemax.
+    showValue:
+      values: [true, false]
+      default: false
+      note: Ignored while indeterminate. The readout is aria-hidden.
+  defaults:
+    min: 0
+    max: 100
+
+accessibility:
+  element: div
+  role: progressbar
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.2.2",
+      "2.3.1",
+      "2.3.3",
+      "3.3.2",
+      "4.1.2",
+      "4.1.3",
+    ]
+  notes:
+    - A div with role, not <progress>, for styling control, forced-colors and
+      reduced-motion behaviour, and a real min.
+    - Named by the visible label via aria-labelledby; the description is wired
+      with aria-describedby, merged with any the caller passes.
+    - Not a live region. For loading content, set aria-busy on the region being
+      loaded, not on the bar.
+    - Under prefers-reduced-motion the indeterminate slide becomes still
+      stripes. Forced colors use CanvasText and Highlight.
+    - valueText, or the output of formatValue, becomes aria-valuetext.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: false
+  alternatives:
+    - id: inlineAlert
+      when: >-
+        Announcing that the work finished or failed. Mount it before the work
+        starts, with live="polite" or "assertive".
+
+tokens:
+  - foreground
+  - foreground-muted
+  - border-strong
+  - surface
+  - accent
+  - success
+  - danger
+  - radius-control
+
+# Not in the 0.1.0 tree.
+versioning: {}
+
+figma:
+  syncedWith: null

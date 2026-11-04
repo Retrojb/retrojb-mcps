@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: fab
+name: FAB
+category: actions
+status: planned
+complexity: atom
+description: >-
+  Meant to be a floating action button: one prominent button for the main action
+  of a screen. Not yet implemented; the folder holds no files other than this
+  spec.
+
+files:
+  component: null
+  story: null
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+figma:
+  syncedWith: null

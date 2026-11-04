@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * Slots: `root` wraps everything; `field` is the `<label>` that holds the circle
  * and the label text, so the whole row is one click target; `box` is the cell

@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the component rather than
- * inside it — see the note in `interactions/Button/styles.ts`.
+ * inside it — see the note in `actions/Button/styles.ts`.
  *
  * `inlineAlertStyles` is exported for the case this component does not cover: a
  * server-rendered notice in prose that should look like an alert without being

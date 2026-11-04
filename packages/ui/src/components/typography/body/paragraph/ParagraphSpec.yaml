@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: paragraph
+name: Paragraph
+category: typography
+subcategory: body
+status: shipped
+complexity: atom
+description: >-
+  A paragraph of running text on the body type roles. It is always a p; copy
+  that is a label, list or quotation needs its own element.
+
+files:
+  component: packages/ui/src/components/typography/body/paragraph/Paragraph.tsx
+  types: packages/ui/src/components/typography/body/paragraph/types.ts
+  styles: packages/ui/src/components/typography/body/paragraph/styles.ts
+  barrel: packages/ui/src/components/typography/body/paragraph/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Paragraph.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Paragraph
+    kind: component
+  - name: paragraphStyles
+    kind: styles
+  - name: IParagraphProps
+    kind: type
+  - name: ParagraphVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'p'>"
+  variants:
+    size:
+      values: [lg, md, sm]
+      default: md
+      note: lg for a lead paragraph, md for reading text, sm for component copy.
+    tone:
+      values: [default, muted]
+      default: default
+      note:
+        muted is for supporting text and still clears 4.5:1 on every surface.
+    measure:
+      values: [true, false]
+      default: false
+      note: true caps the line length at 65ch (max-w-prose).
+
+accessibility:
+  element: p
+  keyboard: []
+  wcag: ["1.3.1", "1.4.3", "1.4.4", "1.4.6", "1.4.8", "1.4.10", "1.4.12"]
+  notes:
+    - Body roles use a unitless line height of 1.5 or more and rem sizes.
+    - measure is off by default. Use it for long-form copy; inside a card or
+      table cell it only leaves a ragged gap.
+    - Always a p. Labels, lists and quotations need their own elements to keep
+      their structure (1.3.1).
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+
+tokens:
+  - foreground
+  - foreground-muted
+
+versioning: {}
+
+figma:
+  syncedWith: null

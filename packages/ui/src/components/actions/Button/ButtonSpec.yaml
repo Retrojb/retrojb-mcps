@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: button
+name: Button
+category: actions
+status: shipped
+complexity: atom
+description: >-
+  Triggers an action on the current page. Defaults to type="button", so it never
+  submits a surrounding form by accident; pass type="submit" when that is the
+  intent.
+
+files:
+  component: packages/ui/src/components/actions/Button/Button.tsx
+  types: packages/ui/src/components/actions/Button/types.ts
+  styles: packages/ui/src/components/actions/Button/styles.ts
+  barrel: packages/ui/src/components/actions/Button/index.ts
+  story: apps/retrojb-storybook/src/stories/actions/Button.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/actions/accessibilityDocs/ButtonAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/actions/Button.mdx
+
+exports:
+  - name: Button
+    kind: component
+  - name: buttonStyle
+    kind: styles
+    note: >-
+      Lives outside the "use client" module, so a server component can call it
+      to style an element this package does not own.
+  - name: IButtonProps
+    kind: type
+  - name: ButtonVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'button'>"
+  required: [text]
+  variants:
+    intent:
+      values: [primary, secondary, ghost, danger]
+      default: primary
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: 32 / 40 / 48px tall. Only lg meets the 44px AAA target (2.5.5).
+    fullWidth:
+      values: [true, false]
+      default: false
+  defaults:
+    type: button
+
+accessibility:
+  element: button
+  role: button
+  keyboard: [Enter, Space]
+  wcag:
+    [
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.5",
+      "2.5.8",
+      "4.1.2",
+    ]
+  notes:
+    - The accessible name is the text prop. An icon-only button is not supported
+      yet.
+    - Disabled buttons drop below 4.5:1, which 1.4.3 permits; the disabled
+      attribute also removes them from the tab order.
+    - Focus is a 2px outline at a 2px offset, which survives forced-colors mode.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Pass type="submit" explicitly when the button submits a form.
+      - Use size lg where AAA target size is required.
+    dont:
+      - Use Button for navigation to another page. Use Link.
+
+tokens:
+  - accent
+  - accent-foreground
+  - accent-hover
+  - accent-text
+  - border-strong
+  - surface
+  - surface-raised
+  - foreground
+  - danger
+  - danger-foreground
+  - focus
+  - radius-control
+  - label-md
+  - label-lg
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

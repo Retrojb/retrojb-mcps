@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: avatar
+name: Avatar
+category: content
+status: planned
+complexity: atom
+description: >-
+  Meant to be a round picture or initials that stands for a person or account.
+  Not yet implemented; the folder holds empty scaffold files only.
+
+files:
+  component: null
+  types: packages/ui/src/components/content/avatar/types.ts
+  styles: packages/ui/src/components/content/avatar/styles.ts
+  barrel: packages/ui/src/components/content/avatar/index.ts
+  story: null
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+figma:
+  syncedWith: null

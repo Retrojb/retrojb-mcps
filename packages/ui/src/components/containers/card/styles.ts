@@ -1,6 +1,6 @@
 /*
  * The variant definition, in its own module beside the components rather than
- * inside them — see the note in `interactions/Button/styles.ts`.
+ * inside them — see the note in `actions/Button/styles.ts`.
  *
  * One slot recipe for the whole family. `Card`, `InteractiveCard` and
  * `GraphicCard` draw the same box with the same padding scale; what differs is

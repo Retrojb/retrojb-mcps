@@ -1,0 +1,102 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: input
+name: Input
+category: forms
+status: shipped
+complexity: atom
+description: >-
+  A labelled text input with description and error text associated by generated
+  ids. label is required on purpose; use labelHidden when the design has no room
+  for it, never omit it.
+
+files:
+  component: packages/ui/src/components/forms/Input/Input.tsx
+  types: packages/ui/src/components/forms/Input/types.ts
+  styles: packages/ui/src/components/forms/Input/styles.ts
+  barrel: packages/ui/src/components/forms/Input/index.ts
+  story: apps/retrojb-storybook/src/stories/forms/Inputs.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/forms/accessibilityDocs/InputAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Input
+    kind: component
+  - name: inputStyle
+    kind: styles
+    note: >-
+      Lets a textarea or select match the inputs around it. Call
+      inputStyle().control() on the element and use the other slots on the
+      surrounding markup.
+  - name: IInputProps
+    kind: type
+  - name: InputVariants
+    kind: type
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'input'>, 'size'>"
+  required: [label]
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note:
+        32 / 40 / 48px tall, matching Button. Only lg meets the 44px AAA target
+        (2.5.5).
+    invalid:
+      values: [true, false]
+      default: false
+      note: Derived from error and not a prop on Input.
+    labelHidden:
+      values: [true]
+      note: Hides the label visually (sr-only). It stays the accessible name.
+
+accessibility:
+  element: input
+  keyboard: [Tab]
+  wcag:
+    [
+      "1.3.1",
+      "1.4.1",
+      "1.4.3",
+      "1.4.11",
+      "2.3.3",
+      "2.4.7",
+      "2.4.13",
+      "2.5.5",
+      "2.5.8",
+      "3.3.1",
+      "3.3.2",
+      "4.1.2",
+    ]
+  notes:
+    - Error text is listed before the description in aria-describedby, and a
+      caller-supplied aria-describedby is kept.
+    - The required asterisk is decorative and aria-hidden; the required
+      attribute is what is announced.
+    - Focus changes the border colour as well as the outline.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+
+tokens:
+  - surface-raised
+  - border-strong
+  - accent
+  - danger
+  - focus
+  - foreground
+  - foreground-muted
+  - label-md
+  - body-sm
+  - body-md
+
+versioning:
+  introducedIn: "0.1.0"
+
+figma:
+  syncedWith: null

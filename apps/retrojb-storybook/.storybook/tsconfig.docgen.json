@@ -1,0 +1,12 @@
+{
+  // Read only by `react-docgen-typescript` (see `typescript` in `main.ts`), never
+  // by `tsc`. The plugin skips any file outside the TypeScript project it is
+  // given, and `tsconfig.app.json` covers `src` alone. The component library's
+  // source is named here so its TSDoc reaches the docs pages.
+  "extends": "../tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": null,
+    "noEmit": true
+  },
+  "include": ["../src", "../../../packages/ui/src"]
+}
