@@ -2,7 +2,7 @@
 "@retrojb/ui": patch
 ---
 
-`Button` now follows the TSDoc standard in `project-docs/TSDOC.md`. Every prop
+`Button` now follows the TSDoc standard in `../project-docs/references/TSDOC.md`. Every prop
 of `IButtonProps` has a description, and `intent`, `size`, `fullWidth` and
 `type` are redeclared with their defaults so editors and Storybook show them.
 The custom props (`text`, `intent`, `size`, `fullWidth`) are now `readonly`,

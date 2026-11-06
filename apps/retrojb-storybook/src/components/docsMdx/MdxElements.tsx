@@ -12,6 +12,7 @@ import {
 } from "react";
 import { DocCode, DocCodeBlock } from "../docCode";
 import { DocHeading } from "../docHeading";
+import { DocEmphasis, DocStrong } from "../docInline";
 import { DocList, DocListItem } from "../docList";
 import { DocParagraph } from "../docParagraph";
 import { DocReference } from "../docReference";
@@ -47,6 +48,16 @@ const MdxBlockquote = ({
   <DocReference>{children}</DocReference>
 );
 
+/** `**bold**`: strong importance. */
+const MdxStrong = (props: ComponentPropsWithoutRef<"strong">) => (
+  <DocStrong {...props} />
+);
+
+/** `*italic*`: stress emphasis. */
+const MdxEm = (props: ComponentPropsWithoutRef<"em">) => (
+  <DocEmphasis {...props} />
+);
+
 /** Inline `code`. Fenced blocks never reach here; `MdxPre` unwraps them. */
 const MdxCode = (props: ComponentPropsWithoutRef<"code">) => (
   <DocCode {...props} />
@@ -77,6 +88,7 @@ const MdxPre = ({
 export {
   MdxBlockquote,
   MdxCode,
+  MdxEm,
   MdxH1,
   MdxH2,
   MdxH3,
@@ -87,5 +99,6 @@ export {
   MdxOl,
   MdxP,
   MdxPre,
+  MdxStrong,
   MdxUl,
 };

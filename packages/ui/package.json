@@ -3,15 +3,20 @@
   "version": "0.1.0",
   "description": "Shared React primitives: Tailwind-styled Button, Link, Input and a composable TanStack Table with typed variants.",
   "type": "module",
-  "private": true,
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "exports": {
-    ".": "./dist/index.js",
-    "./icons": "./dist/icons.js",
-    "./styles.css": "./dist/styles.css",
-    "./theme.css": "./src/styles/theme.css"
+  "homepage": "https://github.com/Retrojb/retrojb-mcps",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Retrojb/retrojb-mcps"
+  },
+  "bugs": {
+    "url": "https://github.com/Retrojb/retrojb-mcps",
+    "email": "jbaltes89@gmail.com"
   },
   "sideEffects": [
     "**/*.css"
@@ -30,7 +35,7 @@
     "check-types": "tsc --noEmit",
     "check:specs": "node scripts/check-component-specs.mjs",
     "check:spec-changesets": "node scripts/check-component-changesets.mjs",
-    "publish": "npm stage publish"
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "lucide-react": "1.61.0",
@@ -58,5 +63,14 @@
     "tsc-alias": "1.9.4",
     "typescript": "6.0.3",
     "yaml": "2.9.1"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./icons": "./dist/icons.js",
+    "./styles.css": "./dist/styles.css",
+    "./theme.css": "./src/styles/theme.css"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }

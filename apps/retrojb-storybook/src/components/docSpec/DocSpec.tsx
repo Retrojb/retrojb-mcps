@@ -17,9 +17,6 @@ type TagTone = NonNullable<TagVariants["tone"]>;
  * accessibility, exports) from the spec itself, so they are written once and
  * cannot disagree. Prose that belongs to the page (the examples, the
  * explanation around them) stays in the MDX.
- *
- * Each block returns `null` when the spec has nothing for it, so a page for a
- * planned component, or one with a short spec, renders without empty headings.
  * Usage is in `templates/Component.mdx`.
  */
 

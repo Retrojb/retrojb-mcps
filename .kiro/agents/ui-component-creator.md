@@ -21,7 +21,7 @@ Before writing a single line, **read at least two existing components** from the
 same or an adjacent group to confirm conventions are consistent with what is
 documented here. Structure and style must match what is already in the codebase.
 
-Also read **`project-docs/TSDOC.md`** in full. It is the standard for every doc
+Also read **`../../project-docs/references/TSDOC.md`** in full. It is the standard for every doc
 comment you write; sections 3, 8 and 9 below only summarise it. `Button`
 (`actions/Button`) is the reference implementation: copy the comments in its
 `Button.tsx`, `types.ts` and `styles.ts`.
@@ -620,7 +620,7 @@ export const WithDismiss: Story = {
 Every new component also gets a docs page, `{ComponentName}.mdx`, beside its
 stories file. Start from `apps/retrojb-storybook/templates/Component.mdx` and
 follow the steps in its header comment, and read
-`project-docs/STORYBOOK_DOCS.md` for how the page gets its content.
+`../../project-docs/references/STORYBOOK_DOCS.md` for how the page gets its content.
 
 - The page is built from Storybook Doc blocks and the `Doc*` blocks in
   `src/components/docSpec`. The summary and prop table come from the TSDoc, and
@@ -772,7 +772,7 @@ the component by its exported name. CI fails without it.
 
 ### Quick reference
 
-`project-docs/COMPONENT_QUICK_REFERENCE.md` is no longer edited by this agent.
+`../../project-docs/references/COMPONENT_QUICK_REFERENCE.md` is no longer edited by this agent.
 It is being moved to output generated from the specs.
 
 ---
@@ -796,7 +796,7 @@ file.
 `npm run lint` includes `tsdoc/syntax`, which rejects malformed doc comments and
 tags that are not defined. It does not check that the required parts are there,
 so also check by hand against the checklist at the end of
-`project-docs/TSDOC.md`:
+`../../project-docs/references/TSDOC.md`:
 
 - the summary equals the spec `description`
 - `@remarks`, `@example`, `@a11y`, `@see` and one release tag are present

@@ -124,7 +124,8 @@ export const AsAFilter: Story = {
     options: pages,
     landmark: false,
     size: "sm",
-    description: "Not a landmark — this is a column filter, not the site search.",
+    description:
+      "Not a landmark — this is a column filter, not the site search.",
   },
 };
 

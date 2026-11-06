@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: strong
+name: Strong
+category: typography
+subcategory: body
+status: shipped
+complexity: atom
+description: >-
+  A phrase of strong importance, seriousness or urgency inside running text,
+  rendered as a strong element in bold. It is for meaning, not for a heavier
+  look, and a meaning that matters must also be in the words.
+
+files:
+  component: packages/ui/src/components/typography/body/strong/Strong.tsx
+  types: packages/ui/src/components/typography/body/strong/types.ts
+  styles: packages/ui/src/components/typography/body/strong/styles.ts
+  barrel: packages/ui/src/components/typography/body/strong/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Strong.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/typography/Strong.mdx
+
+exports:
+  - name: Strong
+    kind: component
+  - name: strongStyles
+    kind: styles
+    note: >-
+      Callable from a server component, to style an element this package does
+      not own. There is no variants type, because the recipe has no variants.
+  - name: IStrongProps
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'strong'>"
+
+accessibility:
+  element: strong
+  keyboard: []
+  wcag: ["1.3.1", "1.4.1", "1.4.3", "1.4.4", "1.4.12"]
+  notes:
+    - Not interactive. It is not focusable and has no keyboard behaviour.
+    - Most screen readers do not announce strong by default. Put a meaning that
+      matters, such as a warning or a required field, in the words as well as
+      the weight, for example by starting with the word Warning (1.4.1).
+    - Inherits colour, size, line height and family from the surrounding text.
+      It has no colour of its own, so there is nothing to measure for contrast;
+      the parent's component already did.
+    - Weight is 700 (font-bold) whatever the parent sets. Inside a 600 heading
+      it is a step heavier; inside a 700 heading (display, heading-xl) it looks
+      the same.
+    - Weight survives forced-colors mode.
+
+usage:
+  standalone: false
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: emphasis
+      when: >-
+        The phrase is stressed, the word you would lean on when speaking, rather
+        than important. Stress is italic, importance is bold, and the two can
+        nest.
+  guidance:
+    do:
+      - Mark a phrase whose importance, seriousness or urgency the reader must
+        not miss, and keep it to a word or a phrase.
+      - Say the meaning in words as well, such as starting with the word Warning
+        or Required.
+    dont:
+      - Use it to make text look heavier. For a bigger or heavier look, change
+        the type role, such as a heading or a label.
+      - Bold a whole paragraph. If everything is important, nothing is.
+
+tokens:
+  - font-weight-700
+
+versioning: {}
+
+figma:
+  syncedWith: null

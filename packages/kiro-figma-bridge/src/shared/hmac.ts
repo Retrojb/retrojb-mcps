@@ -15,7 +15,7 @@
  * computed without an `await` in the socket's `onopen` path.
  *
  * This is a well-specified, fixed-size hash with a public test-vector suite —
- * `tests/hmac.test.mjs` checks it against `node:crypto` on random inputs, so a
+ * `tests/hmac.test.js` checks it against `node:crypto` on random inputs, so a
  * divergence fails the build rather than the handshake. It is used only to prove
  * possession of a pairing code, never to encrypt anything.
  */

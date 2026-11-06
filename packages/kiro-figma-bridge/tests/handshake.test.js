@@ -20,7 +20,7 @@ import {
   CLOSE_REPLACED,
   METHODS,
 } from "../dist/shared/protocol.js";
-import { connectFakePlugin, DEFAULT_DOCUMENT } from "./helpers/fake-plugin.mjs";
+import { connectFakePlugin, DEFAULT_DOCUMENT } from "./helpers/fake-plugin.js";
 
 const PAIR_CODE = "ABCD2345";
 

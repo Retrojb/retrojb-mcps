@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../../../../componentSpec.schema.json
+specVersion: 1
+id: emphasis
+name: Emphasis
+category: typography
+subcategory: body
+status: shipped
+complexity: atom
+description: >-
+  A word or phrase with stress emphasis inside running text, the one you would
+  lean on when speaking, rendered as an em element in italic. It is for meaning,
+  not for a slanted look, and a meaning that matters must also be in the words.
+
+files:
+  component: packages/ui/src/components/typography/body/emphasis/Emphasis.tsx
+  types: packages/ui/src/components/typography/body/emphasis/types.ts
+  styles: packages/ui/src/components/typography/body/emphasis/styles.ts
+  barrel: packages/ui/src/components/typography/body/emphasis/index.ts
+  story: apps/retrojb-storybook/src/stories/typography/Emphasis.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/typography/accessibilityDocs/TypographyAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/typography/Emphasis.mdx
+
+exports:
+  - name: Emphasis
+    kind: component
+  - name: emphasisStyles
+    kind: styles
+    note: >-
+      Callable from a server component, to style an element this package does
+      not own. There is no variants type, because the recipe has no variants.
+  - name: IEmphasisProps
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'em'>"
+
+accessibility:
+  element: em
+  keyboard: []
+  wcag: ["1.3.1", "1.4.1", "1.4.3", "1.4.4", "1.4.12"]
+  notes:
+    - Not interactive. It is not focusable and has no keyboard behaviour.
+    - Most screen readers do not announce em by default. Put a meaning that
+      matters in the words as well as the slant (1.4.1).
+    - Inherits colour, size, line height and family from the surrounding text.
+      It has no colour of its own, so there is nothing to measure for contrast;
+      the parent's component already did.
+    - Italic is harder to read at length for some readers. Keep it to a word or
+      a phrase, never a whole paragraph.
+    - Slant survives forced-colors mode.
+
+usage:
+  standalone: false
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: strong
+      when: >-
+        The phrase is important, serious or urgent rather than stressed.
+        Importance is bold, stress is italic, and the two can nest.
+  guidance:
+    do:
+      - Stress the word you would lean on when speaking, so that moving the
+        emphasis changes the meaning of the sentence.
+      - Keep it to a word or a phrase.
+    dont:
+      - Use it for a title, a foreign term or a name for looks. Italic alone
+        carries no stress there.
+      - Italicise a whole paragraph.
+
+versioning: {}
+
+figma:
+  syncedWith: null

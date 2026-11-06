@@ -275,15 +275,14 @@ npm run check-types --workspace @retrojb/kiro-figma-bridge
 npm run test --workspace @retrojb/kiro-figma-bridge
 ```
 
-The three execution contexts each have their own `tsconfig` and their own ESLint
-scope, which is what turns "used `fetch` in the sandbox" or "used `figma` in the
-iframe" into a compile error rather than a runtime failure only reproducible
-inside Figma.
+The three execution contexts each have their own `tsconfig`, which is what turns
+"used `fetch` in the sandbox" or "used `figma` in the iframe" into a compile
+error rather than a runtime failure only reproducible inside Figma.
 
 Tests run the real server against a real WebSocket client
-(`tests/helpers/fake-plugin.mjs`), including the client misbehaving on purpose —
+(`tests/helpers/fake-plugin.js`), including the client misbehaving on purpose —
 wrong code, wrong protocol version, a proof signed for a different document.
-`tests/hmac.test.mjs` checks the hand-written SHA-256 and HMAC against
+`tests/hmac.test.js` checks the hand-written SHA-256 and HMAC against
 `node:crypto`, which is what justifies shipping them: the same implementation
 has to run in the Figma sandbox, the plugin iframe, and Node, and only the last
 of those has Web Crypto.

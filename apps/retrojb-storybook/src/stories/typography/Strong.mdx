@@ -1,0 +1,59 @@
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as StrongStories from "./Strong.stories";
+import specSource from "../../../../../packages/ui/src/components/typography/body/strong/StrongSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={StrongStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### In a heading
+
+<Description of={StrongStories.InHeading} />
+
+<Canvas of={StrongStories.InHeading} />
+
+### With Emphasis
+
+<Description of={StrongStories.WithEmphasis} />
+
+<Canvas of={StrongStories.WithEmphasis} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/typography-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

@@ -1,5 +1,5 @@
 /*
- * The typography group: five headings and four body components, all built on
+ * The typography group: five headings and six body components, all built on
  * the semantic type roles in `styles/tokens.css` (`text-heading-md`,
  * `text-body-sm`, …), never on Tailwind's `text-sm` scale.
  *
@@ -31,9 +31,11 @@ export { SectionHeading } from "./headings/sectionHeading";
 export { SubHeading } from "./headings/subHeading";
 export { TitleHeading } from "./headings/titleHeading";
 export { Code, CodeBlock } from "./body/code";
+export { Emphasis } from "./body/emphasis";
 export { List, ListItem } from "./body/lists";
 export { Paragraph } from "./body/paragraph";
 export { Reference } from "./body/reference";
+export { Strong } from "./body/strong";
 export type {
   HeadingLevel,
   HeadingSize,
@@ -45,9 +47,11 @@ export type { ISectionHeadingProps } from "./headings/sectionHeading";
 export type { ISubHeadingProps } from "./headings/subHeading";
 export type { ITitleHeadingProps } from "./headings/titleHeading";
 export type { ICodeBlockProps, ICodeProps } from "./body/code";
+export type { IEmphasisProps } from "./body/emphasis";
 export type { IListItemProps, IListProps } from "./body/lists";
 export type { IParagraphProps } from "./body/paragraph";
 export type { IReferenceProps } from "./body/reference";
+export type { IStrongProps } from "./body/strong";
 export { type HeadingVariants } from "./headings/styles";
 export {
   pageHeadingStyles,
@@ -70,6 +74,8 @@ export {
   type TitleHeadingVariants,
 } from "./headings/titleHeading";
 export { codeBlockStyles, codeStyles } from "./body/code";
+export { emphasisStyles } from "./body/emphasis";
 export { listItemStyles, listStyles, type ListVariants } from "./body/lists";
 export { paragraphStyles, type ParagraphVariants } from "./body/paragraph";
 export { referenceStyles, type ReferenceVariants } from "./body/reference";
+export { strongStyles } from "./body/strong";

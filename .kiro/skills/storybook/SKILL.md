@@ -31,7 +31,7 @@ type Story = StoryObj<typeof meta>;
 Copy `apps/retrojb-storybook/templates/Component.mdx` to
 `apps/retrojb-storybook/src/stories/$CATEGORY/$COMPONENT.mdx` and follow the
 header comment in the template. How the page gets its content is in
-`project-docs/STORYBOOK_DOCS.md`.
+`../../../project-docs/references/STORYBOOK_DOCS.md`.
 
 ### Accessibility Documentation.
 

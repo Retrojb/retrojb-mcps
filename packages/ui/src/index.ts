@@ -242,9 +242,20 @@ export {
   type IDynamicContainerProps,
 } from "./components/containers/dynamicContainer";
 
+/*
+ * Typography — five headings and the body components, on the semantic type
+ * roles.
+ *
+ * `Strong` and `Emphasis` are inline: a `<strong>` for importance and an `<em>`
+ * for stress inside running text, which is what MDX renders `**x**` and `*x*`
+ * as. They set only weight and slant and inherit everything else. They carry
+ * meaning, so use them for that and not for looks, and put a meaning that
+ * matters in the words too.
+ */
 export {
   Code,
   CodeBlock,
+  Emphasis,
   List,
   ListItem,
   PageHeading,
@@ -252,10 +263,12 @@ export {
   ProductHeading,
   Reference,
   SectionHeading,
+  Strong,
   SubHeading,
   TitleHeading,
   codeBlockStyles,
   codeStyles,
+  emphasisStyles,
   listItemStyles,
   listStyles,
   pageHeadingStyles,
@@ -263,6 +276,7 @@ export {
   productHeadingStyles,
   referenceStyles,
   sectionHeadingStyles,
+  strongStyles,
   subHeadingStyles,
   titleHeadingStyles,
   type HeadingLevel,
@@ -270,6 +284,7 @@ export {
   type HeadingVariants,
   type ICodeBlockProps,
   type ICodeProps,
+  type IEmphasisProps,
   type IHeadingProps,
   type IListItemProps,
   type IListProps,
@@ -278,6 +293,7 @@ export {
   type IProductHeadingProps,
   type IReferenceProps,
   type ISectionHeadingProps,
+  type IStrongProps,
   type ISubHeadingProps,
   type ITitleHeadingProps,
   type ListVariants,

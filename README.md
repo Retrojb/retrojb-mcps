@@ -197,4 +197,4 @@ unset.
 
 **Versions are managed by changesets.** Every package sits at `0.0.0` and nobody
 edits a `version` field by hand. See
-[`project-docs/RELEASE.md`](project-docs/RELEASE.md).
+[`project-docs/processes/RELEASE.md`](project-docs/processes/RELEASE.md).

@@ -1,0 +1,84 @@
+# Builds the static sites and deploys them to Cloudflare Pages (Direct Upload).
+#
+#   push to main      -> production deployment
+#   pull request      -> preview deployment at <branch>.<project>.pages.dev
+#   workflow_dispatch -> deploys the selected ref (a non-main ref is a preview)
+#
+# One-time setup (Cloudflare account, Pages projects, repository secrets) is in
+# project-docs/DEPLOY-CLOUDFLARE.md.
+#
+# Adding a site: add one entry to the matrix below.
+name: Deploy Sites
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel a superseded run for the same ref, but never one that is mid-deploy on
+# main: a half-finished production upload is worse than a slightly late one.
+concurrency:
+  group: deploy-sites-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  deploy:
+    # Fork PRs do not receive repository secrets, so they cannot deploy. Skip
+    # them rather than fail.
+    if: >-
+      github.event_name != 'pull_request' ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    name: Deploy ${{ matrix.site.name }}
+    permissions:
+      contents: read
+      deployments: write
+    strategy:
+      fail-fast: false
+      matrix:
+        site:
+          - name: docs
+            # Cloudflare Pages project name. Must match the project you create.
+            project: retrojb-docs
+            # Turbo builds the site and the workspace packages it depends on.
+            filter: "@retrojb/docs"
+            dir: apps/docs/out
+          - name: storybook
+            project: retrojb-storybook
+            filter: "@retrojb/retrojb-storybook"
+            dir: apps/retrojb-storybook/storybook-static
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24.x"
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npx turbo run build --filter="${{ matrix.site.filter }}"
+      - name: Check build output
+        run: test -f "${{ matrix.site.dir }}/index.html"
+      # Pull request checkouts are a detached merge commit, so wrangler cannot
+      # read a branch name from git and the deploy could be treated as
+      # production. Name the branch explicitly. Pages only accepts a limited
+      # character set in branch names, so anything else becomes "-", which also
+      # keeps a hostile branch name out of the command line.
+      - name: Resolve branch
+        id: branch
+        env:
+          REF_NAME: ${{ github.head_ref || github.ref_name }}
+        run:
+          echo "name=$(printf '%s' "$REF_NAME" | tr -c 'A-Za-z0-9._-' '-')" >>
+          "$GITHUB_OUTPUT"
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v4
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # A deploy to the project's production branch (main) is production;
+          # any other branch is a preview.
+          command:
+            pages deploy ${{ matrix.site.dir }} --project-name=${{
+            matrix.site.project }} --branch=${{ steps.branch.outputs.name }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

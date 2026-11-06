@@ -1,4 +1,4 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
+# Builds and tests, then publishes any workspace package whose version is not yet on npmjs.org (via changesets).
 # For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
 
 name: Publish Packages
@@ -13,7 +13,6 @@ jobs:
   build:
     permissions:
       contents: read
-      pages: write
       id-token: write
     runs-on: ubuntu-slim
     steps:
@@ -30,7 +29,6 @@ jobs:
     needs: build
     permissions:
       contents: read
-      pages: write
       id-token: write
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +40,6 @@ jobs:
           scope: "@retrojb"
       - run: npm ci
       - run: npm run build
-      - run: npm publish
+      - run: npx changeset publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

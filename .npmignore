@@ -3,10 +3,11 @@
 ./changeset
 ./vscode
 ./apps
-
+./temp
 ./packages/eslint-config/*
 ./packages/typescript-config/*
-./workspace-tools/*
+./packages/plugin-kit/*
+./packages/workspace-tools/*
 .editorconfig
 .nvmrc
 .prettierignore
