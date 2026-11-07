@@ -1,4 +1,5 @@
 # retro-mcps
+
 [![Pull Request](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml/badge.svg?branch=main)](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml)
 
 A monorepo for MCP servers and other AI tooling, built on
@@ -38,6 +39,7 @@ runs in the host application and relays between it and a harness.
 ### Shared packages
 
 - `@retrojb/ui` — React component library shared by the apps
+- `@retrojb/tokens` — design tokens as CSS custom properties, light and dark
 - `@retrojb/eslint-config` — shared ESLint configuration
 - `@retrojb/typescript-config` — shared `tsconfig.json` bases
 

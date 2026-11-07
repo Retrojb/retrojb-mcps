@@ -74,7 +74,7 @@ usage:
       - Rely on tone alone to say what a tag means.
 
 tokens:
-  - surface
+  - surface-base
   - foreground
   - border-strong
   - accent

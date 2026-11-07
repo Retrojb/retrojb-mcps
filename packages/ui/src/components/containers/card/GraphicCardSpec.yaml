@@ -81,12 +81,11 @@ usage:
 
 tokens:
   - border-strong
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - foreground
   - foreground-muted
   - radius-control
-  - spacing-1000
 
 versioning: {}
 

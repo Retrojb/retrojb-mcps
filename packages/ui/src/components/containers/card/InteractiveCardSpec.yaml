@@ -103,8 +103,8 @@ usage:
 tokens:
   - border-strong
   - accent
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - foreground
   - foreground-muted
   - focus

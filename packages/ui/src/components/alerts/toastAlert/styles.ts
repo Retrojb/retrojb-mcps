@@ -18,7 +18,7 @@ import { ALERT_DISMISS, ALERT_SURFACE, toneVariants } from "../tone";
 const toastRegionStyles = tv({
   base: [
     "fixed z-50 flex w-full max-w-sm flex-col",
-    "gap-(--spacing-20) p-(--spacing-40)",
+    "gap-(--space-2) p-(--space-4)",
 
     /*
      * The region spans a corner of the viewport whether or not it holds anything, so
@@ -61,17 +61,17 @@ const toastAlertStyles = tv({
      *
      * No shadow. The palette ships no elevation token, and the `--border-strong` edge
      * from `ALERT_SURFACE` is what separates the toast from whatever is behind it —
-     * which it has to do anyway, since `--surface` against `--background` is 1.42:1 in
+     * which it has to do anyway, since `--surface-base` against `--background` is 1.42:1 in
      * light and 1.09:1 in dark and reads as no boundary at all.
      */
     box: [
       ...ALERT_SURFACE,
       "pointer-events-auto",
       "flex items-start justify-between",
-      "gap-(--spacing-30) p-(--spacing-40) text-body-sm",
+      "gap-(--space-3) p-(--space-4) text-body-sm",
     ],
 
-    content: "flex min-w-0 flex-col gap-(--spacing-10)",
+    content: "flex min-w-0 flex-col gap-(--space-1)",
 
     /*
      * The tone as words, for the same reason as in `InlineAlert`: the bar colour and

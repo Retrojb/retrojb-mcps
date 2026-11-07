@@ -39,7 +39,7 @@
   align-items: baseline;
   gap: 0.5rem;
   padding: 0.6rem 0.75rem;
-  background: var(--surface);
+  background: var(--surface-base);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 0.925rem;
@@ -76,7 +76,7 @@
   max-width: var(--measure);
   margin-top: 1.5rem;
   padding: 1rem 1.15rem;
-  background: var(--surface);
+  background: var(--surface-base);
   border: 1px solid var(--border);
   border-left: 3px solid var(--border-strong);
   border-radius: var(--radius-sm);
@@ -133,7 +133,7 @@
   font-size: 0.8125rem;
   font-weight: 700;
   border-bottom: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--surface-base);
 }
 
 /*
@@ -151,7 +151,7 @@
 .pane pre {
   border: none;
   border-radius: 0;
-  background: var(--surface-raised);
+  background: var(--surface-raised-1);
 }
 
 .paneNote {

@@ -141,31 +141,32 @@ not a thing anyone needs.
 
 ## Colors
 
-Measured against `--surface`, the fill the dialog's inner box sets on itself.
+Measured against `--surface-base`, the fill the dialog's inner box sets on
+itself.
 
 ### Text (needs 4.5:1)
 
-| Role          | Pairing                        |   Light |    Dark |
-| ------------- | ------------------------------ | ------: | ------: |
-| Title         | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
-| Message       | `--foreground` on `--surface`  | 18.95:1 | 17.21:1 |
-| Info label    | `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
-| Success label | `--success` on `--surface`     |  8.99:1 |  9.77:1 |
-| Error label   | `--danger` on `--surface`      |  8.91:1 |  9.00:1 |
+| Role          | Pairing                             |   Light |    Dark |
+| ------------- | ----------------------------------- | ------: | ------: |
+| Title         | `--foreground` on `--surface-base`  | 18.95:1 | 17.21:1 |
+| Message       | `--foreground` on `--surface-base`  | 18.95:1 | 17.21:1 |
+| Info label    | `--accent-text` on `--surface-base` | 15.33:1 | 14.50:1 |
+| Success label | `--success` on `--surface-base`     |  8.99:1 |  9.77:1 |
+| Error label   | `--danger` on `--surface-base`      |  8.91:1 |  9.00:1 |
 
 ### Boundaries (needs 3:1)
 
-| Role        | Pairing                       |       Light |        Dark |
-| ----------- | ----------------------------- | ----------: | ----------: |
-| Info bar    | `--accent` on `--surface`     |      8.82:1 |      9.72:1 |
-| Success bar | `--success` on `--surface`    |      8.99:1 |      9.77:1 |
-| Error bar   | `--danger` on `--surface`     |      8.91:1 |      9.00:1 |
-| Box edge    | `--border-strong` on the page | 4.16–6.36:1 | 4.41–4.83:1 |
+| Role        | Pairing                         |       Light |        Dark |
+| ----------- | ------------------------------- | ----------: | ----------: |
+| Info bar    | `--accent` on `--surface-base`  |      8.82:1 |      9.72:1 |
+| Success bar | `--success` on `--surface-base` |      8.99:1 |      9.77:1 |
+| Error bar   | `--danger` on `--surface-base`  |      8.91:1 |      9.00:1 |
+| Box edge    | `--border-strong` on the page   | 4.16–6.36:1 | 4.41–4.83:1 |
 
-The backdrop is `--neutral-9` at 60%, which darkens the page behind without
-being the thing that separates the dialog from it — the `--border-strong` edge
-does that, and has to, since `--surface` against `--background` is 1.42:1 in
-light and 1.09:1 in dark.
+The backdrop is `--scrim-md`, which darkens the page behind in both themes
+without being the thing that separates the dialog from it — the
+`--border-strong` edge does that, and has to, since `--surface-base` against
+`--background` is 1.42:1 in light and 1.09:1 in dark.
 
 ### Two slots, because `<dialog>` has user-agent styles
 

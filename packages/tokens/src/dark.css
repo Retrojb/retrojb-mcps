@@ -1,0 +1,68 @@
+/*
+ * Dark colour values. Only what differs from `light.css`.
+ *
+ * The ramps are indexed by role, so the semantic tokens in `light.css`
+ * (`--accent: var(--primary-8)` and friends) pick up whichever ramp is in scope
+ * and are never restated here. What is here is the three ramps, the surfaces,
+ * the scrims and the status colours, which are not from a ramp.
+ *
+ * This file is a source, not a stylesheet to import on its own: it declares only
+ * the overrides. `dist/dark.css` is the standalone, pinned-dark build, and
+ * `dist/index.css` combines both themes. See `build.mjs`.
+ */
+
+@layer theme {
+  :root {
+    /* PRIMARY  */
+    --primary-0: #200230;
+    --primary-1: #2b0b3e;
+    --primary-2: #38164c;
+    --primary-3: #44215a;
+    --primary-4: #593571;
+    --primary-5: #906aab;
+    --primary-6: #a17cbd;
+    --primary-7: #af89ca;
+    --primary-8: #d3b2ec;
+    --primary-9: #f1e1fd;
+
+    /* SECONDARY  */
+    --secondary-0: #001d01;
+    --secondary-1: #012904;
+    --secondary-2: #033608;
+    --secondary-3: #06430e;
+    --secondary-4: #0e5a17;
+    --secondary-5: #20962d;
+    --secondary-6: #30aa3b;
+    --secondary-7: #46b84d;
+    --secondary-8: #82de83;
+    --secondary-9: #9dff9e;
+
+    /* NEUTRAL */
+    --neutral-0: #201f20;
+    --neutral-1: #272427;
+    --neutral-2: #332f33;
+    --neutral-3: #3e3a3e;
+    --neutral-4: #534e53;
+    --neutral-5: #888388;
+    --neutral-6: #9a969a;
+    --neutral-7: #a8a3a8;
+    --neutral-8: #d0ccd0;
+    --neutral-9: #fcf9fc;
+
+    /* SURFACES: each level a step lighter; sunken a step darker than base. */
+    --surface-sunken: #0e1012;
+    --surface-base: #14171a;
+    --surface-raised-1: #1a1e22;
+    --surface-raised-2: #20252a;
+    --surface-overlay: #272c32;
+
+    /* SCRIM: higher alpha, so it still dims a near-black page. */
+    --scrim-sm: rgb(0 0 0 / 0.48);
+    --scrim-md: rgb(0 0 0 / 0.72);
+
+    /* STATUS */
+    --danger: #ff9d95;
+    --success: #6bd39a;
+    --information: #32aee3;
+  }
+}

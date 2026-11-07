@@ -24,7 +24,7 @@ const headingStyles = tv({
     // No preflight in this package, so a bare `<h2>` keeps its UA margins and
     // UA font size. The role sets the size; the margin is the layout's job.
     "m-0 min-w-0",
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface, in light /
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface-base, in light /
     // dark. Clears 1.4.6 (AAA, 7:1) everywhere it can sit.
     "text-foreground",
     /*

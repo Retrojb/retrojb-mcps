@@ -23,8 +23,8 @@ import { tv } from "../../../../lib/tv";
 const codeStyles = tv({
   base: [
     "font-mono text-code",
-    // 20.31 / 16.04:1 on --surface-raised in light / dark.
-    "bg-surface-raised text-foreground",
+    // 20.31 / 16.04:1 on --surface-raised-1 in light / dark.
+    "bg-surface-raised-1 text-foreground",
     /*
      * `border-border`, the decorative one, deliberately. The chip is not a
      * control and not a region — it is text, identified by its monospace face,
@@ -33,7 +33,7 @@ const codeStyles = tv({
      * identifier in a paragraph.
      */
     "rounded-(--radius-xs) border border-border",
-    "px-(--spacing-10)",
+    "px-(--space-1)",
     /*
      * A long identifier wraps rather than overflowing at 320 CSS px (1.4.10),
      * and `box-decoration-clone` gives each wrapped fragment its own padding and
@@ -56,15 +56,15 @@ const codeBlockStyles = tv({
      * `border-border-strong` here, unlike inline `Code`. The block is a focusable
      * region (see `CodeBlock.tsx`), and its edge is what shows where the
      * scrollable area ends: 4.17 / 4.42:1 on --background, 6.36 / 4.51:1 against
-     * its own --surface-raised fill.
+     * its own --surface-raised-1 fill.
      */
     root: [
       "m-0 min-w-0 overflow-x-auto whitespace-pre",
       "font-mono text-code",
-      // 20.31 / 16.04:1 on --surface-raised in light / dark.
-      "bg-surface-raised text-foreground",
+      // 20.31 / 16.04:1 on --surface-raised-1 in light / dark.
+      "bg-surface-raised-1 text-foreground",
       "rounded-control border border-border-strong",
-      "p-(--spacing-40)",
+      "p-(--space-4)",
       // The shared focus indicator. --focus on --background is 6.19 / 8.88:1.
       "outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus",
     ],

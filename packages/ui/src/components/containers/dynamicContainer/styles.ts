@@ -53,18 +53,18 @@ const dynamicContainerStyles = tv({
       container: "",
     },
     /*
-     * Steps on the spacing scale in `styles/tokens.css`. Named by size rather
+     * Steps on the spacing scale in `@retrojb/tokens`. Named by size rather
      * than by token number so a caller reads intent, and so the mapping can be
      * retuned here once. One value for both axes: a wrapped row's second line
      * should sit as far from the first as the items sit from each other.
      */
     gap: {
-      none: "gap-(--spacing-0)",
-      xs: "gap-(--spacing-10)", // 4px
-      sm: "gap-(--spacing-20)", // 8px
-      md: "gap-(--spacing-30)", // 12px
-      lg: "gap-(--spacing-40)", // 16px
-      xl: "gap-(--spacing-60)", // 24px
+      none: "gap-(--space-0)",
+      xs: "gap-(--space-1)", // 4px
+      sm: "gap-(--space-2)", // 8px
+      md: "gap-(--space-3)", // 12px
+      lg: "gap-(--space-4)", // 16px
+      xl: "gap-(--space-6)", // 24px
     },
     /*
      * Cross-axis alignment. `stretch` is the flex default and stated anyway so

@@ -47,7 +47,7 @@ export const Checked: Story = {
  */
 export const Sizes: Story = {
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <Radio {...args} size="sm" value="sm" label="Small" defaultChecked />
       <Radio {...args} size="md" value="md" label="Medium" />
       <Radio {...args} size="lg" value="lg" label="Large" />
@@ -79,7 +79,7 @@ export const WithDescription: Story = {
  */
 export const SharedName: Story = {
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--spacing-20)" }}>
+    <div style={{ display: "grid", gap: "var(--space-2)" }}>
       <Radio {...args} value="standard" label="Standard" defaultChecked />
       <Radio {...args} value="express" label="Express" />
     </div>

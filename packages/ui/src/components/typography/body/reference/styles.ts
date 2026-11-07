@@ -19,13 +19,13 @@ const referenceStyles = tv({
      * right-to-left document.
      */
     root: [
-      "m-0 min-w-0 flex flex-col gap-(--spacing-20)",
-      "border-s-4 border-border-strong ps-(--spacing-40)",
+      "m-0 min-w-0 flex flex-col gap-(--space-2)",
+      "border-s-4 border-border-strong ps-(--space-4)",
     ],
     // No preflight: a `<blockquote>` keeps a UA `40px` inline margin otherwise.
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface.
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface-base.
     quote: "m-0 text-foreground text-pretty wrap-break-word",
-    // 6.25 / 6.63:1 on --background, 8.91 / 7.26:1 on --surface.
+    // 6.25 / 6.63:1 on --background, 8.91 / 7.26:1 on --surface-base.
     attribution: "m-0 text-body-sm text-foreground-muted",
     // A `<cite>` is italic in the UA stylesheet; stated so it survives a reset.
     work: "italic",

@@ -66,7 +66,7 @@ export const SizeOverride: Story = {
  */
 export const AboveThePageTitle: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <PageHeading>Pricing</PageHeading>
       <ProductHeading level={2}>Retro Studio</ProductHeading>
     </div>

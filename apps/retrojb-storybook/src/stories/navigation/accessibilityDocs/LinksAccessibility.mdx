@@ -13,7 +13,7 @@ Extracted from `packages/ui/src/components/navigation/Link/styles.ts` and its
 | Criterion                         | Level | How the component meets it                                                                |
 | --------------------------------- | ----- | ----------------------------------------------------------------------------------------- |
 | 1.4.1 Use of Color                | A     | `inline` and `muted` are underlined; hover thickens the underline as well as shifting hue |
-| 1.4.3 Contrast (Minimum)          | AA    | Every intent clears 4.5:1 on both `--background` and `--surface`                          |
+| 1.4.3 Contrast (Minimum)          | AA    | Every intent clears 4.5:1 on both `--background` and `--surface-base`                     |
 | 1.4.11 Non-text Contrast          | AA    | Focus ring clears 3:1 in both themes                                                      |
 | 2.3.3 Animation from Interactions | AAA   | `motion-reduce:transition-none` drops the colour transition                               |
 | 2.4.7 Focus Visible               | AA    | Same 2px `outline` indicator as `Button`                                                  |
@@ -59,18 +59,18 @@ keeps the outline from clipping square against inline text.
 | Intent       | Pairing                                   |  Light |    Dark |
 | ------------ | ----------------------------------------- | -----: | ------: |
 | `inline`     | `--accent-text` on `--background`         | 5.98:1 |  8.81:1 |
-| `inline`     | `--accent-text` on `--surface`            | 5.58:1 |  8.14:1 |
+| `inline`     | `--accent-text` on `--surface-base`       | 5.58:1 |  8.14:1 |
 | `inline`     | hover, `--accent-hover` on `--background` | 9.82:1 | 11.64:1 |
 | `standalone` | `--foreground` on `--background`          | 17.8:1 |  16.6:1 |
 | `muted`      | `--foreground-muted` on `--background`    | 6.43:1 |  8.59:1 |
-| `muted`      | `--foreground-muted` on `--surface`       |    6:1 |  7.93:1 |
+| `muted`      | `--foreground-muted` on `--surface-base`  |    6:1 |  7.93:1 |
 
 ### Focus ring (needs 3:1)
 
-| Pairing                          |  Light |   Dark |
-| -------------------------------- | -----: | -----: |
-| `--focus-ring` on `--background` | 5.98:1 | 8.81:1 |
-| `--focus-ring` on `--surface`    | 5.58:1 | 8.14:1 |
+| Pairing                            |  Light |   Dark |
+| ---------------------------------- | -----: | -----: |
+| `--focus-ring` on `--background`   | 5.98:1 | 8.81:1 |
+| `--focus-ring` on `--surface-base` | 5.58:1 | 8.14:1 |
 
 ## Aria
 

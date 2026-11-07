@@ -31,12 +31,12 @@ const paragraphStyles = tv({
       sm: "text-body-sm",
     },
     tone: {
-      // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface, in light
+      // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface-base, in light
       // / dark.
       default: "text-foreground",
-      // 6.25 / 6.63:1 on --background, 8.91 / 7.26:1 on --surface, 9.55 / 6.76:1
-      // on --surface-raised. Clears 1.4.3 (4.5:1) on every surface and 1.4.6
-      // (7:1) on --surface in both themes.
+      // 6.25 / 6.63:1 on --background, 8.91 / 7.26:1 on --surface-base, 9.55 / 6.76:1
+      // on --surface-raised-1. Clears 1.4.3 (4.5:1) on every surface and 1.4.6
+      // (7:1) on --surface-base in both themes.
       muted: "text-foreground-muted",
     },
     /*

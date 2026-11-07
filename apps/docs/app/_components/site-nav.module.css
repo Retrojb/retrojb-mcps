@@ -39,7 +39,7 @@
 
 .link:hover {
   color: var(--foreground);
-  background: var(--surface);
+  background: var(--surface-base);
   text-decoration: none;
 }
 
@@ -50,6 +50,6 @@
 .current {
   color: var(--foreground);
   font-weight: 600;
-  background: var(--surface);
+  background: var(--surface-base);
   border-left-color: var(--accent);
 }

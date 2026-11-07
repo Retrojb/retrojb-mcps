@@ -309,5 +309,5 @@ export {
 // rules the components use, rather than a second, differently-configured copy.
 export { cn, cx, tv, type VariantProps } from "./lib/tv";
 // The semantic type roles; `text-${role}` is the utility for each. See the
-// typography section of `styles/tokens.css`.
+// typography section of `packages/tokens/src/base.css`.
 export { TYPE_ROLES, type TypeRole } from "./lib/tv";

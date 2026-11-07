@@ -84,7 +84,7 @@ usage:
   nativeElement: true
 
 tokens:
-  - surface-raised
+  - surface-raised-1
   - border-strong
   - accent
   - danger
@@ -94,6 +94,9 @@ tokens:
   - label-md
   - body-sm
   - body-md
+  - control-height-sm
+  - control-height-md
+  - control-height-lg
 
 versioning:
   introducedIn: "0.1.0"

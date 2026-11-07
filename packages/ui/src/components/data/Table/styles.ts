@@ -34,7 +34,7 @@ const tableStyle = tv({
      */
     root: [
       "w-full overflow-x-auto",
-      "rounded-control border border-border bg-surface-raised",
+      "rounded-control border border-border bg-surface-raised-1",
       "outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus",
     ],
 
@@ -75,7 +75,7 @@ const tableStyle = tv({
     row: "transition-colors motion-reduce:transition-none",
 
     /*
-     * `bg-surface` unconditionally, not only when the header is sticky. A
+     * `bg-surface-base` unconditionally, not only when the header is sticky. A
      * sticky header scrolls body rows underneath itself, so it must be opaque;
      * making that depend on the `stickyHeader` variant means the day someone
      * sets the variant from a caller-supplied class instead, rows show through.
@@ -93,7 +93,7 @@ const tableStyle = tv({
      * decorative. Naming the side puts the two in different groups.
      */
     headerCell: [
-      "bg-surface font-medium text-foreground",
+      "bg-surface-base font-medium text-foreground",
       "border-b border-b-border-strong",
       "whitespace-nowrap",
     ],
@@ -110,8 +110,8 @@ const tableStyle = tv({
      * cell, so the target is the full header cell rather than the text.
      */
     sortButton: [
-      "flex w-full items-center gap-1.5",
-      "min-h-6 rounded-control font-medium",
+      "flex w-full items-center gap-(--space-2)",
+      "min-h-(--control-height-xs) rounded-control font-medium",
       "cursor-pointer select-none",
       "transition-colors motion-reduce:transition-none",
       "hover:text-accent-text",
@@ -137,32 +137,33 @@ const tableStyle = tv({
 
   variants: {
     /*
-     * Row heights work out to roughly 36/40/48px, tracking Button and Input so
-     * a table can sit in the same layout as a toolbar without the two scales
-     * disagreeing. The same target-size trade applies to the sort buttons: all
+     * Cell padding is `--space-*`, so a table inside `data-density="compact"`
+     * tightens with it; `size` and density are separate axes. At the default
+     * density rows are about 38 / 46 / 49px, close to Button and Input so a
+     * table can sit in the same layout as a toolbar. The same target-size trade applies to the sort buttons: all
      * three clear 2.5.8 (AA, 24px), only `lg` clears 2.5.5 (AAA, 44px).
      */
     size: {
       sm: {
-        caption: "px-2.5 py-2 text-body-sm",
-        headerLabel: "px-2.5 py-2 text-body-sm",
-        sortButton: "px-2.5 py-2 text-body-sm",
-        cell: "px-2.5 py-2 text-body-sm",
-        empty: "px-2.5 py-6 text-body-sm",
+        caption: "px-(--space-2) py-(--space-2) text-body-sm",
+        headerLabel: "px-(--space-2) py-(--space-2) text-body-sm",
+        sortButton: "px-(--space-2) py-(--space-2) text-body-sm",
+        cell: "px-(--space-2) py-(--space-2) text-body-sm",
+        empty: "px-(--space-2) py-(--space-6) text-body-sm",
       },
       md: {
-        caption: "px-3 py-2.5 text-body-sm",
-        headerLabel: "px-3 py-2.5 text-body-sm",
-        sortButton: "px-3 py-2.5 text-body-sm",
-        cell: "px-3 py-2.5 text-body-sm",
-        empty: "px-3 py-8 text-body-sm",
+        caption: "px-(--space-3) py-(--space-3) text-body-sm",
+        headerLabel: "px-(--space-3) py-(--space-3) text-body-sm",
+        sortButton: "px-(--space-3) py-(--space-3) text-body-sm",
+        cell: "px-(--space-3) py-(--space-3) text-body-sm",
+        empty: "px-(--space-3) py-(--space-7) text-body-sm",
       },
       lg: {
-        caption: "px-4 py-3 text-body-md",
-        headerLabel: "px-4 py-3 text-body-md",
-        sortButton: "px-4 py-3 text-body-md",
-        cell: "px-4 py-3 text-body-md",
-        empty: "px-4 py-10 text-body-md",
+        caption: "px-(--space-4) py-(--space-3) text-body-md",
+        headerLabel: "px-(--space-4) py-(--space-3) text-body-md",
+        sortButton: "px-(--space-4) py-(--space-3) text-body-md",
+        cell: "px-(--space-4) py-(--space-3) text-body-md",
+        empty: "px-(--space-4) py-(--space-8) text-body-md",
       },
     },
 
@@ -209,13 +210,13 @@ const tableStyle = tv({
      * that cannot drift.
      */
     striped: {
-      true: { row: "odd:bg-surface" },
+      true: { row: "odd:bg-surface-base" },
     },
 
     /*
      * A tint, and only a tint.
      *
-     * Over `--surface-raised` this composites to roughly #e7effb on light and
+     * Over `--surface-raised-1` this composites to roughly #e7effb on light and
      * #242d38 on dark, leaving `--foreground` at about 15.4:1 and 11.9:1. Those
      * two are calculated rather than measured: `check:contrast` in apps/docs
      * covers pairs of named tokens, and a composited tint is not one.

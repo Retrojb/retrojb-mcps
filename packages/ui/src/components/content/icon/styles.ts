@@ -9,7 +9,8 @@
  *
  * SIZE
  *
- * 16 / 20 / 24px (`sm` / `md` / `lg`), `--spacing-40` to `--spacing-60`. The
+ * 16 / 20 / 24px (`sm` / `md` / `lg`): `size-4` to `size-6`, fixed rem sizes
+ * that density does not change. The
  * same three steps as `Button`, `ProgressBar` and `SegmentedControl`, and no
  * `xs` or `xl`, because no sibling has them either:
  *
@@ -48,7 +49,7 @@
  * Lucide paints with `stroke="currentColor"`, so with no `tone` the icon is
  * whatever colour the text around it is — inside a primary `Button` that is
  * `--accent-foreground` on `--accent` (9.32 / 10.19:1), inside an `InlineAlert`
- * it is `--foreground` on `--surface`. That inherited pairing is the one that
+ * it is `--foreground` on `--surface-base`. That inherited pairing is the one that
  * has to clear 3:1 for a meaningful icon, and it is the caller's surface, so
  * it cannot be checked here.
  *
@@ -108,7 +109,7 @@ const ICON_STROKE_WIDTH = {
 /*
  * The colour per tone, set as `color` so Lucide's `currentColor` stroke picks
  * it up. Ratios from `checkContrast` (graphical object, 3:1), light / dark,
- * against `--background` · `--surface` · `--surface-raised`.
+ * against `--background` · `--surface-base` · `--surface-raised-1`.
  *
  * `info` is `--accent` rather than `--accent-text`. An icon is a graphic, as
  * the alerts' tone bar and `ProgressBar`'s fill are, and those use `--accent`
@@ -144,9 +145,9 @@ const iconStyles = tv({
   variants: {
     // 16 / 20 / 24px — see SIZE above.
     size: {
-      sm: "size-(--spacing-40)",
-      md: "size-(--spacing-50)",
-      lg: "size-(--spacing-60)",
+      sm: "size-4",
+      md: "size-5",
+      lg: "size-6",
     },
     tone: ICON_TONE,
     mirrorInRtl: {

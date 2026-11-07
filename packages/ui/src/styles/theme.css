@@ -28,7 +28,7 @@
    * Exposed as utilities as well as custom properties because an app composing its
    * own layouts needs `bg-neutral-1` and `text-primary-9` without reaching for
    * arbitrary values. The step index is a role, not a lightness — see the contract
-   * table in `tokens.css` — so `bg-primary-7` is the solid fill in both themes.
+   * table in `packages/tokens/src/light.css` — so `bg-primary-7` is the solid fill in both themes.
    *
    * Fallbacks are the light-theme values. An app that overrides the ramp gets a
    * dark theme for free, because the semantic tokens below resolve through these.
@@ -73,8 +73,24 @@
    * from here: `bg-accent` -> `--color-accent` -> `--accent` -> `--primary-8`.
    */
   --color-background: var(--background, #d1d1d1);
+
+  /* The six surface levels; see SURFACES in `packages/tokens/src/light.css`. */
+  --color-surface-sunken: var(--surface-sunken, #e7e8eb);
+  --color-surface-base: var(--surface-base, #f6f7f9);
+  --color-surface-raised-1: var(--surface-raised-1, #ffffff);
+  --color-surface-raised-2: var(--surface-raised-2, #ffffff);
+  --color-surface-overlay: var(--surface-overlay, #ffffff);
+
+  /* Deprecated: `bg-surface` and `bg-surface-raised`. Use the levels above. */
   --color-surface: var(--surface, #f6f7f9);
   --color-surface-raised: var(--surface-raised, #ffffff);
+
+  /*
+   * `bg-scrim-sm`, `bg-scrim-md`, and `backdrop:bg-scrim-md` on a modal
+   * `<dialog>`. Each fallback is the light value.
+   */
+  --color-scrim-sm: var(--scrim-sm, rgb(7 5 7 / 0.32));
+  --color-scrim-md: var(--scrim-md, rgb(7 5 7 / 0.6));
 
   /* --neutral-9 / --neutral-7 */
   --color-foreground: var(--foreground, #070507);
@@ -163,7 +179,7 @@
    * and the `text-body-sm/6` line-height modifier works as it does on `text-sm`.
    *
    * Fallbacks are the resolved values, so `dist/styles.css` renders correctly
-   * without `tokens.css` in front of it. Tailwind's `text-xs` … `text-9xl` are
+   * without `@retrojb/tokens` in front of it. Tailwind's `text-xs` … `text-9xl` are
    * still emitted; components in this package use the roles instead.
    *
    * The role names are registered with tailwind-merge in `lib/tv.ts`. Without

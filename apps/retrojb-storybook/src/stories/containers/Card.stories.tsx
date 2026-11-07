@@ -94,7 +94,7 @@ export const AsListItems: Story = {
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(14rem, 1fr))",
-        gap: "var(--spacing-40)",
+        gap: "var(--space-4)",
         margin: 0,
         padding: 0,
       }}

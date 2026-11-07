@@ -18,8 +18,8 @@
  * So the tokens now come from one place. `layout.tsx` imports
  * `@retrojb/ui/styles.css` before this file; that stylesheet carries the token
  * values in `@layer theme`, and nothing here overrides them. To retheme the docs
- * site, change the ramps in `packages/ui/src/styles/tokens.css` — and
- * `check:contrast` reads that same file, so it cannot drift again.
+ * site, change the ramps in `packages/tokens/src/light.css` and `dark.css` — and
+ * `check:contrast` reads those same files, so it cannot drift again.
  *
  *
  * WHAT TAILWIND IS DOING HERE

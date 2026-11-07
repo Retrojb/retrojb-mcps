@@ -29,7 +29,7 @@ import { tv, type VariantProps } from "../../../lib/tv";
  */
 const buttonStyle = tv({
   base: [
-    "inline-flex items-center justify-center gap-2",
+    "inline-flex items-center justify-center gap-(--space-2)",
     "rounded-control border border-transparent",
     // Weight comes from the `label-*` type role in `size`.
     "whitespace-nowrap",
@@ -64,20 +64,22 @@ const buttonStyle = tv({
       // only one of the two that clears 1.4.11 as a control boundary, and the
       // boundary is what makes this readable as a button at all.
       secondary:
-        "border-border-strong bg-surface text-foreground hover:bg-surface-raised",
+        "border-border-strong bg-surface-base text-foreground hover:bg-surface-raised-1",
 
-      ghost: "bg-transparent text-accent-text hover:bg-surface",
+      ghost: "bg-transparent text-accent-text hover:bg-surface-base",
 
       danger: "bg-danger text-danger-foreground hover:opacity-90",
     },
 
     size: {
-      // Heights are 32/40/48px. All three clear the 24px minimum in 2.5.8 (AA).
+      // Heights are 32/40/48px (`--control-height-*`), and density does not
+      // change them, only the inline padding. All three clear the 24px minimum
+      // in 2.5.8 (AA).
       // Only `lg` clears the 44px enhanced target in 2.5.5 (AAA) — `md` is 40px
       // and falls 4px short, so reach for `lg` where AAA is the bar.
-      sm: "h-8 px-3 text-label-md",
-      md: "h-10 px-4 text-label-md",
-      lg: "h-12 px-6 text-label-lg",
+      sm: "h-(--control-height-sm) px-(--space-3) text-label-md",
+      md: "h-(--control-height-md) px-(--space-4) text-label-md",
+      lg: "h-(--control-height-lg) px-(--space-6) text-label-lg",
     },
 
     fullWidth: {

@@ -178,11 +178,13 @@ so overriding the token retints every component with no rebuild of this package:
 }
 ```
 
-The defaults ship in `dist/styles.css` inside `@layer theme`, and unlayered CSS
-wins over layered CSS, so an app's own `:root` block overrides them without
-`!important` or a specificity fight. `apps/docs` already declares these tokens,
-so it retints this package automatically and its `npm run check:contrast` stays
-the authority on the palette.
+The token values come from [`@retrojb/tokens`](../tokens) and are bundled into
+`dist/styles.css` inside `@layer theme`. Unlayered CSS wins over layered CSS, so
+an app's own `:root` block overrides them without `!important` or a specificity
+fight. The theme follows the OS by default; set `data-theme="light"` or
+`data-theme="dark"` on `<html>` to force one.
+`npm run check:contrast --workspace=@retrojb/docs` measures the token sources
+and is the authority on the palette.
 
 Apps running their own Tailwind build can import just the token mapping to get
 the same utilities in their own markup:
@@ -224,11 +226,11 @@ call site:
 - One focus indicator across all four components: a 2px `outline` with a 2px
   offset on `:focus-visible` (2.4.7, 2.4.13). An `outline` rather than a `ring`
   box-shadow, because outlines survive forced-colors mode.
-- Contrast ratios for every token pair are recorded in `src/styles/tokens.css`,
-  and the pairings these components introduce — button labels on their fills,
-  input text, borders and focus rings — are gated by
-  `npm run check:contrast --workspace=@retrojb/docs`, which uses the engine from
-  `@retrojb/wcag-a11y-scanner`. If you change a colour, run it.
+- Contrast ratios for every token pair are recorded in
+  `packages/tokens/src/light.css`, and the pairings these components introduce —
+  button labels on their fills, input text, borders and focus rings — are gated
+  by `npm run check:contrast --workspace=@retrojb/docs`, which uses the engine
+  from `@retrojb/wcag-a11y-scanner`. If you change a colour, run it.
 
 Colour is never the only signal for a state: the invalid input changes its
 border as well as showing a message, disabled controls change cursor as well as

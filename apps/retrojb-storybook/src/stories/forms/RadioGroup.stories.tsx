@@ -87,7 +87,7 @@ export const Controlled: Story = {
 const ControlledDemo = (args: ComponentProps<typeof RadioGroup>) => {
   const [value, setValue] = useState<string | null>(null);
   return (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <RadioGroup
         {...args}
         defaultValue={undefined}
@@ -125,10 +125,10 @@ const FormDemo = (args: ComponentProps<typeof RadioGroup>) => {
       onReset={() => {
         setSubmitted("");
       }}
-      style={{ display: "grid", gap: "var(--spacing-40)" }}
+      style={{ display: "grid", gap: "var(--space-4)" }}
     >
       <RadioGroup {...args} />
-      <div style={{ display: "flex", gap: "var(--spacing-20)" }}>
+      <div style={{ display: "flex", gap: "var(--space-2)" }}>
         <Button type="submit" text="Continue" />
         <Button type="reset" intent="secondary" text="Reset" />
       </div>

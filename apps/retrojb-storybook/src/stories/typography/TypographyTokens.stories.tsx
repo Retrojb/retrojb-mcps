@@ -17,7 +17,7 @@ interface IRoleValues {
  * identified by their header cells, not by the lines between them.
  */
 const cell = {
-  padding: "var(--spacing-20) var(--spacing-30)",
+  padding: "var(--space-2) var(--space-3)",
   borderBlockEnd: "1px solid var(--border)",
   verticalAlign: "baseline",
 };
@@ -94,11 +94,11 @@ const RoleRow = ({ role }: { readonly role: TypeRole }) => {
 };
 
 const TypeScale = () => (
-  <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+  <div style={{ display: "grid", gap: "var(--space-4)" }}>
     <Paragraph tone="muted" size="sm" measure>
-      Every semantic type role in <Code>tokens.css</Code>, in order. Values are
-      read from the page: the token&apos;s resolved value, then in brackets the
-      px the browser computed at the current root font size. Raise the
+      Every semantic type role in <Code>@retrojb/tokens</Code>, in order. Values
+      are read from the page: the token&apos;s resolved value, then in brackets
+      the px the browser computed at the current root font size. Raise the
       browser&apos;s default font size and the px column grows with it — every
       size is rem (or em, for code).
     </Paragraph>
@@ -114,7 +114,7 @@ const TypeScale = () => (
           style={{
             textAlign: "start",
             fontWeight: 600,
-            paddingBlockEnd: "var(--spacing-20)",
+            paddingBlockEnd: "var(--space-2)",
           }}
         >
           Type roles

@@ -86,7 +86,7 @@ const meta = {
           maxWidth: "100%",
           resize: "horizontal",
           overflow: "auto",
-          padding: "var(--spacing-20)",
+          padding: "var(--space-2)",
         }}
       >
         <Story />

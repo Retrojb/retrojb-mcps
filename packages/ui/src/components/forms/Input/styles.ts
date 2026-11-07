@@ -13,12 +13,12 @@ import { tv, type VariantProps } from "../../../lib/tv";
 
 const inputStyle = tv({
   slots: {
-    root: "flex flex-col gap-1.5",
+    root: "flex flex-col gap-(--space-2)",
 
     label: "text-label-md text-foreground",
 
     control: [
-      "w-full rounded-control border bg-surface-raised",
+      "w-full rounded-control border bg-surface-raised-1",
       "text-foreground placeholder:text-foreground-muted",
       "transition-colors motion-reduce:transition-none",
 
@@ -38,12 +38,12 @@ const inputStyle = tv({
 
   variants: {
     size: {
-      // Matches Button's 32/40/48px so an input and a button line up when they
+      // Matches Button's 32/40/48px (`--control-height-*`) so an input and a button line up when they
       // sit side by side in a row — including the target-size trade noted there:
       // all three clear 2.5.8 (AA, 24px), only `lg` clears 2.5.5 (AAA, 44px).
-      sm: { control: "h-8 px-2.5 text-body-sm" },
-      md: { control: "h-10 px-3 text-body-sm" },
-      lg: { control: "h-12 px-4 text-body-md" },
+      sm: { control: "h-(--control-height-sm) px-(--space-2) text-body-sm" },
+      md: { control: "h-(--control-height-md) px-(--space-3) text-body-sm" },
+      lg: { control: "h-(--control-height-lg) px-(--space-4) text-body-md" },
     },
 
     invalid: {

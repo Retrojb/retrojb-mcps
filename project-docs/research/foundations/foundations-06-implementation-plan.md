@@ -5,6 +5,10 @@ Response to the feedback at the end of `foundations-05-patterns-and-recommendati
 ## Contents
 
 - [Questions that block Phase 1](#questions-that-block-phase-1)
+- [Resolved decisions](#resolved-decisions)
+- [Phase 1 status](#phase-1-status)
+- [Phase 2 status](#phase-2-status)
+- [Phase 3 status](#phase-3-status)
 - [Decisions reviewed](#decisions-reviewed)
 - [Explainers](#explainers)
 - [Implementation phases](#implementation-phases)
@@ -17,6 +21,86 @@ Response to the feedback at the end of `foundations-05-patterns-and-recommendati
 3. **Which Carbon breakpoint?** Carbon's largest is 1584px (`max`). Tailwind's largest is 1536px (`2xl`). They are 48px apart, so adding 1584 changes almost nothing. If you want a wider tier, 1920px (Ant, Fluent) is the common choice. Did you mean 1584, 1920, or Carbon's 320px floor?
 4. **Is `sunken` the page background?** The page (`--background`, `#d1d1d1`) is already darker than `--surface` (`#f6f7f9`). A sunken well that sits between them is a sixth level. Making `sunken` equal `--background` keeps it at five.
 5. **Version bump.** The spacing rename is breaking. `@retrojb/ui` is at `0.1.0`, and a changesets `major` takes it to `1.0.0`. The alternative is a `minor` with a deprecation note, which is the usual 0.x convention. Which do you want?
+
+## Resolved decisions
+
+Answers from the review notes at the end of this file, applied to the phases below.
+
+| Topic | Decision |
+|---|---|
+| Scales (Q1, G1) | Integer index from 0. Colour ramps stay at 0 to 9. |
+| Shadow names (Q2, S4) | `0` to `6`, following the 0-10 rule. |
+| Breakpoints (Q3, L1) | Tailwind defaults, no Carbon breakpoint. |
+| Sunken surface (Q4) | A sixth surface level, separate from `--background`. |
+| Version bump (Q5, H2) | Changesets written per phase on this branch, `minor` while 0.x. |
+| Spacing names | `--space-*`. Spacious uses the soft column of Table P2. Scale docs must spell out edge cases and limits. |
+| Control heights (P3) | Tokenised, unchanged by density for now. |
+| Hard shadows (S6) | Dropped. No `shadow-hard` set and no `data-shadow` switch. |
+| Bevels (S5) | T-shirt sizes, with written docs for the decision. |
+| Prop (S7) | `elevated`, on Card, Button and Avatar. |
+| Grid (L3) | A root layout template rather than a provider. |
+| Tokens package (H3) | `light-dark()` in the root stylesheet, with `light.css` and `dark.css` as single-theme builds. See Phase 1. |
+| Docs | Add `project-docs/references/TAILWIND.md` and a general token reference, `project-docs/references/TOKENS.md`. |
+
+**On the `light-dark()` question in H3.** Yes, that gives consumers both. The sources are `src/light.css` and `src/dark.css`, which is what people review and what `check:contrast` measures. The build pairs them into one `light-dark()` declaration per token in `dist/index.css`, so the duplicated dark block is gone, and also writes `dist/light.css` and `dist/dark.css` for apps that ship one theme. The objections in the paragraph at the end of this file do not apply: the files still exist, the contrast engine reads the plain-colour sources, and the only tokens that differ by theme today are colours. Shadow alphas, when they land, are written as colours inside `light-dark()` rather than as bare percentages.
+
+## Phase 1 status
+
+Done on branch `feat/tokens-package`. No token value changed.
+
+- `packages/tokens` holds `src/base.css`, `src/light.css`, `src/dark.css` and `build.mjs`, which writes `dist/index.css`, `dist/light.css` and `dist/dark.css`.
+- `@retrojb/ui` imports `@retrojb/tokens` and `packages/ui/src/styles/tokens.css` is deleted. It was never in the package `exports`, so nothing outside the repo could import it.
+- `check-contrast.mjs` reads the two source files. Output is identical to before: 236 pairings, all AA.
+- All 166 tokens resolve to the same computed values as before in all six combinations of OS setting and `data-theme`, checked in headless Chromium against the old `dist/styles.css`, the new one, a minified build, and the Next.js build of `apps/docs` (which transpiles `light-dark()` with Lightning CSS). The only difference is computed `color-scheme`, now `light dark` where it was one value when no `data-theme` is set.
+- Found while checking: `--radius-xs` and `--radius-sm` collide with Tailwind's own theme variables, and in `apps/docs` Tailwind's values win. This predates Phase 1 and is recorded in `TAILWIND.md`.
+
+## Phase 2 status
+
+Done on branch `feat/tokens-package`. Rules and edge cases are in `project-docs/references/SPACING.md`.
+
+- `--space-0` to `--space-10` in rem in `base.css`. Compact and spacious in `src/density.css`; the build generates the `[data-density="comfort"]` block from `base.css` and fails if a density block declares different steps.
+- `--control-height-xs` (24px), `-sm`, `-md`, `-lg`, unchanged by density.
+- `--spacing-*` kept as deprecated aliases. Nothing in `@retrojb/ui` reads them.
+- Every component length is classified as spacing (`--space-*`), size (`--control-height-*`, or Tailwind's numeric scale for graphical parts), or geometry (`calc()` of its parts). Text-aligning indents in Checkbox, CheckboxGroup, Radio and Toggle are now `calc(box + gap)`, so they stay aligned in every density. This replaces the 44, 52 and 96px size tokens the plan proposed; GraphicCard's 96px media height is `min-h-24`.
+- Document 05 item B.5 decided: Button, Input, ComboBox, Table, SegmentedControl, Chip and TabGroup now use `--space-*` and `--control-height-*` instead of Tailwind numerics.
+- Storybook has a Density toolbar and a **Foundations / Spacing** page.
+
+Visual changes at the default density, from a pixel diff of all 211 stories before and after (everything else is identical). Each comes from moving an off-scale value onto the 4px comfort scale:
+
+| Component | Change |
+|---|---|
+| Input, ComboBox, SearchBox | Label-to-field gap 6px to 8px. `sm` leading padding 10px to 8px. |
+| Table | `sm` cell inline padding 10px to 8px. `md` cell block padding 10px to 12px, so `md` rows are 46px (were 42px). Sort-button icon gap 6px to 8px. |
+
+Also fixed: the InlineAlert, ToastAlert and BrowserAlert stories used Tailwind classes (`gap-3`, `gap-4`, `p-6`, `min-h-96`, `sm:grid-cols-2`) that never existed in `dist/styles.css`, so their layout was partly unstyled. They now use inline styles with `--space-*`.
+
+Verified in headless Chromium against the built Storybook:
+
+- Every story renders in compact, comfort and spacious (183 stories change in compact, 141 in spacious).
+- No interactive element that was at least 24 × 24px in comfort drops below it in compact. A few story elements are under 24px in every density (a native checkbox in the composed Table story, plain story buttons); they predate this phase.
+- No element clips (`overflow: hidden` with overflowing content) and no page scrolls sideways at 200% root font size in compact or comfort.
+
+## Phase 3 status
+
+Done on branch `feat/tokens-package`. Reference: the Surfaces section of `project-docs/references/TOKENS.md`.
+
+| Token | Light | Dark |
+|---|---|---|
+| `--background` | `#d1d1d1` | `#201f20` |
+| `--surface-sunken` | `#e7e8eb` | `#0e1012` |
+| `--surface-base` | `#f6f7f9` | `#14171a` |
+| `--surface-raised-1` | `#ffffff` | `#1a1e22` |
+| `--surface-raised-2` | `#ffffff` | `#20252a` |
+| `--surface-overlay` | `#ffffff` | `#272c32` |
+| `--scrim-sm` | `rgb(7 5 7 / 0.32)` | `rgb(0 0 0 / 0.48)` |
+| `--scrim-md` | `rgb(7 5 7 / 0.6)` | `rgb(0 0 0 / 0.72)` |
+
+- `--surface-base` and `--surface-raised-1` keep the old `--surface` and `--surface-raised` values, which stay as deprecated aliases. Every component, story, spec and the docs site now use the new names.
+- `check:contrast` measures every text and boundary token on all six levels: 290 pairings, all AA.
+- `BrowserAlert` uses `backdrop:bg-scrim-md`. Its old backdrop, `--neutral-9` at 60%, was near-white in dark mode. Measured in Chromium, the dark page goes from `rgb(32, 31, 32)` to `rgb(9, 9, 9)` behind the dialog, where before it was lightened.
+- The rename changes nothing visually: a pixel diff of all 211 stories against Phase 2 is identical, apart from a Spacing story whose buttons were fixed to render their labels.
+
+Not done here, by design: overlay components (ComboBox listbox, ToastAlert, BrowserAlert) still use `--surface-base` and `--surface-raised-1`. Moving them to `--surface-overlay` changes their dark-mode fill and the tone ratios measured against it, and it belongs with the shadow roles and the `data-surface` rule for a Card inside an overlay in Phase 5.
 
 ## Decisions reviewed
 
@@ -221,6 +305,7 @@ Answer the five blocking questions above, plus the design calls these phases nee
 - `withShadow` (or `elevated`) on Card and Button as a tailwind-variants boolean, with compound variants turning it off for ghost and disabled buttons.
 - ComboBox listbox: replace `shadow-lg` with `shadow-overlay`. Toast: `shadow-overlay`. BrowserAlert: `shadow-modal`.
 - Overlay components set `data-surface="overlay"`, and Card drops its shadow inside one.
+- ComboBox listbox, ToastAlert and BrowserAlert move to `bg-surface-overlay`, with their tone ratios re-measured on it.
 - Button: `transition-colors` becomes a transition on colour and shadow, with `motion-reduce:transition-none`. Hard-style press uses a translate only when motion is allowed.
 - Update each touched `*Spec.yaml`, TSDoc, stories and changeset entry.
 
@@ -266,3 +351,11 @@ Sources: Tailwind box-shadow and theme docs (https://tailwindcss.com/docs/box-sh
 
 **Alternative to H3, not recommended for now.** CSS `light-dark()` lets each colour token hold both values in one declaration (`--surface-base: light-dark(#f6f7f9, #14171a)`), with `data-theme` only setting `color-scheme`. That removes the duplication, but it removes the light and dark files you asked for, the contrast engine would need to parse `light-dark()`, and it only accepts colours, so shadow alphas would still need per-theme blocks.
 
+
+---
+
+author: John Baltes
+
+updated: 2026-11-06
+
+---

@@ -1,6 +1,6 @@
 /*
  * The typography group: five headings and six body components, all built on
- * the semantic type roles in `styles/tokens.css` (`text-heading-md`,
+ * the semantic type roles in `@retrojb/tokens` (`text-heading-md`,
  * `text-body-sm`, …), never on Tailwind's `text-sm` scale.
  *
  * None of them has `"use client"`. They use no hooks, state or context, so they

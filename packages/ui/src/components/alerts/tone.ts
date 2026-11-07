@@ -19,7 +19,7 @@
  * The tone → class mapping, as `{ bar, label }` per tone.
  *
  * Ratios are the measured output of `@retrojb/wcag-a11y-scanner`, light / dark,
- * against `--surface` — which is the fill every alert here sets on itself, so these
+ * against `--surface-base` — which is the fill every alert here sets on itself, so these
  * are the numbers that actually apply rather than page-background approximations.
  *
  * `bar` is the inline-start edge; `label` is the word naming the tone. Both are
@@ -28,8 +28,8 @@
  *
  * There is no `warning`, and that is a decision rather than an oversight. The
  * palette ships no `--warning` token, and an amber solved for 4.5:1 against
- * `--surface` lands at exactly 4.5:1 in both themes — no headroom left for
- * `--background` or `--surface-raised`, and nothing left for a filled variant. A
+ * `--surface-base` lands at exactly 4.5:1 in both themes — no headroom left for
+ * `--background` or `--surface-raised-1`, and nothing left for a filled variant. A
  * fourth tone wants its own ten-step ramp alongside `--primary` and `--secondary`,
  * not a single value squeezed onto one surface.
  */
@@ -59,13 +59,13 @@ type AlertTone = keyof typeof ALERT_TONE;
  * `--border-strong` and not `--border`. On the page surfaces `--border` measures
  * 1.75-2.67:1 in light and 2.02-2.21:1 in dark and misses 1.4.11 on all of them,
  * while `--border-strong` clears it at 4.16-6.36:1. The edge has to carry the box,
- * because the fill cannot: `--surface` against `--background` is 1.42:1 in light and
+ * because the fill cannot: `--surface-base` against `--background` is 1.42:1 in light and
  * 1.09:1 in dark, which is no visible boundary at all.
  *
  * Logical sides throughout, so the bar stays on the reading-order edge in RTL.
  */
 const ALERT_SURFACE = [
-  "bg-surface text-foreground",
+  "bg-surface-base text-foreground",
   "rounded-control",
   "border border-y-border-strong border-e-border-strong",
   "border-s-4",

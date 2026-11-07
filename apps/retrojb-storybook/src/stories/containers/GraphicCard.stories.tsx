@@ -81,7 +81,7 @@ const Frame = ({
         resize: "horizontal",
         overflow: "auto",
         outline: "1px dashed currentColor",
-        padding: "var(--spacing-20)",
+        padding: "var(--space-2)",
       }}
     >
       {children}
@@ -130,7 +130,7 @@ export const MediaRatios: Story = {
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
-        gap: "var(--spacing-40)",
+        gap: "var(--space-4)",
       }}
     >
       {(["16/9", "4/3", "3/2", "1/1"] as const).map((ratio) => (
@@ -175,7 +175,7 @@ export const HuggingContainers: Story = {
     ),
   },
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--spacing-60)" }}>
+    <div style={{ display: "grid", gap: "var(--space-6)" }}>
       <Frame width="16rem" label="16rem — stacked">
         <GraphicCard {...args} />
       </Frame>
@@ -232,7 +232,7 @@ export const Interactive: Story = {
       style={{
         display: "grid",
         gridTemplateColumns: "repeat(auto-fill, minmax(16rem, 1fr))",
-        gap: "var(--spacing-40)",
+        gap: "var(--space-4)",
       }}
     >
       <InteractiveCard

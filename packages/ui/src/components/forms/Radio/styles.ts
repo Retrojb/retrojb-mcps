@@ -44,7 +44,7 @@ import { tv, type VariantProps } from "../../../lib/tv";
 
 const radioStyles = tv({
   slots: {
-    root: "flex min-w-0 flex-col gap-(--spacing-10)",
+    root: "flex min-w-0 flex-col gap-(--space-1)",
     /*
      * The disabled look lives here rather than on the input so the circle, the
      * dot and the label dim together. `has-[input:disabled]` also matches an
@@ -52,7 +52,7 @@ const radioStyles = tv({
      * `RadioGroup` disables its children.
      */
     field: [
-      "inline-flex w-fit items-start gap-(--spacing-20)",
+      "inline-flex w-fit items-start gap-(--space-2)",
       "cursor-pointer",
       "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-60",
     ],
@@ -62,14 +62,14 @@ const radioStyles = tv({
       "peer col-start-1 row-start-1 m-0 appearance-none rounded-full",
       /*
        * Unchecked: `--border-strong` at 2px. It identifies the control, so
-       * 1.4.11 applies — 6.36 / 4.50:1 against the `--surface-raised` fill and
+       * 1.4.11 applies — 6.36 / 4.50:1 against the `--surface-raised-1` fill and
        * 4.16 / 4.41:1 against `--background` outside it. `--border` at
        * 1.75–2.67:1 would fail.
        */
-      "border-2 border-border-strong bg-surface-raised",
+      "border-2 border-border-strong bg-surface-raised-1",
       /*
        * Checked: an `--accent` fill, 6.19 / 8.87:1 on `--background` and
-       * 8.82 / 9.72:1 on `--surface` — the same fill as a checked `Checkbox`.
+       * 8.82 / 9.72:1 on `--surface-base` — the same fill as a checked `Checkbox`.
        */
       "checked:border-accent checked:bg-accent",
       "enabled:hover:border-accent",
@@ -107,7 +107,7 @@ const radioStyles = tv({
       "forced-colors:forced-color-adjust-none forced-colors:text-[SelectedItemText]",
       "forced-colors:peer-disabled:text-[Canvas]",
     ],
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface. The type
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface-base. The type
     // role and line height are set per size, below, so tailwind-merge never
     // sees a role in one place drop a `leading-*` from another.
     label: "min-w-0 text-foreground",
@@ -132,8 +132,8 @@ const radioStyles = tv({
         control: "size-4",
         dot: "size-1.5",
         label: "text-body-sm leading-6",
-        description: "ps-(--spacing-80)",
-        error: "ps-(--spacing-80)",
+        description: "ps-[calc(--spacing(6)+var(--space-2))]",
+        error: "ps-[calc(--spacing(6)+var(--space-2))]",
       },
       md: {
         field: "min-h-6",
@@ -141,8 +141,8 @@ const radioStyles = tv({
         control: "size-5",
         dot: "size-2",
         label: "text-body-sm leading-6",
-        description: "ps-(--spacing-80)",
-        error: "ps-(--spacing-80)",
+        description: "ps-[calc(--spacing(6)+var(--space-2))]",
+        error: "ps-[calc(--spacing(6)+var(--space-2))]",
       },
       lg: {
         field: "min-h-8",
@@ -150,8 +150,8 @@ const radioStyles = tv({
         control: "size-6",
         dot: "size-2.5",
         label: "text-body-md leading-8",
-        description: "ps-(--spacing-100)",
-        error: "ps-(--spacing-100)",
+        description: "ps-[calc(--spacing(8)+var(--space-2))]",
+        error: "ps-[calc(--spacing(8)+var(--space-2))]",
       },
     },
     invalid: {
@@ -159,7 +159,7 @@ const radioStyles = tv({
       /*
        * The border stays red in every state, so a checked radio in an invalid
        * group still reads as invalid. `--danger` is 9.56 / 8.38:1 on the
-       * `--surface-raised` fill.
+       * `--surface-raised-1` fill.
        */
       true: {
         control: [

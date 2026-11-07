@@ -111,7 +111,7 @@ export const AsList: Story = {
 export const ContainerQuery: Story = {
   args: { responsiveTo: "container" },
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--spacing-60)" }}>
+    <div style={{ display: "grid", gap: "var(--space-6)" }}>
       {["16rem", "36rem"].map((width) => (
         <div
           key={width}

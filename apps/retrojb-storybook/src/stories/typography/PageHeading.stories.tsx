@@ -65,7 +65,7 @@ export const SizeOverride: Story = {
  */
 export const WithSections: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <PageHeading>Billing</PageHeading>
       <SectionHeading>Payment methods</SectionHeading>
       <SubHeading>Cards on file</SubHeading>

@@ -111,9 +111,6 @@ tokens:
   - accent
   - success
   - danger
-  - spacing-40
-  - spacing-50
-  - spacing-60
 
 # Not released yet: the 0.1.0 tree had no icon folder.
 versioning: {}

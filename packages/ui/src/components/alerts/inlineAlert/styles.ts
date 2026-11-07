@@ -14,17 +14,16 @@
  *
  * ON THE SPACING
  *
- * Padding is written `p-(--spacing-40)` rather than `p-4`. Both compute to 16px, but
- * the token form resolves through `--spacing-40` in `tokens.css`, so the scale is the
- * one the design system publishes rather than Tailwind's built-in one.
+ * Padding is written `p-(--space-4)` rather than `p-4`. Both compute to 16px at
+ * the default density, but the token form follows `data-density`, and the scale
+ * is the one the design system publishes rather than Tailwind's built-in one.
  *
- * It has to be the arbitrary-property form. Registering `--spacing-40` in `@theme`
- * would generate a `p-40` utility colliding with Tailwind's own numeric `p-40`
- * (10rem) — v4 derives `p-<number>` from the single `--spacing` base unit, so a
- * *named* spacing token cannot join that scale without ambiguity. `p-(--spacing-40)`
- * sidesteps it by emitting `padding: var(--spacing-40)` directly.
+ * It has to be the arbitrary-property form. Tailwind derives `p-<number>` from
+ * its single `--spacing` base unit, so a named spacing token cannot join that
+ * namespace without colliding: that is why the tokens are `--space-*`, not
+ * `--spacing-*`. `p-(--space-4)` emits `padding: var(--space-4)` directly.
  *
- * Note the leading `--`. `p-(spacing-40)`, without it, compiles to nothing at all
+ * Note the leading `--`. `p-(space-4)`, without it, compiles to nothing at all
  * and does so silently, which is how the scaffolded version of this file ended up
  * with no padding.
  */
@@ -71,13 +70,13 @@ const inlineAlertStyles = tv({
 
     size: {
       sm: {
-        box: "gap-(--spacing-20) p-(--spacing-30) text-body-sm",
-        content: "gap-(--spacing-10)",
+        box: "gap-(--space-2) p-(--space-3) text-body-sm",
+        content: "gap-(--space-1)",
         label: "text-title-sm",
       },
       md: {
-        box: "gap-(--spacing-30) p-(--spacing-40) text-body-sm",
-        content: "gap-(--spacing-10)",
+        box: "gap-(--space-3) p-(--space-4) text-body-sm",
+        content: "gap-(--space-1)",
         label: "text-title-md",
       },
     },

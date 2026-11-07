@@ -21,7 +21,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /**
- * The default: inline `<code>` at `text-code`, on `--surface-raised` with the
+ * The default: inline `<code>` at `text-code`, on `--surface-raised-1` with the
  * decorative `--border` edge. The monospace face identifies it; the edge is
  * there for looks, which is why it does not need 3:1.
  */
@@ -33,7 +33,7 @@ export const Primary: Story = {};
  */
 export const InContext: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <SectionHeading>
         Configuring <Code>tv()</Code>
       </SectionHeading>

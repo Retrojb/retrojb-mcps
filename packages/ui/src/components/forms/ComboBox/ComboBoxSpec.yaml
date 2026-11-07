@@ -159,8 +159,8 @@ usage:
       - Use it as a search field.
 
 tokens:
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - border-strong
   - foreground
   - foreground-muted
@@ -173,6 +173,9 @@ tokens:
   - label-md
   - body-sm
   - body-md
+  - control-height-sm
+  - control-height-md
+  - control-height-lg
 
 versioning: {}
 

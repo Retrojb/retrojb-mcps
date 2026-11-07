@@ -3,7 +3,7 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css";
 
-@import "./tokens.css";
+@import "@retrojb/tokens";
 @import "./theme.css";
 
 @source "../components/**/*.tsx";
@@ -74,7 +74,7 @@
     bottom: auto;
     left: anchor(left);
     right: anchor(right);
-    margin-top: 0.25rem;
+    margin-top: var(--space-1, 0.25rem);
     margin-bottom: 0;
 
     /*

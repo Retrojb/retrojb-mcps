@@ -10,8 +10,8 @@ Covers the five headings (`ProductHeading`, `PageHeading`, `TitleHeading`,
 
 Extracted from the `styles.ts` files under
 `packages/ui/src/components/typography/`, the typography section of
-`packages/ui/src/styles/tokens.css` and its mapping in `theme.css`. Ratios are
-the measured output of `@retrojb/wcag-a11y-scanner` against the default palette.
+`packages/tokens` and its mapping in `theme.css`. Ratios are the measured output
+of `@retrojb/wcag-a11y-scanner` against the default palette.
 
 The two decisions worth reading are that **a heading's size is not its level**,
 and that **every size is `rem` on a unitless line height**, which is what 1.4.4
@@ -25,7 +25,7 @@ and 1.4.12 come down to.
 | 1.4.1 Use of Color           | A     | No meaning is carried by colour. Headings differ by size and weight; quotations by structure and a bar; code by its monospace face                          |
 | 1.4.3 Contrast (Minimum)     | AA    | `--foreground` 13.30:1 or more; `--foreground-muted` 6.25:1 or more on every surface, both themes                                                           |
 | 1.4.4 Resize Text            | AA    | Every size is `rem` (code is `em`), every line height unitless. Browser text zoom and a raised default font size scale all of it                            |
-| 1.4.6 Contrast (Enhanced)    | AAA   | `--foreground` clears 7:1 everywhere. `--foreground-muted` clears it on `--surface` (8.91 / 7.26:1); on `--surface-raised` in dark it is 6.76:1             |
+| 1.4.6 Contrast (Enhanced)    | AAA   | `--foreground` clears 7:1 everywhere. `--foreground-muted` clears it on `--surface-base` (8.91 / 7.26:1); on `--surface-raised-1` in dark it is 6.76:1      |
 | 1.4.8 Visual Presentation    | AAA   | Partial. `Paragraph measure` caps lines at 65ch, body line height is 1.5–1.65, and nothing is justified. Colours are not user-selectable here               |
 | 1.4.10 Reflow                | AA    | `wrap-break-word` on headings, paragraphs, list items and inline code. `CodeBlock` scrolls sideways — code is the two-dimensional exception                 |
 | 1.4.11 Non-text Contrast     | AA    | The `Reference` bar and `CodeBlock` edge are `--border-strong`, 4.17:1 or more. Inline `Code`'s edge is decorative — see below                              |
@@ -191,28 +191,28 @@ surface it sits on, so it is measured on all three.
 
 ### Text (needs 4.5:1)
 
-| Role                                    | Pairing                                    |   Light |    Dark |
-| --------------------------------------- | ------------------------------------------ | ------: | ------: |
-| Headings, paragraph, list, quote        | `--foreground` on `--background`           | 13.30:1 | 15.72:1 |
-| Headings, paragraph, list, quote        | `--foreground` on `--surface`              | 18.95:1 | 17.22:1 |
-| Headings, paragraph, list, quote        | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
-| Muted paragraph, list markers, citation | `--foreground-muted` on `--background`     |  6.25:1 |  6.63:1 |
-| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface`        |  8.91:1 |  7.26:1 |
-| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
-| `Code`, `CodeBlock`                     | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
+| Role                                    | Pairing                                      |   Light |    Dark |
+| --------------------------------------- | -------------------------------------------- | ------: | ------: |
+| Headings, paragraph, list, quote        | `--foreground` on `--background`             | 13.30:1 | 15.72:1 |
+| Headings, paragraph, list, quote        | `--foreground` on `--surface-base`           | 18.95:1 | 17.22:1 |
+| Headings, paragraph, list, quote        | `--foreground` on `--surface-raised-1`       | 20.31:1 | 16.04:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--background`       |  6.25:1 |  6.63:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface-base`     |  8.91:1 |  7.26:1 |
+| Muted paragraph, list markers, citation | `--foreground-muted` on `--surface-raised-1` |  9.55:1 |  6.76:1 |
+| `Code`, `CodeBlock`                     | `--foreground` on `--surface-raised-1`       | 20.31:1 | 16.04:1 |
 
-The muted rows on `--background` and on `--surface-raised` in dark miss the 7:1
-AAA bar; all are well above the 4.5:1 AA requirement.
+The muted rows on `--background` and on `--surface-raised-1` in dark miss the
+7:1 AAA bar; all are well above the 4.5:1 AA requirement.
 
 ### Boundaries (needs 3:1 where they carry meaning)
 
-| Role                    | Pairing                             |  Light |   Dark |
-| ----------------------- | ----------------------------------- | -----: | -----: |
-| `Reference` bar         | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
-| `Reference` bar         | `--border-strong` on `--surface`    | 5.94:1 | 4.84:1 |
-| `CodeBlock` edge        | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
-| `CodeBlock` focus ring  | `--focus` on `--background`         | 6.19:1 | 8.88:1 |
-| `Code` edge, decorative | `--border` on `--surface-raised`    | 2.67:1 | 2.06:1 |
+| Role                    | Pairing                               |  Light |   Dark |
+| ----------------------- | ------------------------------------- | -----: | -----: |
+| `Reference` bar         | `--border-strong` on `--background`   | 4.17:1 | 4.42:1 |
+| `Reference` bar         | `--border-strong` on `--surface-base` | 5.94:1 | 4.84:1 |
+| `CodeBlock` edge        | `--border-strong` on `--background`   | 4.17:1 | 4.42:1 |
+| `CodeBlock` focus ring  | `--focus` on `--background`           | 6.19:1 | 8.88:1 |
+| `Code` edge, decorative | `--border` on `--surface-raised-1`    | 2.67:1 | 2.06:1 |
 
 ## Aria
 

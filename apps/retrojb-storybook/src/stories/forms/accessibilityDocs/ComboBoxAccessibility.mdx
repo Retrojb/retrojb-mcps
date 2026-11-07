@@ -9,13 +9,13 @@ and keyboard model in `packages/ui/src/hooks/useComboBox.ts`, the option markup
 in `OptionContent.tsx`, and the prop contract in `types.ts`.
 
 Ratios below are computed directly from the light and dark hex values in
-`packages/ui/src/styles/tokens.css` using the WCAG 2.x relative-luminance
-formula. They are **not** the output of
-`npm run check:contrast --workspace=@retrojb/docs` — that script reads its own
-palette from `apps/docs/app/globals.css`, which is a different set of colours,
-as the header comment in `tokens.css` notes. Where a figure here disagrees with
-the one quoted on the `Input` page, this one was measured against the palette
-the package currently ships.
+`packages/tokens` using the WCAG 2.x relative-luminance formula. They are
+**not** the output of `npm run check:contrast --workspace=@retrojb/docs` — that
+script reads its own palette from `apps/docs/app/globals.css`, which is a
+different set of colours, as the header comment in
+`packages/tokens/src/light.css` notes. Where a figure here disagrees with the
+one quoted on the `Input` page, this one was measured against the palette the
+package currently ships.
 
 This is the most accessibility-dense component in the package. A combobox has no
 native equivalent to fall back on, so every part of the contract below is
@@ -219,35 +219,35 @@ submit if that matters.
 
 ## Colors
 
-The field and the popup both sit on `--surface-raised`, so their pairings are
+The field and the popup both sit on `--surface-raised-1`, so their pairings are
 measured against that. The active option sits on `--primary-3`, which
-`tokens.css` designates the active/selected surface and the lowest-contrast
-surface anything is allowed to land on.
+`packages/tokens/src/light.css` designates the active/selected surface and the
+lowest-contrast surface anything is allowed to land on.
 
 ### Text (needs 4.5:1)
 
-| Role                        | Pairing                                    |  Light |   Dark |
-| --------------------------- | ------------------------------------------ | -----: | -----: |
-| Query text                  | `--foreground` on `--surface-raised`       | 20.3:1 | 16.0:1 |
-| Placeholder                 | `--foreground-muted` on `--surface-raised` | 9.55:1 | 6.76:1 |
-| Option label                | `--foreground` on `--surface-raised`       | 20.3:1 | 16.0:1 |
-| Option label, active        | `--foreground` on `--primary-3`            | 15.1:1 | 12.5:1 |
-| Matched run                 | `--accent-text` on `--surface-raised`      | 16.4:1 | 13.5:1 |
-| Matched run, active option  | `--accent-text` on `--primary-3`           | 12.2:1 | 10.5:1 |
-| Empty / loading / truncated | `--foreground-muted` on `--surface-raised` | 9.55:1 | 6.76:1 |
-| Clear and toggle glyphs     | `--foreground-muted` on `--surface-raised` | 9.55:1 | 6.76:1 |
-| Error                       | `--danger` on `--background`               | 6.53:1 | 9.74:1 |
+| Role                        | Pairing                                      |  Light |   Dark |
+| --------------------------- | -------------------------------------------- | -----: | -----: |
+| Query text                  | `--foreground` on `--surface-raised-1`       | 20.3:1 | 16.0:1 |
+| Placeholder                 | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
+| Option label                | `--foreground` on `--surface-raised-1`       | 20.3:1 | 16.0:1 |
+| Option label, active        | `--foreground` on `--primary-3`              | 15.1:1 | 12.5:1 |
+| Matched run                 | `--accent-text` on `--surface-raised-1`      | 16.4:1 | 13.5:1 |
+| Matched run, active option  | `--accent-text` on `--primary-3`             | 12.2:1 | 10.5:1 |
+| Empty / loading / truncated | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
+| Clear and toggle glyphs     | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
+| Error                       | `--danger` on `--background`                 | 6.53:1 | 9.74:1 |
 
 ### Borders and focus ring (needs 3:1)
 
-| State                     | Pairing                                 |  Light |   Dark |
-| ------------------------- | --------------------------------------- | -----: | -----: |
-| Field, valid              | `--border-strong` on `--surface-raised` | 6.36:1 | 4.51:1 |
-| Field, focused            | `--accent` on `--surface-raised`        | 9.46:1 | 9.06:1 |
-| Field, invalid            | `--danger` on `--surface-raised`        | 9.56:1 | 8.39:1 |
-| Popup outer border        | `--border-strong` on `--background`     | 4.17:1 | 4.42:1 |
-| Active-option left border | `--accent` on `--primary-3`             | 7.01:1 | 7.04:1 |
-| Focus ring                | `--focus-ring` on `--background`        | 6.19:1 | 8.88:1 |
+| State                     | Pairing                                   |  Light |   Dark |
+| ------------------------- | ----------------------------------------- | -----: | -----: |
+| Field, valid              | `--border-strong` on `--surface-raised-1` | 6.36:1 | 4.51:1 |
+| Field, focused            | `--accent` on `--surface-raised-1`        | 9.46:1 | 9.06:1 |
+| Field, invalid            | `--danger` on `--surface-raised-1`        | 9.56:1 | 8.39:1 |
+| Popup outer border        | `--border-strong` on `--background`       | 4.17:1 | 4.42:1 |
+| Active-option left border | `--accent` on `--primary-3`               | 7.01:1 | 7.04:1 |
+| Focus ring                | `--focus-ring` on `--background`          | 6.19:1 | 8.88:1 |
 
 1.4.11 applies to the field's boundary because the boundary is what identifies
 the control, and to the active-option border because that border is what

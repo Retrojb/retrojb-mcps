@@ -120,7 +120,7 @@ usage:
       - Keep errors until dismissed rather than setting a duration.
 
 tokens:
-  - surface
+  - surface-base
   - foreground
   - border-strong
   - accent

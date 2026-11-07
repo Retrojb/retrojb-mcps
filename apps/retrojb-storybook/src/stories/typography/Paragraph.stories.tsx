@@ -54,7 +54,7 @@ export const Muted: Story = {
 /** Every size, one above the other, all with `measure`. */
 export const Sizes: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--spacing-60)" }}>
+    <div style={{ display: "grid", gap: "var(--space-6)" }}>
       <Paragraph size="lg" measure>
         {copy}
       </Paragraph>

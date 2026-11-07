@@ -107,7 +107,7 @@ usage:
       - Use live="assertive" for anything but errors that block the user.
 
 tokens:
-  - surface
+  - surface-base
   - foreground
   - border-strong
   - accent

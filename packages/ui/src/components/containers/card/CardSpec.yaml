@@ -113,18 +113,18 @@ usage:
 
 tokens:
   - border-strong
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - foreground
   - foreground-muted
   - radius-control
   - title-md
   - title-lg
   - body-md
-  - spacing-10
-  - spacing-20
-  - spacing-30
-  - spacing-40
+  - space-1
+  - space-2
+  - space-3
+  - space-4
 
 # Not released yet: the 0.1.0 tree only had the Card template. Set
 # introducedIn when the next @retrojb/ui version ships.

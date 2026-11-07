@@ -25,9 +25,9 @@ import { tv, type VariantProps } from "../../../lib/tv";
 const checkboxGroupStyles = tv({
   slots: {
     root: "m-0 min-w-0 border-0 p-0",
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface.
-    legend: "mb-(--spacing-20) p-0 text-label-md text-foreground",
-    body: "flex min-w-0 flex-col gap-(--spacing-30)",
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface-base.
+    legend: "mb-(--space-2) p-0 text-label-md text-foreground",
+    body: "flex min-w-0 flex-col gap-(--space-3)",
     // 6.25 / 6.62:1 on --background.
     description: "m-0 text-body-sm text-foreground-muted",
     // 6.26 / 8.22:1 on --background. Every member checkbox also turns red and

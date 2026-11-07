@@ -29,7 +29,7 @@ import { tv, type VariantProps } from "../../../lib/tv";
 
 const comboBoxStyle = tv({
   slots: {
-    root: "flex flex-col gap-1.5",
+    root: "flex flex-col gap-(--space-2)",
 
     label: "text-label-md text-foreground",
 
@@ -45,8 +45,8 @@ const comboBoxStyle = tv({
     anchor: "relative isolate",
 
     field: [
-      "flex w-full items-center gap-1",
-      "rounded-control border bg-surface-raised",
+      "flex w-full items-center gap-(--space-1)",
+      "rounded-control border bg-surface-raised-1",
       "transition-colors motion-reduce:transition-none",
 
       /*
@@ -79,7 +79,7 @@ const comboBoxStyle = tv({
       "grid shrink-0 place-items-center rounded-control",
       "text-foreground-muted",
       "transition-colors motion-reduce:transition-none",
-      "hover:bg-surface hover:text-foreground",
+      "hover:bg-surface-base hover:text-foreground",
 
       // These are out of the tab order, so they are reached by pointer only and
       // never show a focus ring. They still get a hover and an accessible name.
@@ -87,10 +87,10 @@ const comboBoxStyle = tv({
     ],
 
     listbox: [
-      "absolute inset-x-0 top-full z-10 mt-1",
+      "absolute inset-x-0 top-full z-10 mt-(--space-1)",
       "max-h-72 overflow-y-auto overscroll-contain",
-      "rounded-control border border-border-strong bg-surface-raised",
-      "py-1 shadow-lg",
+      "rounded-control border border-border-strong bg-surface-raised-1",
+      "py-(--space-1) shadow-lg",
 
       // `hidden` is set as an attribute by `getListboxProps`. Tailwind's
       // preflight sets `display` on some elements, which would beat the
@@ -103,8 +103,8 @@ const comboBoxStyle = tv({
     ],
 
     option: [
-      "flex cursor-pointer items-center justify-between gap-2",
-      "px-3 py-2 text-body-sm text-foreground",
+      "flex cursor-pointer items-center justify-between gap-(--space-2)",
+      "px-(--space-3) py-(--space-2) text-body-sm text-foreground",
 
       /*
        * The active option is identified by a background *and* a left border, so
@@ -135,7 +135,7 @@ const comboBoxStyle = tv({
       "underline decoration-2 underline-offset-2",
     ],
 
-    note: "px-3 py-2 text-body-sm text-foreground-muted",
+    note: "px-(--space-3) py-(--space-2) text-body-sm text-foreground-muted",
 
     description: "text-body-sm text-foreground-muted",
 
@@ -152,21 +152,23 @@ const comboBoxStyle = tv({
        * three clear 2.5.8 (AA, 24px), only `lg` clears 2.5.5 (AAA, 44px).
        *
        * The height is on the field, not the input, because the field is now the
-       * bordered box. The affordances are square and inset by 4px so they stay
-       * inside the boundary.
+       * bordered box. The affordances are square and inset by 4 / 6 / 8px so they
+       * sit centred in the field. That inset is geometry, `(height - affordance)
+       * / 2`, so it is a fixed `pr-*` and does not follow density. The leading
+       * padding is spacing and does.
        */
       sm: {
-        field: "h-8 pl-2.5 pr-1",
+        field: "h-(--control-height-sm) pl-(--space-2) pr-1",
         control: "text-body-sm",
         affordance: "size-6",
       },
       md: {
-        field: "h-10 pl-3 pr-1.5",
+        field: "h-(--control-height-md) pl-(--space-3) pr-1.5",
         control: "text-body-sm",
         affordance: "size-7",
       },
       lg: {
-        field: "h-12 pl-4 pr-2",
+        field: "h-(--control-height-lg) pl-(--space-4) pr-2",
         control: "text-body-md",
         affordance: "size-8",
       },
@@ -206,9 +208,9 @@ const comboBoxStyle = tv({
      * where the layout already guarantees the space and a flip would be wrong.
      */
     placement: {
-      auto: { listbox: "top-full mt-1" },
-      bottom: { listbox: "top-full mt-1" },
-      top: { listbox: "bottom-full top-auto mb-1" },
+      auto: { listbox: "top-full mt-(--space-1)" },
+      bottom: { listbox: "top-full mt-(--space-1)" },
+      top: { listbox: "bottom-full top-auto mb-(--space-1)" },
     },
   },
 

@@ -115,18 +115,21 @@ usage:
 tokens:
   - accent
   - accent-foreground
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - border-strong
   - foreground
   - focus
   - radius-control
   - label-md
   - label-lg
-  - spacing-10
-  - spacing-20
-  - spacing-30
-  - spacing-40
+  - space-1
+  - space-2
+  - space-3
+  - space-4
+  - control-height-xs
+  - control-height-sm
+  - control-height-md
 
 versioning: {}
 

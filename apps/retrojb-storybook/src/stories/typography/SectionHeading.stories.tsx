@@ -64,7 +64,7 @@ export const SizeOverride: Story = {
  */
 export const UnderATitleHeading: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--spacing-40)" }}>
+    <div style={{ display: "grid", gap: "var(--space-4)" }}>
       <TitleHeading>Account</TitleHeading>
       <SectionHeading level={3}>Profile</SectionHeading>
       <SectionHeading level={3}>Notifications</SectionHeading>

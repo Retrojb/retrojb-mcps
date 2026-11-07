@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 const TOKENS = [
   "--background",
-  "--surface",
-  "--surface-raised",
+  "--surface-base",
+  "--surface-raised-1",
   "--foreground",
   "--foreground-muted",
   "--border",

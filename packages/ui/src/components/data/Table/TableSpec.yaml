@@ -196,8 +196,8 @@ usage:
 tokens:
   - border
   - border-strong
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - foreground
   - foreground-muted
   - accent
@@ -206,6 +206,7 @@ tokens:
   - radius-control
   - body-sm
   - body-md
+  - control-height-xs
 
 versioning:
   introducedIn: "0.1.0"

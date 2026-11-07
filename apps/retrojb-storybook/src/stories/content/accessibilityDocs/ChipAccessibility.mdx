@@ -6,24 +6,23 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 Extracted from `packages/ui/src/components/content/chip/styles.ts`, plus the
 markup in `Chip.tsx`. Ratios are measured with `checkContrast` from
-`@retrojb/wcag-a11y-scanner` against the tokens in
-`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
-(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
-values).
+`@retrojb/wcag-a11y-scanner` against the tokens in `packages/tokens`, in the
+light theme and the dark theme (`prefers-color-scheme: dark` or
+`data-theme="dark"`, which share one set of values).
 
 ## WCAG Standard and Expectations
 
-| Criterion                         | Level | How the component meets it                                                                                                                     |
-| --------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1.4.1 Use of Color                | A     | A selected chip draws a check icon as well as the accent fill, and `aria-pressed` carries the state for assistive technology                   |
-| 1.4.3 Contrast (Minimum)          | AA    | Unselected text clears 4.5:1 on `--surface`, `--background` and the hover fill (13.30:1 at the lowest). Selected text is 9.32:1 at the lowest  |
-| 1.4.11 Non-text Contrast          | AA    | The unselected border is `--border-strong`, 4.16:1 at the lowest. The selected fill and the check icon clear 3:1 (6.19:1 and 9.32:1 at lowest) |
-| 2.3.3 Animation from Interactions | AAA   | The colour transition is paired with `motion-reduce:transition-none`                                                                           |
-| 2.4.7 Focus Visible               | AA    | `focus-visible:outline-2 focus-visible:outline-focus` with a 2px offset                                                                        |
-| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus 2px offset                                                                                                                  |
-| 2.5.5 Target Size (Enhanced)      | AAA   | Not met. `sm` is 24px tall and `md` is 32px, both under 44px                                                                                   |
-| 2.5.8 Target Size (Minimum)       | AA    | `sm` is 24px and `md` is 32px, so both clear the 24px minimum                                                                                  |
-| 4.1.2 Name, Role, Value           | A     | A native `<button>` named by `text`, with `aria-pressed="true"` or `"false"` always present                                                    |
+| Criterion                         | Level | How the component meets it                                                                                                                         |
+| --------------------------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1.4.1 Use of Color                | A     | A selected chip draws a check icon as well as the accent fill, and `aria-pressed` carries the state for assistive technology                       |
+| 1.4.3 Contrast (Minimum)          | AA    | Unselected text clears 4.5:1 on `--surface-base`, `--background` and the hover fill (13.30:1 at the lowest). Selected text is 9.32:1 at the lowest |
+| 1.4.11 Non-text Contrast          | AA    | The unselected border is `--border-strong`, 4.16:1 at the lowest. The selected fill and the check icon clear 3:1 (6.19:1 and 9.32:1 at lowest)     |
+| 2.3.3 Animation from Interactions | AAA   | The colour transition is paired with `motion-reduce:transition-none`                                                                               |
+| 2.4.7 Focus Visible               | AA    | `focus-visible:outline-2 focus-visible:outline-focus` with a 2px offset                                                                            |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus 2px offset                                                                                                                      |
+| 2.5.5 Target Size (Enhanced)      | AAA   | Not met. `sm` is 24px tall and `md` is 32px, both under 44px                                                                                       |
+| 2.5.8 Target Size (Minimum)       | AA    | `sm` is 24px and `md` is 32px, so both clear the 24px minimum                                                                                      |
+| 4.1.2 Name, Role, Value           | A     | A native `<button>` named by `text`, with `aria-pressed="true"` or `"false"` always present                                                        |
 
 ### A toggle button, not a checkbox or a switch
 
@@ -88,9 +87,9 @@ The hover fill is also switched off.
 
 ### Known gaps
 
-- The ratios cover `--surface` and `--background`. A chip on `--surface-raised`
-  needs its own check, although the unselected border measures 6.36 / 4.50:1 on
-  it.
+- The ratios cover `--surface-base` and `--background`. A chip on
+  `--surface-raised-1` needs its own check, although the unselected border
+  measures 6.36 / 4.50:1 on it.
 - Forced-colors behaviour follows from using a real border and outline, and has
   not been checked in Windows High Contrast.
 - Screen-reader output has not been tested with real assistive technology.
@@ -105,23 +104,23 @@ that mark the control, the check icon and the focus outline need 3:1 (1.4.11,
 
 | State           |                                   Pairing |   Light |    Dark |
 | --------------- | ----------------------------------------: | ------: | ------: |
-| Unselected      |             `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
+| Unselected      |        `--foreground` on `--surface-base` | 18.95:1 | 17.21:1 |
 | Unselected      |          `--foreground` on `--background` | 13.30:1 | 15.72:1 |
-| Hover           |      `--foreground` on `--surface-raised` | 20.31:1 | 16.04:1 |
+| Hover           |    `--foreground` on `--surface-raised-1` | 20.31:1 | 16.04:1 |
 | Selected        |       `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
 | Selected, hover | `--accent-foreground` on `--accent-hover` | 16.21:1 | 15.21:1 |
 
 ### Border, fill and focus (needs 3:1)
 
-| State      |                                 Pairing |  Light |   Dark |
-| ---------- | --------------------------------------: | -----: | -----: |
-| Unselected |        `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
-| Unselected |     `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
-| Unselected | `--border-strong` on `--surface-raised` | 6.36:1 | 4.50:1 |
-| Selected   |               `--accent` on `--surface` | 8.82:1 | 9.72:1 |
-| Selected   |            `--accent` on `--background` | 6.19:1 | 8.87:1 |
-| Focus      |        `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
-| Focus      |           `--focus-ring` on `--surface` | 8.82:1 | 9.72:1 |
+| State      |                                   Pairing |  Light |   Dark |
+| ---------- | ----------------------------------------: | -----: | -----: |
+| Unselected |     `--border-strong` on `--surface-base` | 5.93:1 | 4.83:1 |
+| Unselected |       `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Unselected | `--border-strong` on `--surface-raised-1` | 6.36:1 | 4.50:1 |
+| Selected   |            `--accent` on `--surface-base` | 8.82:1 | 9.72:1 |
+| Selected   |              `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| Focus      |          `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
+| Focus      |        `--focus-ring` on `--surface-base` | 8.82:1 | 9.72:1 |
 
 The unselected border uses `--border-strong`. `--border` is decorative only and
 fails 1.4.11 on every surface.

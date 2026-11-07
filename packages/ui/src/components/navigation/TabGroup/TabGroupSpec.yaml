@@ -165,11 +165,14 @@ tokens:
   - radius-control
   - label-md
   - label-lg
-  - spacing-10
-  - spacing-20
-  - spacing-30
-  - spacing-40
-  - spacing-60
+  - space-1
+  - space-2
+  - space-3
+  - space-4
+  - space-6
+  - control-height-sm
+  - control-height-md
+  - control-height-lg
 
 # The 0.1.0 tree only had navigation/Tabs/types.ts.
 versioning: {}
