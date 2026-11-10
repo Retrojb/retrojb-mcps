@@ -86,11 +86,18 @@ const comboBoxStyle = tv({
       "disabled:cursor-not-allowed disabled:opacity-60",
     ],
 
+    /*
+     * The popup floats over the page: the overlay surface and the `overlay`
+     * shadow, which replaces Tailwind's stock `shadow-lg`. `ComboBox` and
+     * `SearchBox` mark it `data-surface="overlay"`. The `--border-strong` edge
+     * is what separates it from the page in forced-colors mode, where the
+     * shadow is removed.
+     */
     listbox: [
       "absolute inset-x-0 top-full z-10 mt-(--space-1)",
       "max-h-72 overflow-y-auto overscroll-contain",
-      "rounded-control border border-border-strong bg-surface-raised-1",
-      "py-(--space-1) shadow-lg",
+      "rounded-control border border-border-strong bg-surface-overlay",
+      "py-(--space-1) shadow-overlay",
 
       // `hidden` is set as an attribute by `getListboxProps`. Tailwind's
       // preflight sets `display` on some elements, which would beat the
@@ -99,7 +106,9 @@ const comboBoxStyle = tv({
 
       // Reset the list semantics the popup does not want. `role="listbox"`
       // already removes the list role, so the markers would be decorative noise.
-      "m-0 list-none",
+      // `ps-0` clears the browser's 40px list indent, which no preflight here
+      // removes; `py-(--space-1)` above sets the block padding.
+      "m-0 list-none ps-0",
     ],
 
     option: [

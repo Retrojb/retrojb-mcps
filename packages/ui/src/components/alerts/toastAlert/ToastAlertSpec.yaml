@@ -130,6 +130,8 @@ tokens:
   - foreground-muted
   - focus
   - radius-control
+  - surface-overlay
+  - elevation-overlay
 
 versioning:
   introducedIn: "0.1.0"

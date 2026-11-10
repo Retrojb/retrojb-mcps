@@ -1,0 +1,72 @@
+import {
+  Meta,
+  Title,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+} from "@storybook/addon-docs/blocks";
+import * as AvatarStories from "./Avatar.stories";
+import specSource from "../../../../../packages/ui/src/components/content/avatar/AvatarSpec.yaml?raw";
+import {
+  DocSpecAccessibility,
+  DocSpecExports,
+  DocSpecFacts,
+  DocSpecGuidance,
+  parseSpec,
+} from "../../components/docSpec";
+
+export const spec = parseSpec(specSource);
+
+<Meta of={AvatarStories} />
+
+<Title />
+
+<Description />
+
+<DocSpecFacts spec={spec} />
+
+<Primary />
+
+<Controls />
+
+## Usage
+
+<DocSpecGuidance spec={spec} />
+
+## Examples
+
+### Shapes
+
+<Description of={AvatarStories.Shapes} />
+<Canvas of={AvatarStories.Shapes} />
+
+### Sizes
+
+<Description of={AvatarStories.Sizes} />
+<Canvas of={AvatarStories.Sizes} />
+
+### Fallbacks
+
+<Description of={AvatarStories.Fallbacks} />
+<Canvas of={AvatarStories.Fallbacks} />
+
+### Elevated
+
+<Description of={AvatarStories.Elevated} />
+<Canvas of={AvatarStories.Elevated} />
+
+### Beside a name
+
+<Description of={AvatarStories.BesideAName} />
+<Canvas of={AvatarStories.BesideAName} />
+
+## Accessibility
+
+<DocSpecAccessibility spec={spec} />
+
+[Full accessibility notes](?path=/docs/content-avatar-accessibility--documentation)
+
+## Exports
+
+<DocSpecExports spec={spec} />

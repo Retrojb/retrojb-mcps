@@ -186,12 +186,52 @@ fight. The theme follows the OS by default; set `data-theme="light"` or
 `npm run check:contrast --workspace=@retrojb/docs` measures the token sources
 and is the authority on the palette.
 
-Apps running their own Tailwind build can import just the token mapping to get
-the same utilities in their own markup:
+### Using it with your own Tailwind build
+
+An app that writes Tailwind classes in its own markup runs its own Tailwind
+build. Set it up like this, which is what `apps/docs` does:
+
+```tsx
+// app/layout.tsx
+import "@retrojb/ui/styles.css"; // components and token values
+import "./globals.css"; // your Tailwind build, below
+```
 
 ```css
-@import "@retrojb/ui/theme.css";
+/* globals.css */
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@import "@retrojb/ui/theme.css"; /* bg-accent, shadow-overlay, text-body-sm… */
+
+@source "./**/*.tsx";
+
+:root {
+  /* Your brand faces. Put the next/font classes on <html>. */
+  --font-family-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
 ```
+
+Why each line is there:
+
+- **`tailwindcss/theme.css` and `utilities.css`, not `@import "tailwindcss"`.**
+  That leaves out Tailwind's preflight reset, which this package does not
+  assume.
+- **`@retrojb/ui/theme.css`.** Registers the colours, type roles, shadow roles
+  and breakpoints as utilities, so your markup uses the same `bg-accent` and
+  `shadow-overlay` the components do. It also points Tailwind's `rounded-xs` to
+  `rounded-lg` at the token radii, so they match the components whatever order
+  the stylesheets load in. The token values themselves arrive with
+  `@retrojb/ui/styles.css`.
+- **`--font-family-sans` and `--font-family-mono`.** The supported way to set a
+  brand face. They must be declared on the element that holds the font
+  variables, which is why the font classes go on `<html>`.
+
+Then, on `<html>`: `data-theme` to force a theme, `data-density` for density.
+The page grid is `PageGrid` and `GridItem`; see
+`project-docs/references/LAYOUT.md`.
 
 ## Accessibility
 

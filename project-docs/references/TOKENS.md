@@ -61,7 +61,7 @@ every token is declared inside `@layer theme`.
 3. **Small sets use t-shirt sizes.** When a 0-10 scale would be excessive, use
    `none`, `xs`, `sm`, `md`, `lg`, `xl`. Border weights, radii, scrims, bevels
    and control heights follow this.
-4. **Roles are named by use, not by value.** `--accent`, `--surface-raised`,
+4. **Roles are named by use, not by value.** `--accent`, `--surface-raised-1`,
    `--elevation-overlay`. A role points at a primitive, and components use
    roles.
 5. **No token shares a name with a Tailwind theme namespace.** Tailwind reads
@@ -69,7 +69,11 @@ every token is declared inside `@layer theme`.
    `--shadow-*`, `--inset-shadow-*`, `--breakpoint-*`, `--container-*` and
    others as its own. A token in one of those namespaces either collides with a
    Tailwind default or references itself when `theme.css` maps it. See
-   [TAILWIND.md][tailwind-doc] for the collisions that exist today.
+   [TAILWIND.md][tailwind-doc] for the radius collision this rule comes from.
+   Two older families sit inside a Tailwind namespace without sharing a name:
+   `--font-weight-400` to `-700` (Tailwind's are `-thin` to `-black`) and the
+   deprecated `--spacing-*` aliases (Tailwind's is the bare `--spacing`).
+   Neither is registered in `@theme`, so neither creates a utility.
 6. **Units are rem**, so values follow the user's font size (WCAG 1.4.4). Border
    widths, outline widths and shadow offsets stay px, because a fraction of a
    rem renders as a fractional pixel and browsers round it inconsistently.
@@ -82,28 +86,29 @@ every token is declared inside `@layer theme`.
 "Planned" families are agreed in the [foundations implementation
 plan][foundations-plan] and not built yet.
 
-| Family          | Names                                                             | Scale                                 | Status                                                       |
-| --------------- | ----------------------------------------------------------------- | ------------------------------------- | ------------------------------------------------------------ |
-| Colour ramps    | `--primary-*`, `--secondary-*`, `--neutral-*`                     | 0 to 9                                | Shipped                                                      |
-| Semantic colour | `--background`, `--foreground`, `--accent`, `--border`…           | Roles                                 | Shipped                                                      |
-| Status colour   | `--danger`, `--success`, `--information`                          | Roles                                 | Shipped                                                      |
-| Surfaces (old)  | `--surface`, `--surface-raised`                                   | Roles                                 | Deprecated aliases of `--surface-base`, `--surface-raised-1` |
-| Surfaces        | `--surface-sunken`, `-base`, `-raised-1`, `-raised-2`, `-overlay` | Roles, six levels with `--background` | Shipped                                                      |
-| Scrim           | `--scrim-sm`, `--scrim-md`                                        | T-shirt                               | Shipped                                                      |
-| Spacing (old)   | `--spacing-0`, `--spacing-10` to `--spacing-1000`                 | Irregular                             | Deprecated aliases, see [SPACING.md][spacing-doc]            |
-| Space           | `--space-0` to `--space-10`, three densities                      | 0 to 10                               | Shipped                                                      |
-| Control height  | `--control-height-xs`, `-sm`, `-md`, `-lg`                        | T-shirt                               | Shipped                                                      |
-| Border weight   | `--border-weight-none`, `-sm`, `-md`, `-lg`                       | T-shirt                               | Shipped                                                      |
-| Radius          | `--radius-none`, `-xs`, `-sm`, `-md`, `-lg`, `-circle`            | T-shirt                               | Shipped, collides with Tailwind                              |
-| Font family     | `--font-family-sans`, `--font-family-mono`                        | Roles                                 | Shipped                                                      |
-| Font size       | `--font-size-100` to `--font-size-900`                            | Hundreds                              | Shipped                                                      |
-| Font weight     | `--font-weight-400` to `--font-weight-700`                        | CSS value                             | Shipped                                                      |
-| Line height     | `--line-height-tight`, `-snug`, `-normal`, `-relaxed`             | Named                                 | Shipped                                                      |
-| Letter spacing  | `--letter-spacing-tight`, `-normal`, `-wide`                      | Named                                 | Shipped                                                      |
-| Type roles      | `--type-<role>-size`, `-line-height`, `-weight`, `-tracking`      | Roles                                 | Shipped                                                      |
-| Shadow colour   | `--shadow-color`, `--shadow-alpha-0` to `-6`                      | 0 to 6                                | Planned                                                      |
-| Elevation       | `--elevation-0` to `--elevation-6`, plus roles                    | 0 to 6                                | Planned                                                      |
-| Bevel           | `--bevel-sm`, `-md`, `-lg`, `-pressed`                            | T-shirt                               | Planned                                                      |
+| Family          | Names                                                                                        | Scale                                 | Status                                                         |
+| --------------- | -------------------------------------------------------------------------------------------- | ------------------------------------- | -------------------------------------------------------------- |
+| Colour ramps    | `--primary-*`, `--secondary-*`, `--neutral-*`                                                | 0 to 9                                | Shipped                                                        |
+| Semantic colour | `--background`, `--foreground`, `--accent`, `--border`…                                      | Roles                                 | Shipped                                                        |
+| Status colour   | `--danger`, `--success`, `--information`                                                     | Roles                                 | Shipped                                                        |
+| Surfaces (old)  | `--surface`, `--surface-raised`                                                              | Roles                                 | Deprecated aliases of `--surface-base`, `--surface-raised-1`   |
+| Surfaces        | `--surface-sunken`, `-base`, `-raised-1`, `-raised-2`, `-overlay`                            | Roles, six levels with `--background` | Shipped                                                        |
+| Scrim           | `--scrim-sm`, `--scrim-md`                                                                   | T-shirt                               | Shipped                                                        |
+| Spacing (old)   | `--spacing-0`, `--spacing-10` to `--spacing-1000`                                            | Irregular                             | Deprecated aliases, see [SPACING.md][spacing-doc]              |
+| Space           | `--space-0` to `--space-10`, three densities                                                 | 0 to 10                               | Shipped                                                        |
+| Control height  | `--control-height-xs`, `-sm`, `-md`, `-lg`                                                   | T-shirt                               | Shipped                                                        |
+| Grid            | `--grid-columns`, `--grid-gutter`, `--grid-margin`, `--grid-max-width`                       | Roles                                 | Shipped, see [LAYOUT.md][layout-doc]                           |
+| Border weight   | `--border-weight-none`, `-sm`, `-md`, `-lg`                                                  | T-shirt                               | Shipped                                                        |
+| Border radius   | `--border-radius-none`, `-xs`, `-sm`, `-md`, `-lg`, `-circle`                                | T-shirt                               | Shipped. Was `--radius-*`, renamed out of Tailwind's namespace |
+| Font family     | `--font-family-sans`, `--font-family-mono`                                                   | Roles                                 | Shipped                                                        |
+| Font size       | `--font-size-100` to `--font-size-900`                                                       | Hundreds                              | Shipped                                                        |
+| Font weight     | `--font-weight-400` to `--font-weight-700`                                                   | CSS value                             | Shipped                                                        |
+| Line height     | `--line-height-tight`, `-snug`, `-normal`, `-relaxed`                                        | Named                                 | Shipped                                                        |
+| Letter spacing  | `--letter-spacing-tight`, `-normal`, `-wide`                                                 | Named                                 | Shipped                                                        |
+| Type roles      | `--type-<role>-size`, `-line-height`, `-weight`, `-tracking`                                 | Roles                                 | Shipped                                                        |
+| Shadow colour   | `--elevation-shade-sm`, `-md`, `-lg`, `--bevel-highlight`, `--bevel-shade`                   | T-shirt                               | Shipped, see [ELEVATION.md][elevation-doc]                     |
+| Elevation       | `--elevation-0` to `--elevation-6`, plus roles (`--elevation-control` … `--elevation-modal`) | 0 to 6                                | Shipped                                                        |
+| Bevel           | `--bevel-sm`, `-md`, `-lg`, `-pressed`                                                       | T-shirt                               | Shipped                                                        |
 
 Font sizes use hundreds (`100` to `900`), which predates rule 1. They are left
 as they are until type is revisited.
@@ -200,5 +205,7 @@ updated: 2026-11-06
 [tokens-pkg]: ../../packages/tokens
 [tailwind-doc]: ./TAILWIND.md
 [spacing-doc]: ./SPACING.md
+[layout-doc]: ./LAYOUT.md
+[elevation-doc]: ./ELEVATION.md
 [foundations-plan]:
   ../research/foundations/foundations-06-implementation-plan.md

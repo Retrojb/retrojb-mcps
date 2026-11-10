@@ -63,19 +63,31 @@
 @source "./**/*.tsx";
 
 /*
- * Three tokens the site needs and the library does not ship.
+ * What the site sets on top of the tokens.
+ *
+ * The brand faces. `next/font` puts `--font-geist-sans` and `--font-geist-mono`
+ * on `<html>` (see `layout.tsx`), and overriding `--font-family-sans` and
+ * `--font-family-mono` is the documented way to give the library a brand face:
+ * Tailwind's `font-sans` and every component follow. They have to be on the
+ * same element as the Geist variables, which is why `layout.tsx` puts the font
+ * classes on `<html>` and not on `<body>`.
  *
  * `--code-background` is derived rather than fixed: `--neutral-1` is one step off
- * the page in both themes — slightly darker in light, slightly lighter in dark —
- * which is exactly what a code block wants, and it follows the ramp if the ramp
- * moves.
+ * the page in both themes, which is what a code block wants, and it follows the
+ * ramp if the ramp moves. `--surface-sunken` is not used because it sits a step
+ * below `--surface-base`, and code here sits on the page.
  *
- * `--measure` is a line-length limit, not a colour, and belongs to prose rather
- * than to the design system.
+ * The rest are site layout sizes, not design-system tokens: a line-length limit,
+ * the shell's width and sidebar, and how far an anchor jump clears the top.
  */
 :root {
+  --font-family-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-geist-mono), ui-monospace, monospace;
   --code-background: var(--neutral-1);
   --measure: 68ch;
+  --shell-max-width: 84rem;
+  --shell-sidebar-width: 15rem;
+  --anchor-offset: 5rem;
 }
 
 @layer base {
@@ -89,15 +101,15 @@
 
   html {
     /* Lets the skip-link target clear any sticky chrome (WCAG 2.4.11). */
-    scroll-padding-top: 5rem;
+    scroll-padding-top: var(--anchor-offset);
     -webkit-text-size-adjust: 100%;
   }
 
   body {
     min-height: 100svh;
-    font-family: var(--font-geist-sans), system-ui, sans-serif;
-    font-size: 1rem;
-    line-height: 1.65;
+    font-family: var(--font-sans);
+    font-size: var(--type-body-md-size);
+    line-height: var(--line-height-relaxed);
     color: var(--foreground);
     background: var(--background);
     text-rendering: optimizeLegibility;
@@ -113,7 +125,7 @@
   :focus-visible {
     outline: 2px solid var(--focus-ring);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--border-radius-xs);
   }
 
   /*
@@ -151,24 +163,59 @@
   h2,
   h3,
   h4 {
-    line-height: 1.25;
     text-wrap: balance;
+    /* A single long word ("Components" at 200% text on 320px) breaks rather
+       than widening the page (1.4.10). */
+    overflow-wrap: break-word;
     /* Keeps headings clear of sticky chrome when jumped to by anchor. */
-    scroll-margin-top: 5rem;
+    scroll-margin-top: var(--anchor-offset);
   }
 
+  /*
+   * The library's type roles, the same ones `PageHeading`, `SectionHeading` and
+   * `SubHeading` use, so a heading here matches a heading in a component.
+   *
+   * These replace fluid `clamp(…, vw, …)` sizes. A size that grows with the
+   * viewport width does not grow with browser zoom in the same proportion, which
+   * is a known risk for WCAG 1.4.4, and it was the only type on the site not on
+   * the shared scale. Instead, `h1` and `h2` step up one role at `md`: the token
+   * changes at a breakpoint, the tokens themselves do not. That keeps the old
+   * range: `h1` 1.875rem to 2.25rem, `h2` 1.25rem to 1.5rem.
+   */
   h1 {
-    font-size: clamp(1.85rem, 1.4rem + 1.8vw, 2.5rem);
-    letter-spacing: -0.02em;
+    font-size: var(--type-heading-lg-size);
+    line-height: var(--type-heading-lg-line-height);
+    font-weight: var(--type-heading-xl-weight);
+    letter-spacing: var(--type-heading-lg-tracking);
   }
 
   h2 {
-    font-size: clamp(1.35rem, 1.15rem + 0.9vw, 1.65rem);
-    letter-spacing: -0.01em;
+    font-size: var(--type-heading-sm-size);
+    line-height: var(--type-heading-sm-line-height);
+    font-weight: var(--type-heading-md-weight);
+    letter-spacing: var(--type-heading-sm-tracking);
   }
 
-  h3 {
-    font-size: 1.125rem;
+  @media (width >= 48rem) {
+    h1 {
+      font-size: var(--type-heading-xl-size);
+      line-height: var(--type-heading-xl-line-height);
+      letter-spacing: var(--type-heading-xl-tracking);
+    }
+
+    h2 {
+      font-size: var(--type-heading-md-size);
+      line-height: var(--type-heading-md-line-height);
+      letter-spacing: var(--type-heading-md-tracking);
+    }
+  }
+
+  h3,
+  h4 {
+    font-size: var(--type-heading-xs-size);
+    line-height: var(--type-heading-xs-line-height);
+    font-weight: var(--type-heading-xs-weight);
+    letter-spacing: var(--type-heading-xs-tracking);
   }
 
   p,
@@ -177,38 +224,50 @@
     max-width: var(--measure);
   }
 
+  /*
+   * The marker gutter is a fixed 1.5rem, the same as the library's `List`: it
+   * is typographic, and a compact gutter would clip a two-digit marker.
+   */
   ul,
   ol {
-    padding-left: 1.35rem;
+    padding-left: 1.5rem;
   }
 
   li + li {
-    margin-top: 0.35rem;
+    margin-top: var(--space-1);
   }
 
+  /*
+   * Inline code padding stays in em, so it scales with the text around it.
+   * `overflow-wrap: anywhere` lets a long identifier break instead of pushing
+   * the page wider than a 320px screen at 200% text (WCAG 1.4.10). Code blocks
+   * opt out below and scroll instead.
+   */
   code {
-    font-family: var(--font-geist-mono), ui-monospace, monospace;
-    font-size: 0.9em;
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    font-size: var(--type-code-size);
     background: var(--code-background);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-xs);
+    border: var(--border-weight-sm) solid var(--border);
+    border-radius: var(--border-radius-xs);
     padding: 0.1em 0.35em;
   }
 
   pre {
-    font-family: var(--font-geist-mono), ui-monospace, monospace;
-    font-size: 0.85rem;
-    line-height: 1.6;
+    font-family: var(--font-mono);
+    font-size: var(--type-body-sm-size);
+    line-height: var(--line-height-relaxed);
     background: var(--code-background);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 1rem;
+    border: var(--border-weight-sm) solid var(--border);
+    border-radius: var(--border-radius-sm);
+    padding: var(--space-4);
     overflow-x: auto;
     /* Focusable because it scrolls: keyboard users must be able to reach it. */
     scrollbar-gutter: stable;
   }
 
   pre code {
+    overflow-wrap: normal;
     background: none;
     border: none;
     padding: 0;
@@ -226,33 +285,33 @@
   table {
     border-collapse: collapse;
     width: 100%;
-    font-size: 0.925rem;
+    font-size: var(--type-body-sm-size);
   }
 
   caption {
     text-align: left;
     color: var(--foreground-muted);
-    padding-bottom: 0.5rem;
-    font-size: 0.925rem;
+    padding-bottom: var(--space-2);
+    font-size: var(--type-body-sm-size);
   }
 
   th,
   td {
     text-align: left;
-    padding: 0.6rem 0.75rem;
-    border-bottom: 1px solid var(--border);
+    padding: var(--space-2) var(--space-3);
+    border-bottom: var(--border-weight-sm) solid var(--border);
     vertical-align: top;
   }
 
   th {
-    font-weight: 600;
-    border-bottom: 2px solid var(--border-strong);
+    font-weight: var(--font-weight-600);
+    border-bottom: var(--border-weight-md) solid var(--border-strong);
   }
 
   hr {
     border: none;
-    border-top: 1px solid var(--border);
-    margin: 2.5rem 0;
+    border-top: var(--border-weight-sm) solid var(--border);
+    margin: var(--space-8) 0;
   }
 }
 

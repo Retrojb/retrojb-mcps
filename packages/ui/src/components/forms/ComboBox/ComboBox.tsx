@@ -181,6 +181,7 @@ const ComboBox = <TOption,>({
         <ul
           {...getListboxProps()}
           data-combobox-listbox=""
+          data-surface="overlay"
           data-combobox-placement={placement ?? "auto"}
           aria-label={typeof label === "string" ? label : undefined}
           className={slots.listbox({ class: listboxClassName })}

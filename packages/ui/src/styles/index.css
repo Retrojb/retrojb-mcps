@@ -16,6 +16,13 @@
  * `TYPE_ROLES` in `lib/tv.ts`.
  */
 @source inline("text-{display,heading-xl,heading-lg,heading-md,heading-sm,heading-xs,title-md,title-sm,body-lg,body-md,body-sm,label-lg,label-md,label-sm,caption,overline,code}");
+/*
+ * The elevation roles and bevels, for the same reason. Components use only
+ * some of them (`raised-2` and the bevels have no component yet), and apps on
+ * `dist/styles.css` alone still need every one. Keep in step with `SHADOW_ROLES` and `BEVELS` in `lib/tv.ts`.
+ */
+@source inline("{,hover:}shadow-{control,control-hover,raised-1,raised-2,overlay,modal}");
+@source inline("{,active:}inset-shadow-bevel-{sm,md,lg,pressed}");
 
 /*
  * COMBOBOX POPUP POSITIONING

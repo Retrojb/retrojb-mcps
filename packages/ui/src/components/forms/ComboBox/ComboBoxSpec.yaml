@@ -176,6 +176,8 @@ tokens:
   - control-height-sm
   - control-height-md
   - control-height-lg
+  - surface-overlay
+  - elevation-overlay
 
 versioning: {}
 

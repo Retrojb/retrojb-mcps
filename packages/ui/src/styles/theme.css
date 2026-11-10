@@ -114,14 +114,117 @@
   --color-focus: var(--focus-ring, #5b3673);
 
   /*
-   * `rounded-control` — one radius for every interactive surface.
+   * BREAKPOINTS
    *
-   * Reads `--radius-sm` rather than `--radius`. The token layer now ships a radius
-   * scale (`--radius-none` through `--radius-circle`) and no longer defines a bare
-   * `--radius`, so the old reference resolved to nothing and every control silently
-   * fell back to the 8px literal. `--radius-sm` is that same 8px, named.
+   * Tailwind's defaults, restated so they are this package's decision rather
+   * than whatever a future Tailwind ships, and so `sm:` to `2xl:` are
+   * documented next to the tokens. Mobile first: each one is a `min-width`.
+   * rem, so a user who raises their font size gets the narrower layout sooner,
+   * which is what WCAG 1.4.10 reflow wants.
+   *
+   * The `md` and `lg` values are also written as literals in the grid media
+   * queries in `packages/tokens/src/base.css`. Keep the two in step.
    */
-  --radius-control: var(--radius-sm, 8px);
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  /*
+   * ELEVATION
+   *
+   * `shadow-control`, `shadow-control-hover`, `shadow-raised-1`,
+   * `shadow-raised-2`, `shadow-overlay`, `shadow-modal`: the roles, never the
+   * levels. The tokens are `--elevation-*` because a theme variable named
+   * `--shadow-overlay` reading a token also named `--shadow-overlay` would
+   * reference itself.
+   *
+   * Because each value is a `var()`, Tailwind cannot see the colours inside
+   * it, so `shadow-<colour>` and the `/50` opacity modifier have no effect on
+   * these utilities. The colour comes from `--elevation-shade-*` instead.
+   * Fallbacks are the light values.
+   */
+  --shadow-control: var(
+    --elevation-control,
+    0 1px 2px rgb(7 5 7 / 0.12),
+    0 1px 3px rgb(7 5 7 / 0.08)
+  );
+  --shadow-control-hover: var(
+    --elevation-control-hover,
+    0 1px 2px rgb(7 5 7 / 0.12),
+    0 3px 6px rgb(7 5 7 / 0.08)
+  );
+  --shadow-raised-1: var(
+    --elevation-raised-1,
+    0 1px 2px rgb(7 5 7 / 0.12),
+    0 3px 6px rgb(7 5 7 / 0.08)
+  );
+  --shadow-raised-2: var(
+    --elevation-raised-2,
+    0 2px 4px rgb(7 5 7 / 0.12),
+    0 6px 12px rgb(7 5 7 / 0.12)
+  );
+  --shadow-overlay: var(
+    --elevation-overlay,
+    0 2px 4px rgb(7 5 7 / 0.12),
+    0 10px 20px rgb(7 5 7 / 0.12)
+  );
+  --shadow-modal: var(
+    --elevation-modal,
+    0 4px 8px rgb(7 5 7 / 0.12),
+    0 16px 32px rgb(7 5 7 / 0.18)
+  );
+
+  /*
+   * BEVEL
+   *
+   * `inset-shadow-bevel-sm`, `-md`, `-lg`, `-pressed`. Registered in the
+   * `--inset-shadow-*` namespace so Tailwind writes them to
+   * `--tw-inset-shadow`, which is composed with `--tw-shadow` in one
+   * `box-shadow`: `shadow-raised-1 inset-shadow-bevel-md` keeps both.
+   */
+  --inset-shadow-bevel-sm: var(
+    --bevel-sm,
+    inset 1px 1px 0 rgb(255 255 255 / 0.7),
+    inset -1px -1px 0 rgb(7 5 7 / 0.16)
+  );
+  --inset-shadow-bevel-md: var(
+    --bevel-md,
+    inset 2px 2px 0 rgb(255 255 255 / 0.7),
+    inset -2px -2px 0 rgb(7 5 7 / 0.16)
+  );
+  --inset-shadow-bevel-lg: var(
+    --bevel-lg,
+    inset 3px 3px 0 rgb(255 255 255 / 0.7),
+    inset -3px -3px 0 rgb(7 5 7 / 0.16)
+  );
+  --inset-shadow-bevel-pressed: var(
+    --bevel-pressed,
+    inset 2px 2px 0 rgb(7 5 7 / 0.16),
+    inset -2px -2px 0 rgb(255 255 255 / 0.7)
+  );
+
+  /*
+   * RADIUS
+   *
+   * Tailwind's `rounded-xs` to `rounded-lg` remapped to the token scale, the same
+   * way the font weights below are: the utility keeps Tailwind's name and reads
+   * this package's value. The tokens are `--border-radius-*`, a different name,
+   * so these are not references to themselves, and because both sides are now
+   * declared in this file rather than in two stylesheets, load order no longer
+   * decides which value wins. `rounded-xl` and up, `rounded-none` and
+   * `rounded-full` are left as Tailwind ships them.
+   *
+   * `rounded-circle` is the token's pill radius. `rounded-control` is one radius
+   * for every interactive surface.
+   */
+  --radius-xs: var(--border-radius-xs, 4px);
+  --radius-sm: var(--border-radius-sm, 8px);
+  --radius-md: var(--border-radius-md, 16px);
+  --radius-lg: var(--border-radius-lg, 24px);
+  --radius-circle: var(--border-radius-circle, 99px);
+  --radius-control: var(--border-radius-sm, 8px);
 
   /*
    * `animate-progress-indeterminate` — the sliding segment of an indeterminate

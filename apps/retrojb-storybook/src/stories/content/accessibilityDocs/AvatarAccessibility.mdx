@@ -1,0 +1,83 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Content/Avatar/Accessibility" />
+
+# Avatar Accessibility
+
+Extracted from `packages/ui/src/components/content/avatar/styles.ts`, plus the
+markup in `Avatar.tsx`. Ratios are measured with `checkContrast` from
+`@retrojb/wcag-a11y-scanner` against the tokens in `packages/tokens`, in the
+light theme and the dark theme, by
+`npm run check:contrast --workspace=@retrojb/docs`.
+
+## WCAG Standard and Expectations
+
+| Criterion                | Level | How the component meets it                                                                                                |
+| ------------------------ | ----- | ------------------------------------------------------------------------------------------------------------------------- |
+| 1.1.1 Non-text Content   | A     | The avatar is one image named by the required `name`, whatever it shows. `decorative` hides it when the name is beside it |
+| 1.4.3 Contrast (Minimum) | AA    | Initials are `--foreground` on `--surface-sunken`: 16.57:1 light, 18.24:1 dark                                            |
+| 4.1.2 Name, Role, Value  | A     | The root is `role="img"` with `aria-label` set to `name`. It has no state                                                 |
+
+Not applicable to an avatar:
+
+- **1.4.11 Non-text Contrast.** The frame's border identifies nothing, so it is
+  `--border`, the decorative token. The picture or the initials are the content;
+  the border is there so the shape stays visible in forced-colors mode, which
+  removes the fill.
+- **2.4.7 Focus Visible, 2.5.8 Target Size.** An avatar is not focusable and not
+  a target. To make one clickable, wrap it in a `Link` or `Button` and give that
+  control its own accessible name.
+
+### One image, named once
+
+The root `<span>` carries `role="img"` and `aria-label={name}`. Inside it, the
+picture has `alt=""` and the initials and the glyph are `aria-hidden`, so a
+screen reader announces "Ada Lovelace, image" once, whether the avatar shows a
+picture, initials or the glyph, and never reads the initials as letters.
+
+### Decorative avatars
+
+In a list where each avatar sits beside the person's name, announcing the name
+twice is noise. `decorative` sets `aria-hidden="true"` on the whole avatar and
+drops the role and label, so only the visible text is read.
+
+A blank `name` (empty, or only spaces) is treated the same way. An image with no
+name is announced as just "image", which tells the listener nothing.
+
+### A picture that fails
+
+A missing or failed `src` falls back to the initials, so a broken-image icon,
+which tells the reader nothing, never appears. A picture that failed during
+server rendering, before React attached its error handler, is caught when it
+mounts.
+
+### Forced colors
+
+The border is a real border, so the frame keeps its shape when forced-colors
+mode removes the fill. The `elevated` shadow is removed in that mode, which
+loses nothing: it is decoration.
+
+### Known gaps
+
+- Initials are taken from the first and last word of `name`. That suits most
+  Latin-script names and not many others (Chinese, Korean or Thai names, or a
+  name with a particle). Pass `initials` where the result would be wrong.
+- The picture is the caller's. Its own contrast and content are not checked.
+
+## Colors
+
+### Text (needs 4.5:1)
+
+| Role     | Pairing                              |   Light |    Dark |
+| -------- | ------------------------------------ | ------: | ------: |
+| Initials | `--foreground` on `--surface-sunken` | 16.57:1 | 18.24:1 |
+
+## Aria
+
+| Attribute     | On              | Set when                        | Value           |
+| ------------- | --------------- | ------------------------------- | --------------- |
+| `role`        | root `<span>`   | not `decorative`                | `img`           |
+| `aria-label`  | root `<span>`   | not `decorative`                | the `name` prop |
+| `aria-hidden` | root `<span>`   | `decorative`, or a blank `name` | `true`          |
+| `alt`         | `<img>`         | a picture is shown              | `""`            |
+| `aria-hidden` | initials, glyph | always                          | `true`          |

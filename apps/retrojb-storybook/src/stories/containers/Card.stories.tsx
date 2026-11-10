@@ -23,6 +23,7 @@ const meta = {
       options: ["div", "article", "section", "li"],
     },
     size: { control: "inline-radio", options: ["sm", "md"] },
+    elevated: { control: "boolean" },
     children: { table: { disable: true } },
   },
   args: {
@@ -118,5 +119,42 @@ export const AsListItems: Story = {
         </Card>
       ))}
     </ul>
+  ),
+};
+
+/**
+ * `elevated` lifts the card with the `raised-1` shadow on the `raised-1`
+ * surface. The border stays, and it is the only edge left in forced-colors
+ * mode, which removes box-shadows.
+ */
+export const Elevated: Story = {
+  args: { elevated: true },
+};
+
+/**
+ * An overlay is already the top surface, so an elevated card inside one drops
+ * its shadow and keeps its border. The library's overlays (`BrowserAlert`,
+ * `ToastAlert`, the `ComboBox` popup) set `data-surface="overlay"`; this
+ * stands in for one.
+ */
+export const InsideAnOverlay: Story = {
+  name: "Inside an overlay",
+  args: { elevated: true },
+  render: (args) => (
+    <div
+      data-surface="overlay"
+      className="shadow-modal"
+      style={{
+        display: "grid",
+        gap: "var(--space-4)",
+        padding: "var(--space-6)",
+        maxInlineSize: "32rem",
+        background: "var(--surface-overlay)",
+        border: "1px solid var(--border-strong)",
+        borderRadius: "var(--radius-control)",
+      }}
+    >
+      <Card {...args} />
+    </div>
   ),
 };

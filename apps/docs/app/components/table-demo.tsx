@@ -30,11 +30,24 @@ import {
  * `meta.align` off a column when a cell was not given an `align` of its own —
  * which is the only way a generated cell can know to end-align a number.
  */
+interface ICriterionColumnMeta {
+  readonly align?: "start" | "center" | "end";
+}
+
+/*
+ * A typed constant rather than `{} as ICriterionColumnMeta`. The value is only
+ * there to carry its type into `tableFeatures`, and an `as` on an inline object
+ * trips `no-unnecessary-type-assertion`, whose auto-fix deletes the type and
+ * with it every check on `meta`. The annotation keeps the type without an
+ * assertion.
+ */
+const columnMeta: ICriterionColumnMeta = {};
+
 const features = tableFeatures({
   rowSortingFeature,
   sortedRowModel: createSortedRowModel(),
   sortFns: { alphanumeric: sortFn_alphanumeric, basic: sortFn_basic },
-  columnMeta: {} as { readonly align?: "start" | "center" | "end" },
+  columnMeta,
 });
 
 interface Criterion {

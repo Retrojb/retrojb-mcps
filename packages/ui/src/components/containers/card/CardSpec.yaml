@@ -72,6 +72,12 @@ api:
     size:
       values: [sm, md]
       default: md
+    elevated:
+      values: [true, false]
+      default: false
+      note:
+        raised-1 shadow on the raised-1 surface. Dropped inside an ancestor with
+        data-surface="overlay"; the border stays.
   props:
     as:
       values: [div, article, section, li]
@@ -125,6 +131,7 @@ tokens:
   - space-2
   - space-3
   - space-4
+  - elevation-raised-1
 
 # Not released yet: the 0.1.0 tree only had the Card template. Set
 # introducedIn when the next @retrojb/ui version ships.

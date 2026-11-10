@@ -195,6 +195,21 @@ export {
 } from "./components/content/tag";
 
 /*
+ * Avatar — a picture or initials for a person, team or account, in a round or
+ * square frame.
+ *
+ * `name` is required: it is the accessible name and the source of the
+ * initials. A missing or broken picture falls back to the initials. Set
+ * `decorative` when the name is already written beside it.
+ */
+export {
+  Avatar,
+  avatarStyles,
+  type AvatarVariants,
+  type IAvatarProps,
+} from "./components/content/avatar";
+
+/*
  * Chip — a small toggle button for filter-style selection.
  *
  * Renders one `<button type="button">` with `aria-pressed`, and a check icon
@@ -241,6 +256,28 @@ export {
   type DynamicContainerVariants,
   type IDynamicContainerProps,
 } from "./components/containers/dynamicContainer";
+
+/*
+ * Foundations: the page grid. `PageGrid` is the root layout, `GridItem` places
+ * a region on it. Both are server components.
+ */
+export {
+  GRID_BREAKPOINTS,
+  GridItem,
+  PageGrid,
+  gridItemPlacement,
+  gridItemStyles,
+  pageGridStyles,
+  type GridBreakpoint,
+  type GridItemElement,
+  type GridItemVariants,
+  type GridResponsive,
+  type GridSpan,
+  type IGridItemProps,
+  type IPageGridProps,
+  type PageGridElement,
+  type PageGridVariants,
+} from "./components/foundations/pageGrid";
 
 /*
  * Typography — five headings and the body components, on the semantic type
@@ -311,3 +348,6 @@ export { cn, cx, tv, type VariantProps } from "./lib/tv";
 // The semantic type roles; `text-${role}` is the utility for each. See the
 // typography section of `packages/tokens/src/base.css`.
 export { TYPE_ROLES, type TypeRole } from "./lib/tv";
+// The elevation roles (`shadow-${role}`) and bevels (`inset-shadow-${bevel}`).
+// See the elevation and bevel sections of `packages/tokens/src/base.css`.
+export { BEVELS, SHADOW_ROLES, type Bevel, type ShadowRole } from "./lib/tv";

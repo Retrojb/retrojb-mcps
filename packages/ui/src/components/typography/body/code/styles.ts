@@ -32,7 +32,7 @@ const codeStyles = tv({
      * `border-border-strong` at 4.17:1 and up would draw a heavy box around every
      * identifier in a paragraph.
      */
-    "rounded-(--radius-xs) border border-border",
+    "rounded-xs border border-border",
     "px-(--space-1)",
     /*
      * A long identifier wraps rather than overflowing at 320 CSS px (1.4.10),

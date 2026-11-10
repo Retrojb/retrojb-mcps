@@ -60,6 +60,13 @@
     --scrim-sm: rgb(0 0 0 / 0.48);
     --scrim-md: rgb(0 0 0 / 0.72);
 
+    /* SHADOW COLOURS: black at several times the light alpha. */
+    --elevation-shade-sm: rgb(0 0 0 / 0.32);
+    --elevation-shade-md: rgb(0 0 0 / 0.44);
+    --elevation-shade-lg: rgb(0 0 0 / 0.56);
+    --bevel-highlight: rgb(255 255 255 / 0.12);
+    --bevel-shade: rgb(0 0 0 / 0.5);
+
     /* STATUS */
     --danger: #ff9d95;
     --success: #6bd39a;

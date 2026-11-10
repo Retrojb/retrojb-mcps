@@ -19,8 +19,11 @@
  * The tone → class mapping, as `{ bar, label }` per tone.
  *
  * Ratios are the measured output of `@retrojb/wcag-a11y-scanner`, light / dark,
- * against `--surface-base` — which is the fill every alert here sets on itself, so these
- * are the numbers that actually apply rather than page-background approximations.
+ * against `--surface-base`, the fill `InlineAlert` sets on itself. `ToastAlert` and
+ * `BrowserAlert` float, so they override it with `--surface-overlay`, which is a
+ * step lighter in dark mode. There the dark figures drop: bars 7.04-7.64:1, info
+ * label 11.34:1, and every pairing still clears its threshold. `check:contrast`
+ * measures both surfaces.
  *
  * `bar` is the inline-start edge; `label` is the word naming the tone. Both are
  * quoted because both are perceivable content: the bar has to clear 1.4.11 at 3:1

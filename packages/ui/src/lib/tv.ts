@@ -59,11 +59,42 @@ export const TYPE_ROLES = [
 /** A semantic type role; `text-${TypeRole}` is its utility. */
 export type TypeRole = (typeof TYPE_ROLES)[number];
 
+/*
+ * The elevation roles and bevels need the same treatment. tailwind-merge only
+ * recognises `shadow-<t-shirt size>` as a shadow, so it reads `shadow-overlay`
+ * as a shadow *colour*: `shadow-overlay shadow-md` keeps both, and
+ * `shadow-overlay shadow-accent` drops the role. Listed here, they join the
+ * shadow and inset-shadow groups. Keep in step with `styles/theme.css`.
+ */
+export const SHADOW_ROLES = [
+  "control",
+  "control-hover",
+  "raised-1",
+  "raised-2",
+  "overlay",
+  "modal",
+] as const;
+
+/** An elevation role; `shadow-${ShadowRole}` is its utility. */
+export type ShadowRole = (typeof SHADOW_ROLES)[number];
+
+export const BEVELS = [
+  "bevel-sm",
+  "bevel-md",
+  "bevel-lg",
+  "bevel-pressed",
+] as const;
+
+/** A bevel; `inset-shadow-${Bevel}` is its utility. */
+export type Bevel = (typeof BEVELS)[number];
+
 const twMergeConfig: TWMergeConfig = {
   extend: {
     theme: {
-      radius: ["control"],
+      radius: ["control", "circle"],
       text: [...TYPE_ROLES],
+      shadow: [...SHADOW_ROLES],
+      "inset-shadow": [...BEVELS],
     },
   },
 };

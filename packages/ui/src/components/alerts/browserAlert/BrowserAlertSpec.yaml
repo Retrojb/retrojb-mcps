@@ -117,6 +117,8 @@ tokens:
   - danger
   - radius-control
   - scrim-md
+  - surface-overlay
+  - elevation-modal
 
 versioning:
   introducedIn: "0.1.0"

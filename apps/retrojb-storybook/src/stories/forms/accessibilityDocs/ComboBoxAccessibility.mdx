@@ -219,10 +219,12 @@ submit if that matters.
 
 ## Colors
 
-The field and the popup both sit on `--surface-raised-1`, so their pairings are
-measured against that. The active option sits on `--primary-3`, which
-`packages/tokens/src/light.css` designates the active/selected surface and the
-lowest-contrast surface anything is allowed to land on.
+The field sits on `--surface-raised-1` and the popup on `--surface-overlay`, so
+their pairings are measured against those. In light mode both are white; in dark
+mode the popup is a step lighter, which is why its dark ratios are lower. The
+active option sits on `--primary-3`, which `packages/tokens/src/light.css`
+designates the active/selected surface and the lowest-contrast surface anything
+is allowed to land on.
 
 ### Text (needs 4.5:1)
 
@@ -230,11 +232,11 @@ lowest-contrast surface anything is allowed to land on.
 | --------------------------- | -------------------------------------------- | -----: | -----: |
 | Query text                  | `--foreground` on `--surface-raised-1`       | 20.3:1 | 16.0:1 |
 | Placeholder                 | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
-| Option label                | `--foreground` on `--surface-raised-1`       | 20.3:1 | 16.0:1 |
+| Option label                | `--foreground` on `--surface-overlay`        | 20.3:1 | 13.5:1 |
 | Option label, active        | `--foreground` on `--primary-3`              | 15.1:1 | 12.5:1 |
-| Matched run                 | `--accent-text` on `--surface-raised-1`      | 16.4:1 | 13.5:1 |
+| Matched run                 | `--accent-text` on `--surface-overlay`       | 16.4:1 | 11.3:1 |
 | Matched run, active option  | `--accent-text` on `--primary-3`             | 12.2:1 | 10.5:1 |
-| Empty / loading / truncated | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
+| Empty / loading / truncated | `--foreground-muted` on `--surface-overlay`  | 9.55:1 | 5.67:1 |
 | Clear and toggle glyphs     | `--foreground-muted` on `--surface-raised-1` | 9.55:1 | 6.76:1 |
 | Error                       | `--danger` on `--background`                 | 6.53:1 | 9.74:1 |
 
@@ -255,8 +257,9 @@ identifies where the keyboard is. `border-border-strong` is used rather than
 `border-border` for that reason — `--border` is for decorative rules and is
 never the sole indicator of anything.
 
-The popup also has a `shadow-lg`, which is decorative only. Forced-colors mode
-drops box-shadows entirely, which is why the border is there to carry the edge.
+The popup also has the `overlay` shadow (`shadow-overlay`), which is decorative
+only. Forced-colors mode drops box-shadows entirely, which is why the border is
+there to carry the edge.
 
 ## Aria
 

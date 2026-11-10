@@ -49,13 +49,14 @@ const Button = ({
   intent,
   size,
   fullWidth,
+  elevated,
   type = "button",
   ...props
 }: IButtonProps): ReactElement => {
   return (
     <button
       type={type}
-      className={buttonStyle({ intent, size, fullWidth, className })}
+      className={buttonStyle({ intent, size, fullWidth, elevated, className })}
       {...props}
     >
       {text}

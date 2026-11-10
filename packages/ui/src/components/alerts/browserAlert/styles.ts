@@ -27,7 +27,17 @@ const browserAlertStyles = tv({
       "border-0 bg-transparent p-0 text-foreground",
       "backdrop:bg-scrim-md",
     ],
-    box: [...ALERT_SURFACE, "flex flex-col gap-(--space-3) p-(--space-5)"],
+    /*
+     * The dialog's visible box: the overlay surface with the `modal` shadow,
+     * marked `data-surface="overlay"` in `BrowserAlert.tsx` so a card inside
+     * drops its own shadow. The border, not the shadow or the scrim, is what
+     * separates it from the page, and the only one left in forced-colors mode.
+     */
+    box: [
+      ...ALERT_SURFACE,
+      "bg-surface-overlay shadow-modal",
+      "flex flex-col gap-(--space-3) p-(--space-5)",
+    ],
     // `uppercase` is not part of the role: case is presentation the copy may
     // not want, and screen readers ignore it either way.
     label: "text-overline uppercase",

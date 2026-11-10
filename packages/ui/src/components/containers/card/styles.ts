@@ -48,8 +48,14 @@ const cardStyles = tv({
      * ring is an outline on a pseudo-element that sits *outside* this box, and an
      * overflow clip on the root would cut it off.
      */
+    /*
+     * `box-border`, because the root is `w-full` and `Card` puts the content
+     * padding on it. With no preflight the default is `content-box`, so the
+     * card was its container's width plus padding and border, 34px too wide
+     * at the default density, and overflowed a narrow column (1.4.10).
+     */
     root: [
-      "group/card relative @container max-w-[500px]",
+      "group/card relative @container box-border max-w-[500px]",
       "flex w-full min-w-0 h-full flex-col list-none",
       "rounded-control border border-border-strong",
       "bg-surface-base text-foreground",
@@ -152,6 +158,22 @@ const cardStyles = tv({
     disabled: {
       true: { root: "opacity-60" },
     },
+    /*
+     * Lifts the card off the surface it sits on: the `raised-1` shadow on the
+     * `raised-1` fill it pairs with. Off by default; the border already carries
+     * the boundary (1.4.11), and forced-colors mode removes the shadow and
+     * leaves that border.
+     *
+     * Inside an overlay (any ancestor with `data-surface="overlay"`: a dialog, a
+     * popover, a toast) the shadow is dropped and the border kept. An overlay is
+     * already the top surface, so a card in it has no higher level to lift to,
+     * and a shadow there would read as a second floating layer.
+     */
+    elevated: {
+      true: {
+        root: "bg-surface-raised-1 shadow-raised-1 in-data-[surface=overlay]:shadow-none",
+      },
+    },
   },
   compoundVariants: [
     {
@@ -172,6 +194,7 @@ const cardStyles = tv({
     mediaRatio: "16/9",
     interactive: false,
     disabled: false,
+    elevated: false,
   },
 });
 

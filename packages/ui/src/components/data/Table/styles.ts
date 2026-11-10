@@ -31,9 +31,14 @@ const tableStyle = tv({
      * that cannot be reached from the keyboard cannot be scrolled from the
      * keyboard (WCAG 2.1.1) — and once it is focusable it needs the same focus
      * indicator as every other focusable surface in this package.
+     *
+     * `relative` makes it the containing block for absolutely positioned
+     * descendants. An `sr-only` label in a cell is `position: absolute`, and
+     * without a positioned ancestor inside the scroller it escapes the
+     * overflow clip and widens the page instead (1.4.10).
      */
     root: [
-      "w-full overflow-x-auto",
+      "relative w-full overflow-x-auto",
       "rounded-control border border-border bg-surface-raised-1",
       "outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus",
     ],

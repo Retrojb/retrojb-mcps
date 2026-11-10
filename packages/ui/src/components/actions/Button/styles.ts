@@ -34,7 +34,9 @@ const buttonStyle = tv({
     // Weight comes from the `label-*` type role in `size`.
     "whitespace-nowrap",
     "cursor-pointer select-none",
-    "transition-colors motion-reduce:transition-none",
+    // Colours plus `box-shadow`, so an `elevated` button's lift animates with its
+    // fill. `transition-colors` leaves the shadow out.
+    "transition-[color,background-color,border-color,outline-color,box-shadow] motion-reduce:transition-none",
 
     /*
      * One focus indicator for every intent (WCAG 2.4.7). `focus-visible` rather
@@ -85,16 +87,47 @@ const buttonStyle = tv({
     fullWidth: {
       true: "w-full",
     },
+
+    /*
+     * A resting shadow that lifts on hover and drops on press, so the press
+     * reads as the button going down. Off by default: a flat button with its
+     * border is the house style, and a shadow is extra depth on top of an edge
+     * that already identifies the control (1.4.11). Forced-colors mode removes
+     * the shadow and leaves that edge.
+     *
+     * `primary` and `danger` have `border-transparent`, which forced-colors
+     * mode repaints as a visible edge, so they keep a boundary there too.
+     *
+     * `ghost` has no surface to lift and `disabled` cannot be pressed, so the
+     * compound variants below take the shadow off both.
+     */
+    elevated: {
+      true: "shadow-control hover:shadow-control-hover active:shadow-none",
+    },
   },
+
+  compoundVariants: [
+    {
+      elevated: true,
+      intent: "ghost",
+      class: "shadow-none hover:shadow-none",
+    },
+    {
+      elevated: true,
+      class: "disabled:shadow-none disabled:hover:shadow-none",
+    },
+  ],
 
   defaultVariants: {
     intent: "primary",
     size: "md",
+    elevated: false,
   },
 });
 
 /**
- * The variant props of {@link buttonStyle}: `intent`, `size` and `fullWidth`.
+ * The variant props of {@link buttonStyle}: `intent`, `size`, `fullWidth` and
+ * `elevated`.
  *
  * @remarks
  * `IButtonProps` extends this and redeclares each variant with a description,

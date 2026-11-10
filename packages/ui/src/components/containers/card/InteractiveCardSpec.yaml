@@ -49,6 +49,12 @@ api:
     mediaRatio:
       values: ["16/9", "4/3", "3/2", "1/1"]
       default: "16/9"
+    elevated:
+      values: [true, false]
+      default: false
+      note:
+        raised-1 shadow on the raised-1 surface. Dropped inside an ancestor with
+        data-surface="overlay"; the border stays.
   props:
     as:
       values: [div, article, section, li]
@@ -109,6 +115,7 @@ tokens:
   - foreground-muted
   - focus
   - radius-control
+  - elevation-raised-1
 
 versioning: {}
 

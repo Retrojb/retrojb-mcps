@@ -1,18 +1,18 @@
 .nav {
-  font-size: 0.925rem;
+  font-size: var(--type-body-sm-size);
 }
 
 .groupTitle {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.07em;
+  font-size: var(--type-caption-size);
+  font-weight: var(--font-weight-600);
+  letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
   color: var(--foreground-muted);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 
 .group + .group {
-  margin-top: 1.75rem;
+  margin-top: var(--space-7);
 }
 
 .list {
@@ -21,7 +21,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: var(--space-1);
 }
 
 .list li + li {
@@ -30,11 +30,11 @@
 
 .link {
   display: block;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
+  padding: var(--space-2) var(--space-2);
+  border-radius: var(--border-radius-sm);
   color: var(--foreground-muted);
   text-decoration: none;
-  border-left: 2px solid transparent;
+  border-left: var(--border-weight-md) solid transparent;
 }
 
 .link:hover {
@@ -49,7 +49,7 @@
  */
 .current {
   color: var(--foreground);
-  font-weight: 600;
+  font-weight: var(--font-weight-600);
   background: var(--surface-base);
   border-left-color: var(--accent);
 }

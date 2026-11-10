@@ -20,13 +20,23 @@
     --border-weight-md: 2px;
     --border-weight-lg: 4px;
 
-    /* Radii */
-    --radius-none: 0px;
-    --radius-xs: 4px;
-    --radius-sm: 8px;
-    --radius-md: 16px;
-    --radius-lg: 24px;
-    --radius-circle: 99px;
+    /*
+     * BORDER RADIUS
+     *
+     * `--border-radius-*`, beside `--border-weight-*`, and not `--radius-*`.
+     * Tailwind's theme declares `--radius-xs` to `--radius-lg` with its own
+     * values, so a token of the same name fought it: whichever stylesheet
+     * loaded last set the value, and in an app with its own Tailwind build
+     * that was Tailwind's, at half the size. `theme.css` in `@retrojb/ui` now
+     * points Tailwind's `--radius-*` at these, so `rounded-sm` is 8px wherever
+     * that file is imported, regardless of load order.
+     */
+    --border-radius-none: 0px;
+    --border-radius-xs: 4px;
+    --border-radius-sm: 8px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 24px;
+    --border-radius-circle: 99px;
 
     /*
      * SPACE
@@ -68,6 +78,110 @@
     --control-height-sm: 2rem; /* 32px */
     --control-height-md: 2.5rem; /* 40px */
     --control-height-lg: 3rem; /* 48px */
+
+    /*
+     * GRID
+     *
+     * The page grid `PageGrid` reads. Twelve columns at every width; the
+     * gutter and the outer margin widen at the `md` and `lg` breakpoints (see
+     * the block after this one). `--grid-max-width` caps the content width,
+     * and the margin keeps it off the viewport edge below that.
+     *
+     *   width          gutter       margin
+     *   -------------  -----------  -----------
+     *   below 48rem    --space-4    --space-4
+     *   48rem (md)     --space-5    --space-6
+     *   64rem (lg)     --space-6    --space-7
+     *
+     * Columns are a number, not a length, so an app can set a 16 or 24 column
+     * grid with one override. The gutter and margin follow density; see the
+     * note on the selector below.
+     */
+    --grid-columns: 12;
+    --grid-max-width: 80rem; /* 1280px, Tailwind's `xl` */
+
+    /*
+     * ELEVATION
+     *
+     * `--elevation-0` to `--elevation-6`: two layers per level, a tight contact
+     * shadow over a soft ambient one. Offsets and blur grow with the level and
+     * stay px: a shadow is decoration, and scaling it with the font size gains
+     * nothing. Colours come from `--elevation-shade-*`, which is where light
+     * and dark differ.
+     *
+     * Level 0 is a transparent zero shadow, not `none`. Tailwind puts the value
+     * inside a comma-separated `box-shadow` list, where `none` is invalid and
+     * would drop every other shadow on the element.
+     */
+    --elevation-0: 0 0 #0000;
+    --elevation-1:
+      0 1px 2px var(--elevation-shade-md), 0 1px 3px var(--elevation-shade-sm);
+    --elevation-2:
+      0 1px 2px var(--elevation-shade-md), 0 3px 6px var(--elevation-shade-sm);
+    --elevation-3:
+      0 2px 4px var(--elevation-shade-md), 0 6px 12px var(--elevation-shade-md);
+    --elevation-4:
+      0 2px 4px var(--elevation-shade-md), 0 10px 20px var(--elevation-shade-md);
+    --elevation-5:
+      0 4px 8px var(--elevation-shade-md), 0 16px 32px var(--elevation-shade-lg);
+    --elevation-6:
+      0 4px 8px var(--elevation-shade-md), 0 24px 48px var(--elevation-shade-lg);
+
+    /*
+     * Elevation roles. Components use these, never a level, so retuning which
+     * level a role sits at is one edit. Each role pairs with the surface of
+     * the same name: a `raised-1` shadow goes on a `--surface-raised-1` fill.
+     *
+     *   role            level  use
+     *   --------------  -----  ----------------------------------------
+     *   control         1      a button or chip at rest
+     *   control-hover   2      the same, hovered
+     *   raised-1        2      a card on a surface
+     *   raised-2        3      a raised element inside a raised one
+     *   overlay         4      menus, popovers, listboxes, toasts
+     *   modal           5      dialogs
+     *
+     * Level 6 is unassigned, kept for things lifted above a modal (a dragged
+     * item). There is no `control-active`: a pressed control drops its shadow
+     * (`shadow-none`) or uses `--bevel-pressed`.
+     */
+    --elevation-control: var(--elevation-1);
+    --elevation-control-hover: var(--elevation-2);
+    --elevation-raised-1: var(--elevation-2);
+    --elevation-raised-2: var(--elevation-3);
+    --elevation-overlay: var(--elevation-4);
+    --elevation-modal: var(--elevation-5);
+
+    /*
+     * BEVEL
+     *
+     * An inset edge: lit on the top and left, shaded on the bottom and right,
+     * as if lit from the top left. Box shadows are physical, so a bevel does
+     * not mirror in a right-to-left page; light still comes from the top
+     * left, which is how a real raised edge behaves. T-shirt sizes,
+     * because a bevel has a few useful widths rather than a scale:
+     *
+     *   sm 1px, md 2px, lg 3px   raised edge
+     *   pressed                  the md edge inverted, for a pushed-in state
+     *
+     * Bevels are inset shadows, so Tailwind applies them through
+     * `inset-shadow-*` and they stack with an `--elevation-*` shadow on the
+     * same element instead of replacing it. Like every shadow, a bevel
+     * disappears in forced-colors mode and cannot be what identifies a
+     * control.
+     */
+    --bevel-sm:
+      inset 1px 1px 0 var(--bevel-highlight),
+      inset -1px -1px 0 var(--bevel-shade);
+    --bevel-md:
+      inset 2px 2px 0 var(--bevel-highlight),
+      inset -2px -2px 0 var(--bevel-shade);
+    --bevel-lg:
+      inset 3px 3px 0 var(--bevel-highlight),
+      inset -3px -3px 0 var(--bevel-shade);
+    --bevel-pressed:
+      inset 2px 2px 0 var(--bevel-shade),
+      inset -2px -2px 0 var(--bevel-highlight);
 
     /*
      * DEPRECATED: the previous spacing scale.
@@ -303,5 +417,40 @@
     --type-code-line-height: var(--line-height-normal);
     --type-code-weight: var(--font-weight-400);
     --type-code-tracking: var(--letter-spacing-normal);
+  }
+
+  /*
+   * Gutter and margin, on `:root` and on every `[data-density]` element.
+   *
+   * They read `--space-*`, and a custom property holding `var()` resolves
+   * where it is declared. Declared on `:root` alone, a `data-density` set on a
+   * nested element would not reach them. Declaring them on `[data-density]`
+   * as well re-resolves them inside any density region, so a `PageGrid` in a
+   * compact section gets compact gutters.
+   *
+   * The breakpoints are Tailwind's `md` (48rem) and `lg` (64rem), written as
+   * literals because custom properties cannot be used in a media query. Keep
+   * them in step with `--breakpoint-*` in `packages/ui/src/styles/theme.css`.
+   */
+  :root,
+  [data-density] {
+    --grid-gutter: var(--space-4);
+    --grid-margin: var(--space-4);
+  }
+
+  @media (width >= 48rem) {
+    :root,
+    [data-density] {
+      --grid-gutter: var(--space-5);
+      --grid-margin: var(--space-6);
+    }
+  }
+
+  @media (width >= 64rem) {
+    :root,
+    [data-density] {
+      --grid-gutter: var(--space-6);
+      --grid-margin: var(--space-7);
+    }
   }
 }

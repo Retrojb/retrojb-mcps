@@ -82,6 +82,7 @@ const ToastAlert = ({
   return (
     <div
       {...props}
+      data-surface="overlay"
       className={slots.box({ class: className })}
       onPointerEnter={() => setPaused(true)}
       onPointerLeave={() => setPaused(false)}

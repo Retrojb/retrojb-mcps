@@ -138,7 +138,10 @@ const BrowserAlert = ({
        */
       onClose={onClose}
     >
-      <div className={slots.box({ class: boxClassName })}>
+      <div
+        data-surface="overlay"
+        className={slots.box({ class: boxClassName })}
+      >
         <p className={slots.label()} id={labelId}>
           {label ?? ALERT_TONE_LABELS[tone]}
         </p>

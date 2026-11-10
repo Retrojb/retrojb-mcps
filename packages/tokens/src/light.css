@@ -190,6 +190,31 @@
     --scrim-sm: rgb(7 5 7 / 0.32);
     --scrim-md: rgb(7 5 7 / 0.6);
 
+    /*
+     * SHADOW COLOURS
+     *
+     * The only part of a shadow that differs by theme. The geometry is in
+     * `base.css` and written once; these carry the alpha, as colours so each
+     * can be one `light-dark()` pair. Light uses the tinted near-black of
+     * `--neutral-9` at low alpha. Dark uses black at several times the alpha,
+     * because a shadow on a near-black surface is otherwise invisible.
+     *
+     *   --elevation-shade-sm   ambient layer of the low levels
+     *   --elevation-shade-md   contact layer of every level, ambient of the middle
+     *   --elevation-shade-lg   ambient layer of the high levels
+     *   --bevel-highlight      the lit edge of a bevel
+     *   --bevel-shade          the shaded edge of a bevel
+     *
+     * Shadows carry no contrast contract and are not measured: a shadow never
+     * identifies a control. The border does, because forced-colors mode
+     * removes every box-shadow.
+     */
+    --elevation-shade-sm: rgb(7 5 7 / 0.08);
+    --elevation-shade-md: rgb(7 5 7 / 0.12);
+    --elevation-shade-lg: rgb(7 5 7 / 0.18);
+    --bevel-highlight: rgb(255 255 255 / 0.7);
+    --bevel-shade: rgb(7 5 7 / 0.16);
+
     --foreground: var(--neutral-9);
     --foreground-muted: var(--neutral-7);
 

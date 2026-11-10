@@ -48,6 +48,12 @@ api:
     fullWidth:
       values: [true, false]
       default: false
+    elevated:
+      values: [true, false]
+      default: false
+      note:
+        Resting shadow that lifts on hover and drops on press. Ignored by ghost
+        and disabled buttons.
   defaults:
     type: button
 
@@ -73,6 +79,8 @@ accessibility:
     - Disabled buttons drop below 4.5:1, which 1.4.3 permits; the disabled
       attribute also removes them from the tab order.
     - Focus is a 2px outline at a 2px offset, which survives forced-colors mode.
+    - The elevated shadow is decoration. Forced-colors mode removes it; the
+      border and fill identify the button.
 
 usage:
   standalone: true
@@ -103,6 +111,8 @@ tokens:
   - control-height-sm
   - control-height-md
   - control-height-lg
+  - elevation-control
+  - elevation-control-hover
 
 versioning:
   introducedIn: "0.1.0"

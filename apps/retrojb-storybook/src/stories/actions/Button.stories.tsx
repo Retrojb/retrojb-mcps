@@ -87,3 +87,22 @@ export const FullWidth: Story = {
 export const Disabled: Story = {
   args: { text: "Unavailable", disabled: true },
 };
+
+/**
+ * `elevated` adds a resting shadow that lifts on hover and drops on press.
+ * `ghost` and disabled buttons ignore it. The shadow is decoration: in
+ * forced-colors mode it is removed, and each button's border and fill are
+ * what remain.
+ */
+export const Elevated: Story = {
+  args: { text: "Button", elevated: true },
+  render: (args) => (
+    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+      <Button {...args} intent="primary" text="Primary" />
+      <Button {...args} intent="secondary" text="Secondary" />
+      <Button {...args} intent="ghost" text="Ghost (no shadow)" />
+      <Button {...args} intent="danger" text="Delete" />
+      <Button {...args} disabled text="Disabled (no shadow)" />
+    </div>
+  ),
+};
