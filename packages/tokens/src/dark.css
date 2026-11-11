@@ -71,5 +71,12 @@
     --danger: #ff9d95;
     --success: #6bd39a;
     --information: #32aee3;
+
+    /* CODE HIGHLIGHT: solved on dark --surface-sunken (#0e1012). See light.css. */
+    --code-positive: #6bd39a; /* 10.35:1 on --surface-sunken */
+    --code-negative: #ff9d95; /* 9.54:1 on --surface-sunken */
+    --code-special: #d3b2ec; /* 10.30:1 on --surface-sunken */
+    --code-emphasis: #e0b36a; /* 9.82:1 on --surface-sunken */
+    --code-neutral: #a8a3a8; /* 7.68:1 on --surface-sunken */
   }
 }

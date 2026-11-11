@@ -60,29 +60,18 @@ const Frame = ({
   label,
   children,
 }: {
+  /**
+   * A width utility, written out in full at the call site (`"w-64"`) so
+   * Tailwind finds it in the source.
+   */
   readonly width: string;
   readonly label: string;
   readonly children: React.ReactNode;
 }) => (
-  <figure style={{ margin: 0 }}>
-    <figcaption
-      style={{
-        font: "inherit",
-        fontSize: "0.75rem",
-        marginBlockEnd: "0.25rem",
-      }}
-    >
-      {label}
-    </figcaption>
+  <figure className="m-0">
+    <figcaption className="mb-(--space-1) text-caption">{label}</figcaption>
     <div
-      style={{
-        width,
-        maxWidth: "100%",
-        resize: "horizontal",
-        overflow: "auto",
-        outline: "1px dashed currentColor",
-        padding: "var(--space-2)",
-      }}
+      className={`${width} max-w-full resize-x overflow-auto p-(--space-2) outline-1 outline-dashed outline-current`}
     >
       {children}
     </div>
@@ -100,7 +89,7 @@ const Frame = ({
 export const Primary: Story = {
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: "22rem" }}>
+      <div className="max-w-88">
         <Story />
       </div>
     ),
@@ -116,7 +105,7 @@ export const Horizontal: Story = {
   args: { orientation: "horizontal" },
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: "40rem" }}>
+      <div className="max-w-160">
         <Story />
       </div>
     ),
@@ -126,13 +115,7 @@ export const Horizontal: Story = {
 /** The four ratios, each cropping the same very wide image differently. */
 export const MediaRatios: Story = {
   render: (args) => (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(12rem, 1fr))",
-        gap: "var(--space-4)",
-      }}
-    >
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,12rem),1fr))] gap-(--space-4)">
       {(["16/9", "4/3", "3/2", "1/1"] as const).map((ratio) => (
         <GraphicCard
           key={ratio}
@@ -175,18 +158,18 @@ export const HuggingContainers: Story = {
     ),
   },
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--space-6)" }}>
-      <Frame width="16rem" label="16rem — stacked">
+    <div className="grid gap-(--space-6)">
+      <Frame width="w-64" label="16rem — stacked">
         <GraphicCard {...args} />
       </Frame>
-      <Frame width="26rem" label="26rem — still stacked (card is under 28rem)">
+      <Frame width="w-104" label="26rem — still stacked (card is under 28rem)">
         <GraphicCard {...args} />
       </Frame>
-      <Frame width="44rem" label="44rem — side by side">
+      <Frame width="w-176" label="44rem — side by side">
         <GraphicCard {...args} />
       </Frame>
-      <Frame width="44rem" label="44rem, fixed 20rem row — fills the height">
-        <div style={{ display: "grid", height: "20rem" }}>
+      <Frame width="w-176" label="44rem, fixed 20rem row — fills the height">
+        <div className="grid h-80">
           <GraphicCard {...args} />
         </div>
       </Frame>
@@ -214,7 +197,7 @@ export const DecorativeMedia: Story = {
   },
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: "22rem" }}>
+      <div className="max-w-88">
         <Story />
       </div>
     ),
@@ -228,13 +211,7 @@ export const DecorativeMedia: Story = {
  */
 export const Interactive: Story = {
   render: () => (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(16rem, 1fr))",
-        gap: "var(--space-4)",
-      }}
-    >
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,16rem),1fr))] gap-(--space-4)">
       <InteractiveCard
         href="#ridge"
         title="Ridge trail"

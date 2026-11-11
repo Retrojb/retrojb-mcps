@@ -110,6 +110,26 @@
   --color-danger-foreground: var(--danger-foreground, #fefdff);
   --color-success: var(--success, #005028);
 
+  /*
+   * CODE HIGHLIGHT
+   *
+   * `text-code-positive`, `-negative`, `-special`, `-emphasis` and `-neutral`:
+   * the five sentiments a bring-your-own highlighter maps its tokens onto, and
+   * what `CodeSnippet` paints each run with. Also `bg-*` and `border-*`, for a
+   * highlighter that tints a whole line (an added or removed line in a diff).
+   *
+   * Values live in `@retrojb/tokens` and were solved for 4.5:1 on
+   * `--surface-sunken`, the code well (see `packages/tokens/src/light.css`).
+   * Fallbacks are the light values, so `dist/styles.css` renders the verified
+   * palette with no token layer in front of it. These sit outside the ramps on
+   * purpose: code is on a sunken surface, not a brand or status surface.
+   */
+  --color-code-positive: var(--code-positive, #157026);
+  --color-code-negative: var(--code-negative, #b3261e);
+  --color-code-special: var(--code-special, #6a3b9a);
+  --color-code-emphasis: var(--code-emphasis, #8a5200);
+  --color-code-neutral: var(--code-neutral, #555055);
+
   /* --primary-8 */
   --color-focus: var(--focus-ring, #5b3673);
 
@@ -265,6 +285,16 @@
    */
   --font-sans: var(--font-family-sans, ui-sans-serif, system-ui, sans-serif);
   --font-mono: var(--font-family-mono, ui-monospace, monospace);
+  /*
+   * `font-display`, for headings and display text. A new Tailwind family
+   * utility, not one of Tailwind's own, so there is no value to collide with.
+   * The fallback is the sans stack, so a heading matches body text until an
+   * app sets `--font-family-display`.
+   */
+  --font-display: var(
+    --font-family-display,
+    var(--font-family-sans, ui-sans-serif, system-ui, sans-serif)
+  );
 
   --font-weight-normal: var(--font-weight-400, 400);
   --font-weight-medium: var(--font-weight-500, 500);

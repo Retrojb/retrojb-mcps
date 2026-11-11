@@ -256,11 +256,20 @@
      * it.
      */
 
-    /* Families. System stacks: nothing to download, and a consuming app sets
-       its brand face by overriding these two (e.g. to `var(--font-geist-sans)`). */
+    /*
+     * Families. System stacks: nothing to download, and a consuming app sets
+       its brand face by overriding these three (e.g. to `var(--font-geist-sans)`).
+     *
+     * `--font-family-display` is for headings and display text. It defaults to
+     * the sans face, so a heading matches body text until an app sets a
+     * separate display face; `headingStyles` reads it through `font-display`.
+     * An app that loads a condensed or decorative face (Oswald, say) points it
+     * there and leaves body text on `--font-family-sans`. The app owns loading
+     * the font; this package never ships or downloads font files. */
     --font-family-sans:
       ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
       "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-family-display: var(--font-family-sans);
     --font-family-mono:
       ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;

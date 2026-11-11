@@ -32,7 +32,11 @@ const Link = ({
     : {};
 
   return (
-    <a className={linkStyle({ intent, className })} {...props} {...externalProps}>
+    <a
+      className={linkStyle({ intent, className })}
+      {...props}
+      {...externalProps}
+    >
       {children}
       {external ? <span className="sr-only"> {externalLabel}</span> : null}
     </a>

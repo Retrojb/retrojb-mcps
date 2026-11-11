@@ -138,16 +138,7 @@ const TriggerDemo = ({
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        minBlockSize: "24rem",
-        flexDirection: "column",
-        alignItems: "flex-start",
-        gap: "var(--space-3)",
-        padding: "var(--space-6)",
-      }}
-    >
+    <div className="flex min-h-96 flex-col items-start gap-(--space-3) p-(--space-6)">
       <Button
         text="Open the alert"
         onClick={() => {

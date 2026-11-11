@@ -81,13 +81,7 @@ const meta = {
   decorators: [
     (Story, { parameters }) => (
       <div
-        style={{
-          width: (parameters["frameWidth"] as string | undefined) ?? "24rem",
-          maxWidth: "100%",
-          resize: "horizontal",
-          overflow: "auto",
-          padding: "var(--space-2)",
-        }}
+        className={`${(parameters["frameWidth"] as string | undefined) ?? "w-96"} max-w-full resize-x overflow-auto p-(--space-2)`}
       >
         <Story />
       </div>
@@ -177,5 +171,6 @@ export const HorizontalWithMedia: Story = {
     title: "Ridge trail",
     children: "9.4 km, 620 m of climbing.",
   },
-  parameters: { frameWidth: "40rem" },
+  // `frameWidth` is a width utility: 40rem.
+  parameters: { frameWidth: "w-160" },
 };

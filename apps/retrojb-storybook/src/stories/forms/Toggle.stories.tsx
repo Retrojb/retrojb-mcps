@@ -150,7 +150,7 @@ const ControlledDemo = (args: ComponentProps<typeof Toggle>) => {
 export const SettingsList: Story = {
   parameters: { layout: "padded" },
   render: (args) => (
-    <section style={{ maxWidth: "28rem" }}>
+    <section className="max-w-md">
       <SubHeading id="toggle-settings-heading">Notifications</SubHeading>
       <DynamicContainer
         as="ul"

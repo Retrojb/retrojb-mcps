@@ -2,25 +2,17 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 import { Button } from "@retrojb/ui";
 
-// More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   title: "Actions/Button",
   component: Button,
   parameters: {
-    // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
     layout: "centered",
   },
-  // No `autodocs` tag: this component's docs page is `Button.mdx`, and
-  // Storybook refuses to index a docs page and an autodocs tag for the same
-  // file. See `templates/Component.mdx`.
-  //
-  // More on argTypes: https://storybook.js.org/docs/api/arg-types
   argTypes: {
     text: {
       control: "text",
     },
   },
-  // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#story-args
   args: { onClick: fn() },
 } satisfies Meta<typeof Button>;
 
@@ -31,19 +23,16 @@ type Story = StoryObj<typeof meta>;
 /** The default: `intent="primary"`, `size="md"`. */
 export const Primary: Story = {
   args: {
+    intent: "primary",
     text: "Save changes",
+    size: "md",
   },
 };
 
-/**
- * Four intents. `primary` is the one main action on a screen, `secondary` and
- * `ghost` are quieter alternatives, and `danger` is for actions that destroy
- * data.
- */
 export const Intents: Story = {
   args: { text: "Button" },
   render: (args) => (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <div className="flex flex-wrap gap-(--space-3)">
       <Button {...args} intent="primary" text="Primary" />
       <Button {...args} intent="secondary" text="Secondary" />
       <Button {...args} intent="ghost" text="Ghost" />
@@ -52,21 +41,10 @@ export const Intents: Story = {
   ),
 };
 
-/**
- * Three heights: 32px, 40px and 48px. Only `lg` meets the 44px target in
- * WCAG 2.5.5, so use it where that level is required.
- */
 export const Sizes: Story = {
   args: { text: "Button" },
   render: (args) => (
-    <div
-      style={{
-        display: "flex",
-        gap: "0.75rem",
-        flexWrap: "wrap",
-        alignItems: "center",
-      }}
-    >
+    <div className="flex flex-wrap items-center gap-(--space-3)">
       <Button {...args} size="sm" text="Small" />
       <Button {...args} size="md" text="Medium" />
       <Button {...args} size="lg" text="Large" />
@@ -97,7 +75,7 @@ export const Disabled: Story = {
 export const Elevated: Story = {
   args: { text: "Button", elevated: true },
   render: (args) => (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <div className="flex flex-wrap gap-(--space-3)">
       <Button {...args} intent="primary" text="Primary" />
       <Button {...args} intent="secondary" text="Secondary" />
       <Button {...args} intent="ghost" text="Ghost (no shadow)" />

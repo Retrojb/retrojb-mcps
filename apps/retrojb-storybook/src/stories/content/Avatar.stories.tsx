@@ -9,12 +9,7 @@ const SAMPLE_PICTURE = `data:image/svg+xml;utf8,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#956fb1"/><stop offset="1" stop-color="#219a2f"/></linearGradient></defs><rect width="64" height="64" fill="url(#g)"/><circle cx="32" cy="25" r="11" fill="#fefdff"/><path d="M12 64c2-14 10-20 20-20s18 6 20 20z" fill="#fefdff"/></svg>`,
 )}`;
 
-const row = {
-  display: "flex",
-  gap: "var(--space-4)",
-  flexWrap: "wrap",
-  alignItems: "center",
-} as const;
+const row = "flex flex-wrap items-center gap-(--space-4)";
 
 const meta = {
   title: "Content/Avatar",
@@ -53,7 +48,7 @@ export const Primary: Story = {};
  */
 export const Shapes: Story = {
   render: (args) => (
-    <div style={row}>
+    <div className={row}>
       <Avatar {...args} shape="round" src={SAMPLE_PICTURE} />
       <Avatar {...args} shape="round" />
       <Avatar
@@ -70,9 +65,9 @@ export const Shapes: Story = {
 /** 24, 40 and 64px, in both shapes. Density does not change these sizes. */
 export const Sizes: Story = {
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--space-4)" }}>
+    <div className="grid gap-(--space-4)">
       {(["round", "square"] as const).map((shape) => (
-        <div key={shape} style={row}>
+        <div key={shape} className={row}>
           <Avatar {...args} shape={shape} size="sm" />
           <Avatar {...args} shape={shape} size="md" />
           <Avatar {...args} shape={shape} size="lg" />
@@ -91,7 +86,7 @@ export const Sizes: Story = {
  */
 export const Fallbacks: Story = {
   render: (args) => (
-    <div style={row}>
+    <div className={row}>
       <Avatar {...args} name="Grace Brewster Murray Hopper" />
       <Avatar {...args} name="Cher" />
       <Avatar {...args} name="李小龙" initials="李" />
@@ -113,7 +108,7 @@ export const Fallbacks: Story = {
 export const Elevated: Story = {
   args: { elevated: true, size: "lg", src: SAMPLE_PICTURE },
   render: (args) => (
-    <div style={row}>
+    <div className={row}>
       <Avatar {...args} />
       <Avatar {...args} shape="square" name="Retro Studio" />
     </div>
@@ -128,7 +123,7 @@ export const BesideAName: Story = {
   name: "Beside a name",
   args: { decorative: true },
   render: (args) => (
-    <div style={{ ...row, gap: "var(--space-3)" }}>
+    <div className="flex flex-wrap items-center gap-(--space-3)">
       <Avatar {...args} src={SAMPLE_PICTURE} />
       <Paragraph size="sm">{args.name}</Paragraph>
     </div>

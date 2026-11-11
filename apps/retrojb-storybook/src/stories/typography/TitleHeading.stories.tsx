@@ -64,7 +64,7 @@ export const SizeOverride: Story = {
  */
 export const NestedUnderARegion: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--space-4)" }}>
+    <div className="grid gap-(--space-4)">
       <TitleHeading>Account</TitleHeading>
       <TitleHeading level={3}>Security</TitleHeading>
     </div>

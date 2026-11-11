@@ -162,7 +162,7 @@ const FormDemo = (args: ComponentProps<typeof SegmentedControl>) => {
         const data = new FormData(event.currentTarget);
         setSubmitted(String(data.get("units") ?? ""));
       }}
-      style={{ display: "grid", gap: "var(--space-4)" }}
+      className="grid gap-(--space-4)"
     >
       <SegmentedControl
         {...args}

@@ -16,11 +16,34 @@ interface IRoleValues {
  * `--border` is decorative here, as in `Table`'s row separators: the rows are
  * identified by their header cells, not by the lines between them.
  */
-const cell = {
-  padding: "var(--space-2) var(--space-3)",
-  borderBlockEnd: "1px solid var(--border)",
-  verticalAlign: "baseline",
-};
+const cell =
+  "border-b border-border px-(--space-3) py-(--space-2) align-baseline";
+
+/*
+ * The utility for each role, written out so Tailwind finds every one in the
+ * source: a class built from the role name (`text-${role}`) would compile to
+ * nothing in this preview's build. `satisfies` makes a role added to
+ * `TYPE_ROLES` without a class here a type error.
+ */
+const ROLE_CLASS = {
+  display: "text-display",
+  "heading-xl": "text-heading-xl",
+  "heading-lg": "text-heading-lg",
+  "heading-md": "text-heading-md",
+  "heading-sm": "text-heading-sm",
+  "heading-xs": "text-heading-xs",
+  "title-md": "text-title-md",
+  "title-sm": "text-title-sm",
+  "body-lg": "text-body-lg",
+  "body-md": "text-body-md",
+  "body-sm": "text-body-sm",
+  "label-lg": "text-label-lg",
+  "label-md": "text-label-md",
+  "label-sm": "text-label-sm",
+  caption: "text-caption",
+  overline: "text-overline",
+  code: "text-code",
+} as const satisfies Record<TypeRole, `text-${TypeRole}`>;
 
 const readToken = (root: CSSStyleDeclaration, name: string): string =>
   root.getPropertyValue(name).trim() || "—";
@@ -28,12 +51,9 @@ const readToken = (root: CSSStyleDeclaration, name: string): string =>
 /*
  * One row of the scale.
  *
- * The sample is styled with the `--text-<role>` theme variables inline rather
- * than with the `text-<role>` class. `dist/styles.css` only contains the
- * utilities the package's own components use, so a class for a role no
- * component uses yet (`overline`, say) would render unstyled here. The theme
- * variables are emitted for every role, so this shows all of them — and it
- * exercises the `theme.css` mapping the utilities read.
+ * The sample uses the role's own `text-<role>` utility, so this page tests the
+ * class an app would write. `overline` adds `uppercase`, which is
+ * presentation rather than part of the role, and `code` adds the mono face.
  *
  * The token columns are read back from the page, not restated: the custom
  * properties' computed values, with every `var()` resolved, and the sample's
@@ -61,40 +81,34 @@ const RoleRow = ({ role }: { readonly role: TypeRole }) => {
 
   return (
     <tr>
-      <th
-        scope="row"
-        style={{ ...cell, textAlign: "start", whiteSpace: "nowrap" }}
-      >
+      <th scope="row" className={`${cell} text-start whitespace-nowrap`}>
         <Code>text-{role}</Code>
       </th>
       <td
         ref={sampleRef}
-        style={{
-          ...cell,
-          fontSize: `var(--text-${role})`,
-          lineHeight: `var(--text-${role}--line-height)`,
-          fontWeight: `var(--text-${role}--font-weight)`,
-          letterSpacing: `var(--text-${role}--letter-spacing)`,
-          textTransform: role === "overline" ? "uppercase" : undefined,
-          fontFamily: role === "code" ? "var(--font-mono)" : undefined,
-        }}
+        className={[
+          cell,
+          ROLE_CLASS[role],
+          role === "overline" ? "uppercase" : "",
+          role === "code" ? "font-mono" : "",
+        ].join(" ")}
       >
         The quick brown fox
       </td>
-      <td style={cell}>
+      <td className={cell}>
         {values?.size} ({values?.computedSize})
       </td>
-      <td style={cell}>
+      <td className={cell}>
         {values?.lineHeight} ({values?.computedLineHeight})
       </td>
-      <td style={cell}>{values?.weight}</td>
-      <td style={cell}>{values?.tracking}</td>
+      <td className={cell}>{values?.weight}</td>
+      <td className={cell}>{values?.tracking}</td>
     </tr>
   );
 };
 
 const TypeScale = () => (
-  <div style={{ display: "grid", gap: "var(--space-4)" }}>
+  <div className="grid gap-(--space-4)">
     <Paragraph tone="muted" size="sm" measure>
       Every semantic type role in <Code>@retrojb/tokens</Code>, in order. Values
       are read from the page: the token&apos;s resolved value, then in brackets
@@ -102,21 +116,9 @@ const TypeScale = () => (
       browser&apos;s default font size and the px column grows with it — every
       size is rem (or em, for code).
     </Paragraph>
-    <div style={{ overflowX: "auto" }}>
-      <table
-        style={{
-          borderCollapse: "collapse",
-          width: "100%",
-          color: "var(--foreground)",
-        }}
-      >
-        <caption
-          style={{
-            textAlign: "start",
-            fontWeight: 600,
-            paddingBlockEnd: "var(--space-2)",
-          }}
-        >
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-foreground">
+        <caption className="pb-(--space-2) text-start font-semibold">
           Type roles
         </caption>
         <thead>
@@ -129,11 +131,7 @@ const TypeScale = () => (
               "Weight",
               "Tracking",
             ].map((heading) => (
-              <th
-                key={heading}
-                scope="col"
-                style={{ ...cell, textAlign: "start" }}
-              >
+              <th key={heading} scope="col" className={`${cell} text-start`}>
                 {heading}
               </th>
             ))}

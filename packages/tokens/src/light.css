@@ -231,5 +231,36 @@
     --danger-foreground: var(--primary-0);
     --success: #005028;
     --information: #0d80b1;
+
+    /*
+     * CODE HIGHLIGHT
+     *
+     * Five sentiments a bring-your-own highlighter maps its tokens onto, rather
+     * than a per-language grammar palette. A highlighter tags each run with one
+     * of these and `CodeSnippet` paints it:
+     *
+     *   positive   added lines, strings, success-like tokens
+     *   negative   removed lines, errors, deletions
+     *   special    keywords, types, the language's reserved words
+     *   emphasis   functions, attributes, the thing being pointed at
+     *   neutral    comments, punctuation, de-emphasised runs
+     *
+     * These are not from a ramp. `--danger` and `--success` are status colours
+     * tuned for alerts on `--surface-base`; code sits on `--surface-sunken`
+     * (the code well) and needs its own values solved there. Each is solved for
+     * >= 4.5:1 on `--surface-sunken` (1.4.3), the darkest surface code lands on,
+     * so it clears every lighter surface too. The word a highlighter emits is
+     * the real token; colour only reinforces it, so a run read in greyscale
+     * still parses (1.4.1).
+     *
+     * Ratios on `--surface-sunken` are the measured output of
+     * `@retrojb/wcag-a11y-scanner`; `apps/docs/scripts/check-contrast.mjs`
+     * re-measures them on every surface and fails the build on a miss.
+     */
+    --code-positive: #157026; /* 5.07:1 on --surface-sunken */
+    --code-negative: #b3261e; /* 5.33:1 on --surface-sunken */
+    --code-special: #6a3b9a; /* 6.33:1 on --surface-sunken */
+    --code-emphasis: #8a5200; /* 5.21:1 on --surface-sunken */
+    --code-neutral: #555055; /* 6.43:1 on --surface-sunken */
   }
 }

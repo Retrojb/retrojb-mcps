@@ -148,6 +148,27 @@ const ON_FILL = [
   ["code text", "foreground", "neutral-1"],
 ];
 
+/**
+ * Code-highlight sentiments, and the surfaces a code block actually fills with.
+ *
+ * Unlike the semantic text tokens, these are not measured against every surface
+ * in the app. Code lives in a well: `CodeSnippet` and `CodeBlock` fill with
+ * `--surface-sunken`, and the docs' own `pre`/`code` fill with
+ * `--surface-raised-1`. Those are the only backgrounds a highlighted run ever
+ * lands on, so measuring against `--background` or a mid-grey `--neutral-2`
+ * would hold the palette to a contract it never has to meet. `--surface-sunken`
+ * is the darker of the two in light mode and the lighter in dark, so each
+ * sentiment is solved there as the worst case (1.4.3).
+ */
+const CODE_SENTIMENTS = [
+  ["code positive", "code-positive"],
+  ["code negative", "code-negative"],
+  ["code special", "code-special"],
+  ["code emphasis", "code-emphasis"],
+  ["code neutral", "code-neutral"],
+];
+const CODE_SURFACES = ["surface-sunken", "surface-raised-1"];
+
 let failures = 0;
 let checks = 0;
 
@@ -233,6 +254,20 @@ for (const theme of ["light", "dark"]) {
       resolveToken(background, theme),
       "text",
     );
+  }
+
+  console.log(`\n${theme} theme — code-highlight sentiments, on the code well`);
+  console.log("-".repeat(88));
+
+  for (const [label, token] of CODE_SENTIMENTS) {
+    for (const surface of CODE_SURFACES) {
+      report(
+        `${label} on --${surface}`,
+        resolveToken(token, theme),
+        resolveToken(surface, theme),
+        "text",
+      );
+    }
   }
 }
 

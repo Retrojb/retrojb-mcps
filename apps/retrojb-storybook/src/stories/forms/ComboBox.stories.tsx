@@ -25,7 +25,7 @@ const meta = {
   // Every story needs room for the popup, which opens below the field.
   decorators: [
     (Story) => (
-      <div style={{ minHeight: "22rem", width: "20rem" }}>
+      <div className="min-h-88 w-80">
         <Story />
       </div>
     ),
@@ -131,7 +131,7 @@ export const LabelHidden: Story = {
 export const Sizes: Story = {
   args: { label: "Country", options: MOCKCOUNTRIES },
   render: (args) => (
-    <div style={{ display: "grid", gap: "1rem" }}>
+    <div className="grid gap-(--space-4)">
       <ComboBox {...args} label="Small" size="sm" />
       <ComboBox {...args} label="Medium" size="md" />
       <ComboBox {...args} label="Large" size="lg" />
@@ -186,10 +186,7 @@ export const CustomOptions: Story = {
     renderOption: (match, state) => (
       <>
         <span>{match.label}</span>
-        <span
-          style={{ fontVariantNumeric: "tabular-nums", opacity: 0.6 }}
-          aria-hidden="true"
-        >
+        <span className="tabular-nums text-foreground-muted" aria-hidden="true">
           {match.option.value.toUpperCase()}
         </span>
         <span className="sr-only">
@@ -214,14 +211,7 @@ export const PlacementTop: Story = {
   },
   decorators: [
     (Story) => (
-      <div
-        style={{
-          minHeight: "22rem",
-          width: "20rem",
-          display: "flex",
-          alignItems: "flex-end",
-        }}
-      >
+      <div className="flex min-h-88 w-80 items-end">
         <Story />
       </div>
     ),
@@ -270,7 +260,7 @@ export const AsyncSearch: Story = {
     const [chosen, setChosen] = useState<string | null>(null);
 
     return (
-      <div style={{ display: "grid", gap: "0.75rem" }}>
+      <div className="grid gap-(--space-3)">
         <ComboBox
           {...args}
           onSearch={searchCountries}
@@ -278,7 +268,7 @@ export const AsyncSearch: Story = {
             setChosen(value);
           }}
         />
-        <p style={{ fontSize: "0.875rem", opacity: 0.7 }}>
+        <p className="text-body-sm text-foreground-muted">
           {chosen === null ? "Nothing selected" : `Selected: ${chosen}`}
         </p>
       </div>
@@ -303,7 +293,7 @@ export const InAForm: Story = {
 
     return (
       <form
-        style={{ display: "grid", gap: "0.75rem" }}
+        className="grid gap-(--space-3)"
         onSubmit={(event) => {
           event.preventDefault();
           const data = new FormData(event.currentTarget);
@@ -312,7 +302,7 @@ export const InAForm: Story = {
       >
         <ComboBox {...args} />
         <button type="submit">Submit</button>
-        <output style={{ fontSize: "0.875rem", opacity: 0.7 }}>
+        <output className="text-body-sm text-foreground-muted">
           {submitted ?? "Not submitted"}
         </output>
       </form>
@@ -335,7 +325,7 @@ export const Controlled: Story = {
     const [text, setText] = useState("Sweden");
 
     return (
-      <div style={{ display: "grid", gap: "0.75rem" }}>
+      <div className="grid gap-(--space-3)">
         <ComboBox
           {...args}
           value={value}
@@ -343,7 +333,7 @@ export const Controlled: Story = {
           inputValue={text}
           onInputValueChange={setText}
         />
-        <p style={{ fontSize: "0.875rem", opacity: 0.7 }}>
+        <p className="text-body-sm text-foreground-muted">
           value: {value ?? "null"} · inputValue: {JSON.stringify(text)}
         </p>
         <button

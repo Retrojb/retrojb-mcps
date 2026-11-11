@@ -91,15 +91,7 @@ export const Small: Story = {
  */
 export const AsListItems: Story = {
   render: () => (
-    <ul
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(14rem, 1fr))",
-        gap: "var(--space-4)",
-        margin: 0,
-        padding: 0,
-      }}
-    >
+    <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(100%,14rem),1fr))] gap-(--space-4) p-0">
       {[
         ["Starter", "For trying things out."],
         [
@@ -143,16 +135,7 @@ export const InsideAnOverlay: Story = {
   render: (args) => (
     <div
       data-surface="overlay"
-      className="shadow-modal"
-      style={{
-        display: "grid",
-        gap: "var(--space-4)",
-        padding: "var(--space-6)",
-        maxInlineSize: "32rem",
-        background: "var(--surface-overlay)",
-        border: "1px solid var(--border-strong)",
-        borderRadius: "var(--radius-control)",
-      }}
+      className="grid max-w-lg gap-(--space-4) rounded-control border border-border-strong bg-surface-overlay p-(--space-6) shadow-modal"
     >
       <Card {...args} />
     </div>

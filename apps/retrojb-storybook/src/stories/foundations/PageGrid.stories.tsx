@@ -9,25 +9,18 @@ import {
   Paragraph,
 } from "@retrojb/ui";
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 
 /*
  * A visible box for a region, so the columns can be seen. The layout of the
- * page itself comes from `PageGrid` and `GridItem`; only the decoration is
- * inline.
+ * page itself comes from `PageGrid` and `GridItem`; these classes are only the
+ * decoration.
  */
-const box: CSSProperties = {
-  minBlockSize: "3rem",
-  padding: "var(--space-2)",
-  border: "1px dashed var(--border-strong)",
-  borderRadius: "var(--radius-control)",
-  background: "var(--surface-base)",
-  color: "var(--foreground)",
-  font: "inherit",
-};
+const box =
+  "min-h-12 rounded-control border border-dashed border-border-strong bg-surface-base p-(--space-2) text-foreground";
 
 const Label = ({ children }: { readonly children: ReactNode }) => (
-  <span style={{ fontSize: "var(--text-label-sm)" }}>{children}</span>
+  <span className="text-label-sm">{children}</span>
 );
 
 const meta = {
@@ -51,9 +44,9 @@ type Story = StoryObj<typeof meta>;
 /** The twelve columns, one item each. */
 export const Columns: Story = {
   render: () => (
-    <PageGrid style={{ paddingBlock: "var(--space-6)" }}>
+    <PageGrid className="py-(--space-6)">
       {Array.from({ length: 12 }, (_, index) => (
-        <GridItem key={index} span={1} style={box}>
+        <GridItem key={index} span={1} className={box}>
           <Label>{index + 1}</Label>
         </GridItem>
       ))}
@@ -68,9 +61,13 @@ export const Columns: Story = {
 export const ResponsiveSpans: Story = {
   name: "Responsive spans",
   render: () => (
-    <PageGrid style={{ paddingBlock: "var(--space-6)" }}>
+    <PageGrid className="py-(--space-6)">
       {["One", "Two", "Three", "Four", "Five", "Six"].map((name) => (
-        <GridItem key={name} span={{ base: "full", md: 6, lg: 4 }} style={box}>
+        <GridItem
+          key={name}
+          span={{ base: "full", md: 6, lg: 4 }}
+          className={box}
+        >
           <Label>
             {name}: <Code>{`span={{ base: "full", md: 6, lg: 4 }}`}</Code>
           </Label>
@@ -83,13 +80,21 @@ export const ResponsiveSpans: Story = {
 /** `offset` leaves columns empty before the item, here to centre it. */
 export const Offset: Story = {
   render: () => (
-    <PageGrid style={{ paddingBlock: "var(--space-6)" }}>
-      <GridItem span={{ base: "full", md: 8 }} offset={{ md: 2 }} style={box}>
+    <PageGrid className="py-(--space-6)">
+      <GridItem
+        span={{ base: "full", md: 8 }}
+        offset={{ md: 2 }}
+        className={box}
+      >
         <Label>
           <Code>{`span={{ base: "full", md: 8 }} offset={{ md: 2 }}`}</Code>
         </Label>
       </GridItem>
-      <GridItem span={{ base: "full", lg: 6 }} offset={{ lg: 6 }} style={box}>
+      <GridItem
+        span={{ base: "full", lg: 6 }}
+        offset={{ lg: 6 }}
+        className={box}
+      >
         <Label>
           <Code>{`span={{ base: "full", lg: 6 }} offset={{ lg: 6 }}`}</Code>
         </Label>
@@ -104,13 +109,9 @@ export const Offset: Story = {
  */
 export const Subgrid: Story = {
   render: () => (
-    <PageGrid style={{ paddingBlock: "var(--space-6)" }}>
+    <PageGrid className="py-(--space-6)">
       {Array.from({ length: 12 }, (_, index) => (
-        <GridItem
-          key={index}
-          span={1}
-          style={{ ...box, minBlockSize: "1.5rem" }}
-        >
+        <GridItem key={index} span={1} className={`${box} min-h-6`}>
           <Label>{index + 1}</Label>
         </GridItem>
       ))}
@@ -121,19 +122,19 @@ export const Subgrid: Story = {
         offset={{ md: 2 }}
         subgrid
         data-testid="subgrid"
-        style={{ ...box, borderStyle: "solid" }}
+        className={`${box} border-solid`}
       >
         <GridItem
           span={{ base: "full", md: 4 }}
-          style={box}
+          className={box}
           data-testid="subgrid-child"
         >
           <Label>span 4 of the section&apos;s 8</Label>
         </GridItem>
-        <GridItem span={{ base: "full", md: 4 }} style={box}>
+        <GridItem span={{ base: "full", md: 4 }} className={box}>
           <Label>span 4</Label>
         </GridItem>
-        <GridItem style={box} data-testid="subgrid-full">
+        <GridItem className={box} data-testid="subgrid-full">
           <Label>No span: the section&apos;s full width</Label>
         </GridItem>
       </GridItem>
@@ -159,15 +160,9 @@ export const Subgrid: Story = {
 export const RootLayoutTemplate: Story = {
   name: "Root layout template",
   render: () => (
-    <div
-      style={{
-        display: "grid",
-        gap: "var(--space-6)",
-        paddingBlock: "var(--space-6)",
-      }}
-    >
+    <div className="grid gap-(--space-6) py-(--space-6)">
       <PageGrid as="header">
-        <GridItem style={box}>
+        <GridItem className={box}>
           <Label>
             <Code>{`<PageGrid as="header">`}</Code> site header
           </Label>
@@ -206,7 +201,7 @@ export const RootLayoutTemplate: Story = {
         </GridItem>
       </PageGrid>
       <PageGrid as="footer">
-        <GridItem style={box}>
+        <GridItem className={box}>
           <Paragraph size="sm">
             <Code>{`<PageGrid as="footer">`}</Code> site footer
           </Paragraph>

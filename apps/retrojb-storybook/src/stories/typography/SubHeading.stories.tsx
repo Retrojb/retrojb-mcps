@@ -64,7 +64,7 @@ export const SizeOverride: Story = {
  */
 export const DeepOutline: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--space-4)" }}>
+    <div className="grid gap-(--space-4)">
       <SubHeading>Past due</SubHeading>
       <SubHeading level={4} size="heading-xs">
         Over 30 days

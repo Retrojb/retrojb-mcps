@@ -34,6 +34,9 @@ const headingStyles = tv({
      * 320 CSS px, which `display` at 48px would otherwise do (1.4.10).
      */
     "text-balance wrap-break-word",
+    // The display face (`--font-family-display`), which defaults to the sans
+    // stack, so a heading matches body text until an app sets a display font.
+    "font-display",
   ],
   variants: {
     /*

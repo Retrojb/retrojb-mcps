@@ -111,15 +111,12 @@ export const AsList: Story = {
 export const ContainerQuery: Story = {
   args: { responsiveTo: "container" },
   render: (args) => (
-    <div style={{ display: "grid", gap: "var(--space-6)" }}>
-      {["16rem", "36rem"].map((width) => (
+    <div className="grid gap-(--space-6)">
+      {/* 16rem and 36rem: either side of the 24rem `@sm` switch. */}
+      {["w-64", "w-144"].map((width) => (
         <div
           key={width}
-          style={{
-            width,
-            containerType: "inline-size",
-            outline: "1px dashed currentColor",
-          }}
+          className={`${width} @container outline-1 outline-dashed outline-current`}
         >
           <DynamicContainer {...args} />
         </div>

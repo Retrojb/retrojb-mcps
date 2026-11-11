@@ -80,14 +80,7 @@ export const Selected: Story = {
  */
 export const Sizes: Story = {
   render: (args) => (
-    <div
-      style={{
-        display: "flex",
-        gap: "0.75rem",
-        flexWrap: "wrap",
-        alignItems: "center",
-      }}
-    >
+    <div className="flex flex-wrap items-center gap-(--space-3)">
       <Chip {...args} size="sm" text="Small" />
       <Chip {...args} size="sm" text="Small, on" defaultSelected />
       <Chip {...args} size="md" text="Medium" />
@@ -104,7 +97,7 @@ export const Sizes: Story = {
  */
 export const Disabled: Story = {
   render: (args) => (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <div className="flex flex-wrap gap-(--space-3)">
       <Chip {...args} text="Off" disabled />
       <Chip {...args} text="On" defaultSelected disabled />
     </div>
@@ -129,12 +122,12 @@ export const FilterGroup: Story = {
       );
     };
     return (
-      <div style={{ display: "grid", gap: "0.5rem" }}>
+      <div className="grid gap-(--space-2)">
         <span id="chip-filter-status">Status</span>
         <div
           role="group"
           aria-labelledby="chip-filter-status"
-          style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
+          className="flex flex-wrap gap-(--space-2)"
         >
           {STATUSES.map((status) => (
             <Chip

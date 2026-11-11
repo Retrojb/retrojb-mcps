@@ -33,7 +33,7 @@ export const Primary: Story = {};
  */
 export const InContext: Story = {
   render: () => (
-    <div style={{ display: "grid", gap: "var(--space-4)" }}>
+    <div className="grid gap-(--space-4)">
       <SectionHeading>
         Configuring <Code>tv()</Code>
       </SectionHeading>

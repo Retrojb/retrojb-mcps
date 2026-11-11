@@ -206,6 +206,7 @@ import "./globals.css"; // your Tailwind build, below
 @import "@retrojb/ui/theme.css"; /* bg-accent, shadow-overlay, text-body-sm… */
 
 @source "./**/*.tsx";
+@source "../node_modules/@retrojb/ui/dist"; /* the library's classes: see below */
 
 :root {
   /* Your brand faces. Put the next/font classes on <html>. */
@@ -219,6 +220,12 @@ Why each line is there:
 - **`tailwindcss/theme.css` and `utilities.css`, not `@import "tailwindcss"`.**
   That leaves out Tailwind's preflight reset, which this package does not
   assume.
+- **`@source` on the library.** Your build is a second stylesheet after
+  `styles.css`, and between two stylesheets the later rule wins. If your markup
+  uses `border` and a component uses `border-s-4`, your `.border` lands last and
+  the component's 4px edge becomes 1px. Scanning the library regenerates its
+  classes in your stylesheet, where Tailwind sorts them correctly. Point it at
+  wherever `@retrojb/ui` is installed.
 - **`@retrojb/ui/theme.css`.** Registers the colours, type roles, shadow roles
   and breakpoints as utilities, so your markup uses the same `bg-accent` and
   `shadow-overlay` the components do. It also points Tailwind's `rounded-xs` to

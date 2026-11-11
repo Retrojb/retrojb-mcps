@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { tableStyle } from "@retrojb/ui";
+import { CodeBlock, tableStyle } from "@retrojb/ui";
 import { getCriterion } from "@retrojb/wcag-a11y-scanner";
 import styles from "./prose.module.css";
 
@@ -115,14 +115,13 @@ function Pane({
   code: string;
   note?: string;
 }): React.ReactElement {
+  const heading = kind === "avoid" ? "Avoid" : "Do";
   return (
     <div
       className={`${styles.pane} ${kind === "avoid" ? styles.paneAvoid : styles.paneDo}`}
     >
-      <p className={styles.paneHeading}>{kind === "avoid" ? "Avoid" : "Do"}</p>
-      <pre>
-        <code>{code}</code>
-      </pre>
+      <p className={styles.paneHeading}>{heading}</p>
+      <CodeBlock label={`${heading}: code example`}>{code}</CodeBlock>
       {note === undefined ? null : <p className={styles.paneNote}>{note}</p>}
     </div>
   );

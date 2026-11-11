@@ -33,7 +33,7 @@ const meta = {
   argTypes: {},
   decorators: [
     (Story) => (
-      <div style={{ minHeight: "22rem", width: "22rem" }}>
+      <div className="min-h-88 w-88">
         <Story />
       </div>
     ),
@@ -62,7 +62,7 @@ export const Primary: Story = {
     };
 
     return (
-      <div style={{ display: "grid", gap: "0.75rem" }}>
+      <div className="grid gap-(--space-3)">
         <SearchBox
           {...args}
           onSubmit={(query) => {
@@ -72,7 +72,7 @@ export const Primary: Story = {
             append(`selected suggestion: ${page.href}`);
           }}
         />
-        <ul style={{ fontSize: "0.875rem", opacity: 0.7, paddingLeft: "1rem" }}>
+        <ul className="ps-(--space-4) text-body-sm text-foreground-muted">
           {log.length === 0 ? (
             <li>Press Enter, or pick a suggestion.</li>
           ) : (

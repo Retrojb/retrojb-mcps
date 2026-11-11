@@ -1,4 +1,31 @@
 /*
+ * This preview's Tailwind build, set up as `packages/ui/README.md` documents
+ * for any app that writes utilities next to the library ("Using it with your
+ * own Tailwind build"): Tailwind's theme and utilities without its preflight,
+ * then the library's `theme.css` so `bg-surface-base`, `p-(--space-4)`,
+ * `shadow-overlay` and `text-body-sm` mean what they mean in the components.
+ * The token values come from `@retrojb/ui/styles.css`, imported before this
+ * file in `preview.tsx`. `postcss.config.mjs` runs the build.
+ *
+ * `@source` scans the stories and the docs components, so a utility written in
+ * a story gets a rule. It also scans the library's source. Tailwind sorts the
+ * utilities within one stylesheet so that `border-s-4` follows `border`, but
+ * this build is a second stylesheet after `@retrojb/ui/styles.css`: a `border`
+ * emitted here would land after the library's `border-s-4` and win, and every
+ * alert's 4px tone bar would drop to 1px. Scanning the library regenerates its
+ * utilities here, in order.
+ */
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@import "@retrojb/ui/theme.css";
+@import "./fonts.css";
+
+@source "../src/**/*.{ts,tsx,mdx}";
+@source "../../../packages/ui/src";
+
+/*
  * Paints the preview with the package's own surface tokens, so a story sits on
  * `--background` in whichever theme the toolbar has selected. Without it the
  * canvas stays Storybook's white, and dark-theme components would be measured
@@ -22,5 +49,15 @@ body,
  * default serif.
  */
 body {
-  font-family: var(--font-sans);
+  font-family: "Tahoma", var(--font-family-sans);
+}
+
+/*
+ * The brand display face for the preview. Headings read `--font-family-display`
+ * through the `font-display` utility; this points it at Oswald. Body text
+ * stays on `--font-family-sans` (a complementary body face is still to be
+ * chosen). An app sets this the same way, on its own root.
+ */
+:root {
+  --font-family-display: "Oswald", var(--font-family-sans);
 }

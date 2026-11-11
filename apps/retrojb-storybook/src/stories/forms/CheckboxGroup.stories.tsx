@@ -77,7 +77,7 @@ export const Controlled: Story = {
 const ControlledDemo = (args: ComponentProps<typeof CheckboxGroup>) => {
   const [value, setValue] = useState<string[]>(["sms"]);
   return (
-    <div style={{ display: "grid", gap: "var(--space-4)" }}>
+    <div className="grid gap-(--space-4)">
       <CheckboxGroup
         {...args}
         defaultValue={undefined}
@@ -128,7 +128,7 @@ const RequiredDemo = (args: ComponentProps<typeof CheckboxGroup>) => {
         const data = new FormData(event.currentTarget);
         setSubmitted(data.getAll("channels").join(", "));
       }}
-      style={{ display: "grid", gap: "var(--space-4)" }}
+      className="grid gap-(--space-4)"
     >
       <CheckboxGroup {...args} />
       <div>

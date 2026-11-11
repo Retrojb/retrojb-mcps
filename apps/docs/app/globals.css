@@ -61,6 +61,14 @@
 @import "@retrojb/ui/theme.css";
 
 @source "./**/*.tsx";
+/*
+ * The library's source too, so its utilities are regenerated in this
+ * stylesheet in Tailwind's order. This build loads after
+ * `@retrojb/ui/styles.css`; without this, a `border` used here would land
+ * after the library's `border-s-4` and override it. See "Using it with your own
+ * Tailwind build" in `packages/ui/README.md`.
+ */
+@source "../../../packages/ui/src";
 
 /*
  * What the site sets on top of the tokens.

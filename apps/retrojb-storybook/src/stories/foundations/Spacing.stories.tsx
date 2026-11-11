@@ -7,19 +7,33 @@ type Density = (typeof DENSITIES)[number];
 
 const STEPS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
 
+/*
+ * One width utility per step, written out so Tailwind finds each in the
+ * source. A class built from the step (`w-(--space-${step})`) compiles to
+ * nothing.
+ */
+const STEP_WIDTH: Record<(typeof STEPS)[number], string> = {
+  0: "w-(--space-0)",
+  1: "w-(--space-1)",
+  2: "w-(--space-2)",
+  3: "w-(--space-3)",
+  4: "w-(--space-4)",
+  5: "w-(--space-5)",
+  6: "w-(--space-6)",
+  7: "w-(--space-7)",
+  8: "w-(--space-8)",
+  9: "w-(--space-9)",
+  10: "w-(--space-10)",
+};
+
 const CONTROL_HEIGHTS = ["xs", "sm", "md", "lg"] as const;
 
 /*
  * `--border` is decorative here, as in `Table`'s row separators: the rows are
  * identified by their header cells, not by the lines between them.
  */
-const cell = {
-  padding: "var(--space-2) var(--space-3)",
-  borderBlockEnd: "1px solid var(--border)",
-  textAlign: "start",
-  verticalAlign: "middle",
-  whiteSpace: "nowrap",
-} as const;
+const cell =
+  "border-b border-border px-(--space-3) py-(--space-2) text-start align-middle whitespace-nowrap";
 
 /*
  * Each density column is its own `data-density` region, so the bars are
@@ -31,7 +45,7 @@ const StepCell = ({
   step,
 }: {
   readonly density: Density;
-  readonly step: number;
+  readonly step: (typeof STEPS)[number];
 }) => {
   const barRef = useRef<HTMLSpanElement>(null);
   const [px, setPx] = useState<string | null>(null);
@@ -43,19 +57,12 @@ const StepCell = ({
   }, [density, step]);
 
   return (
-    <td style={cell} data-density={density}>
-      <span
-        style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}
-      >
+    <td className={cell} data-density={density}>
+      <span className="flex items-center gap-(--space-2)">
         <span
           ref={barRef}
           aria-hidden
-          style={{
-            display: "inline-block",
-            inlineSize: `var(--space-${String(step)})`,
-            blockSize: "0.75rem",
-            background: "var(--accent)",
-          }}
+          className={`inline-block h-3 bg-accent ${STEP_WIDTH[step]}`}
         />
         <span>{px}</span>
       </span>
@@ -64,7 +71,7 @@ const StepCell = ({
 };
 
 const SpaceScale = () => (
-  <div style={{ display: "grid", gap: "var(--space-4)" }}>
+  <div className="grid gap-(--space-4)">
     <Paragraph tone="muted" size="sm" measure>
       The <Code>--space-*</Code> scale in all three densities. Each column is a{" "}
       <Code>data-density</Code> region, and the px values are measured from the
@@ -72,30 +79,18 @@ const SpaceScale = () => (
       changes spacing only: control heights, icon sizes, borders and type stay
       the same.
     </Paragraph>
-    <div style={{ overflowX: "auto" }}>
-      <table
-        style={{
-          borderCollapse: "collapse",
-          width: "100%",
-          color: "var(--foreground)",
-        }}
-      >
-        <caption
-          style={{
-            textAlign: "start",
-            fontWeight: 600,
-            paddingBlockEnd: "var(--space-2)",
-          }}
-        >
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse text-foreground">
+        <caption className="pb-(--space-2) text-start font-semibold">
           Space scale
         </caption>
         <thead>
           <tr>
-            <th scope="col" style={cell}>
+            <th scope="col" className={cell}>
               Token
             </th>
             {DENSITIES.map((density) => (
-              <th key={density} scope="col" style={cell}>
+              <th key={density} scope="col" className={cell}>
                 {density}
               </th>
             ))}
@@ -104,7 +99,7 @@ const SpaceScale = () => (
         <tbody>
           {STEPS.map((step) => (
             <tr key={step}>
-              <th scope="row" style={cell}>
+              <th scope="row" className={cell}>
                 <Code>--space-{step}</Code>
               </th>
               {DENSITIES.map((density) => (
@@ -119,14 +114,14 @@ const SpaceScale = () => (
 );
 
 const ControlHeights = () => (
-  <div style={{ display: "grid", gap: "var(--space-4)" }}>
+  <div className="grid gap-(--space-4)">
     <Paragraph tone="muted" size="sm" measure>
       <Code>--control-height-*</Code> is a size, not spacing, so density does
       not change it. <Code>xs</Code> is 24px, the WCAG 2.5.8 minimum target
       size. Each row below is the same button and input in one density: the
       height holds and the padding moves.
     </Paragraph>
-    <ul style={{ margin: 0, padding: 0, listStyle: "none" }}>
+    <ul className="m-0 list-none p-0">
       {CONTROL_HEIGHTS.map((size) => (
         <li key={size}>
           <Code>--control-height-{size}</Code>
@@ -137,12 +132,7 @@ const ControlHeights = () => (
       <div
         key={density}
         data-density={density}
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          alignItems: "end",
-          gap: "var(--space-3)",
-        }}
+        className="flex flex-wrap items-end gap-(--space-3)"
       >
         <Button size="sm" text={`${density} sm`} />
         <Button size="md" text={`${density} md`} />

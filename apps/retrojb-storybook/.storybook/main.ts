@@ -25,6 +25,7 @@ const uiSource = fileURLToPath(
 );
 
 const config: StorybookConfig = {
+  staticDirs: ["../public"],
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
   addons: [
     getAbsolutePath("@chromatic-com/storybook"),
