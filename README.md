@@ -27,7 +27,7 @@ runs in the host application and relays between it and a harness.
   per-harness connectivity status, errors surfaced in the plugin window, live
   selection detail, and in-canvas highlighting of whichever node a command
   references.
-- **[`@retrojb/plugin-kit`](packages/plugin-kit)** — the transport primitives
+- **[`@retrojb/plugin-kit`](packages/plugins/plugin-kit)** — the transport primitives
   bridge plugins share: request correlation, polling, backoff, and a bounded
   diagnostics buffer.
 

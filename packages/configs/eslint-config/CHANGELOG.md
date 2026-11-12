@@ -19,7 +19,7 @@
   paint time and an app retints every component by overriding one variable.
   Tokens ship in `@layer theme` and utilities ship unlayered, which is what
   makes an app's own `:root` block win over the defaults while the components
-  still win over an app's global element styles. `apps/docs` already declares
+  still win over an app's global element styles. `../../../apps/docs` already declares
   these tokens, so its contrast-checked palette is the one in effect there.
 
   Accessibility decisions are in the components rather than left to each call

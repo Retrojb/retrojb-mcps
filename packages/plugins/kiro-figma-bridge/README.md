@@ -96,7 +96,7 @@ That produces both halves:
 | Path                 | What it is                            |
 | -------------------- | ------------------------------------- |
 | `dist/server/bin.js` | the bridge server, run by your editor |
-| `dist/figma-plugin/` | the plugin, imported into Figma       |
+| `dist/figma-plugin` | the plugin, imported into Figma       |
 
 ### 3. Point your agent at it
 
@@ -104,7 +104,7 @@ Each client has its own config file. In every case, set `FIGMA_ACCESS_TOKEN` in
 the server's `env` rather than relying on your shell, because editors do not
 reliably pass your shell environment to a spawned process.
 
-**Kiro** — `.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json`:
+**Kiro** — `../../../.kiro/settings/mcp.json` (workspace) or `~/.kiro/settings/mcp.json`:
 
 ```json
 {
@@ -167,7 +167,7 @@ both agents can see the same file.
 While developing, or for personal use:
 
 Figma Desktop → Plugins → Development → Import plugin from manifest… → pick
-`packages/kiro-figma-bridge/dist/figma-plugin/manifest.json`.
+`dist/figma-plugin/manifest.json`.
 
 After a rebuild, close and reopen the plugin window; Figma caches plugin files
 app-wide. You only need to re-import when `manifest.json` itself changes.

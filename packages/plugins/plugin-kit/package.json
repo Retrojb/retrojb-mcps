@@ -4,7 +4,7 @@
   "description": "Transport primitives shared by bridge plugins that connect an external tool to an MCP harness.",
   "type": "module",
   "private": true,
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

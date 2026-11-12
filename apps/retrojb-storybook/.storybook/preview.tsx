@@ -8,7 +8,7 @@ import type { Decorator, Preview } from "@storybook/react-vite";
  * This also brings in the default token layer, so the a11y addon is checking
  * contrast against the palette the package actually ships.
  */
-import "@retrojb/ui/styles.css";
+import "@retrojb/tokens/index.css";
 import "./preview.css";
 import { docsMdxComponents } from "../src/components/docsMdx";
 import { LightDocsContainer } from "./LightDocsContainer";
