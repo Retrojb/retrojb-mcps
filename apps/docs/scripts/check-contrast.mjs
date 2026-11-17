@@ -146,6 +146,11 @@ const ON_FILL = [
   ["label on accent hover", "accent-foreground", "accent-hover"],
   ["label on danger", "danger-foreground", "danger"],
   ["code text", "foreground", "neutral-1"],
+  // Sentiment Tag tints: the tone's text on its soft fill, both themes. `danger`
+  // is the `label on danger` row above; it fills saturated and takes no tint.
+  ["tag neutral text on tint", "foreground", "tag-neutral-surface"],
+  ["tag info text on tint", "accent-text", "tag-info-surface"],
+  ["tag success text on tint", "success", "tag-success-surface"],
 ];
 
 /**

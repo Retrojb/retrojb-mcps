@@ -38,7 +38,7 @@ type AnyCell = Cell<StockFeatures, RowData>;
 /** The variants a table sets once and every cell and row below it inherits. */
 type TableSharedVariants = Pick<
   TableVariants,
-  "size" | "bordered" | "striped" | "stickyHeader"
+  "size" | "bordered" | "striped" | "stickyHeader" | "divided"
 >;
 
 /**
@@ -67,7 +67,12 @@ interface ITableProps<TFeatures extends TableFeatures, TData extends RowData>
     ComponentPropsWithRef<"table">,
     Pick<
       TableVariants,
-      "size" | "bordered" | "striped" | "stickyHeader" | "captionHidden"
+      | "size"
+      | "bordered"
+      | "striped"
+      | "stickyHeader"
+      | "captionHidden"
+      | "divided"
     > {
   /** The instance from TanStack's `useTable`. */
   readonly table: TanStackTable<TFeatures, TData>;

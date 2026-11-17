@@ -233,6 +233,35 @@
     --information: #0d80b1;
 
     /*
+     * SENTIMENT TINTS
+     *
+     * Soft fills for a sentiment `Tag`. A tag states a category or outcome in a
+     * word, and these give it a quiet background to match without shouting: the
+     * tint is a surface, and the tone's existing text colour sits on it. `danger`
+     * is the exception and takes no tint. It is the one tone that has to be
+     * impossible to miss, so it fills with the saturated `--danger` and reverses
+     * to `--danger-foreground`, the same pairing `Button`'s danger uses.
+     *
+     * Unlike a brand or status value, a tint carries no contract of its own. The
+     * contract is on the pairing: the tone's text must clear 4.5:1 on its tint
+     * (1.4.3), in both themes. `info` and `success` reuse step 2 of their ramp,
+     * so one `var()` picks up the dark value too; `neutral` has no status ramp
+     * and takes `--neutral-1`, a step off the page.
+     *
+     *   pairing (text on tint)            light / dark
+     *   --------------------------------  -------------
+     *   --foreground  on --tag-neutral    11.78 / 14.69:1
+     *   --accent-text on --tag-info       13.86 / 12.20:1
+     *   --success     on --tag-success     8.47 /  7.43:1
+     *
+     * `check:contrast` measures all three in both themes and fails the build on
+     * a miss.
+     */
+    --tag-neutral-surface: var(--neutral-1);
+    --tag-info-surface: var(--primary-2);
+    --tag-success-surface: var(--secondary-2);
+
+    /*
      * CODE HIGHLIGHT
      *
      * Five sentiments a bring-your-own highlighter maps its tokens onto, rather

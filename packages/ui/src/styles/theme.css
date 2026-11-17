@@ -111,6 +111,19 @@
   --color-success: var(--success, #005028);
 
   /*
+   * SENTIMENT TINTS
+   *
+   * `bg-tag-neutral-surface`, `-info-surface`, `-success-surface`: the soft
+   * fills a sentiment `Tag` lays under its text. `danger` takes no tint; it
+   * fills with `bg-danger` and reverses to `text-danger-foreground`. Fallbacks
+   * are the light values. Values and pairings live in
+   * `packages/tokens/src/light.css`.
+   */
+  --color-tag-neutral-surface: var(--tag-neutral-surface, #c8c4c8);
+  --color-tag-info-surface: var(--tag-info-surface, #f4e7fe);
+  --color-tag-success-surface: var(--tag-success-surface, #c8fec7);
+
+  /*
    * CODE HIGHLIGHT
    *
    * `text-code-positive`, `-negative`, `-special`, `-emphasis` and `-neutral`:

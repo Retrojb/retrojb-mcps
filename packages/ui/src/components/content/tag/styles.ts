@@ -32,12 +32,14 @@ const tagStyles = tv({
     /*
      * A real `border`, not a box-shadow, so the edge survives forced-colors
      * mode, where shadows are dropped and borders are repainted in a system
-     * colour. `bg-surface-base` is the fill every pairing below was measured on.
+     * colour. Each `tone` sets its own fill, so there is no `bg-*` here: a
+     * sentiment tag is a filled surface (a soft tint, or the saturated
+     * `--danger`), and the text and border were measured on that fill below.
      * `max-w-full` and `wrap-break-word` let a long label wrap at 320 CSS px
      * (1.4.10) instead of overflowing.
      */
-    "inline-flex max-w-full items-center",
-    "rounded-control border bg-surface-base",
+    "inline-flex max-w-full items-center px-(--space-2)",
+    "rounded-control border",
     "wrap-break-word",
     /*
      * Deliberately absent: `cursor-*`, `hover:`, `focus-visible:` and
@@ -48,32 +50,32 @@ const tagStyles = tv({
 
   variants: {
     /*
-     * Ratios are `checkContrast` from `@retrojb/wcag-a11y-scanner`, light / dark.
-     * Text needs 4.5:1 (1.4.3) and the border 3:1 (1.4.11), and each is measured
-     * on `--surface-base` (the tag's own fill, behind the text) and on `--background`
-     * (the page, which the border also touches on its outer edge).
+     * Each tone is a filled surface. `neutral`, `info` and `success` take a soft
+     * tint and keep their existing dark text and border; `danger` fills with the
+     * saturated `--danger` and reverses to `--danger-foreground`, so an error
+     * tag cannot be mistaken for the quieter three. The tints live in
+     * `@retrojb/tokens` (`--tag-*-surface`); `danger-foreground` reverses by
+     * theme, near-white on the light deep-red fill and near-black on the dark
+     * pink one.
      *
      * The word is the signal, not the colour (1.4.1): a tag always carries its
-     * text, so greyscale and forced-colors lose nothing.
+     * text, so greyscale and forced-colors lose nothing. Text clears 4.5:1
+     * (1.4.3) and the border 3:1 (1.4.11) in both themes; the measured pairings
+     * live in `TagSpec.yaml` and are gated by `check:contrast`.
      */
     tone: {
-      // Text `--foreground`: 18.95 / 17.21:1 on --surface-base, 13.30 / 15.72:1 on
-      // --background. Border `--border-strong`: 5.93 / 4.83:1 on --surface-base,
-      // 4.16 / 4.41:1 on --background. `--border` would fail 1.4.11 here.
-      neutral: "border-border-strong text-foreground",
+      // Fill `--tag-neutral-surface`, text `--foreground`, border `--border-strong`.
+      neutral: "border-border-strong bg-tag-neutral-surface text-foreground",
 
-      // Text `--accent-text`: 15.33 / 14.50:1 on --surface-base, 10.76 / 13.24:1 on
-      // --background. Border `--accent`: 8.82 / 9.72:1 on --surface-base, 6.19 /
-      // 8.87:1 on --background.
-      info: "border-accent text-accent-text",
+      // Fill `--tag-info-surface`, text `--accent-text`, border `--accent`.
+      info: "border-accent bg-tag-info-surface text-accent-text",
 
-      // Text and border `--success`: 8.99 / 9.77:1 on --surface-base, 6.31 / 8.92:1
-      // on --background.
-      success: "border-success text-success",
+      // Fill `--tag-success-surface`, text and border `--success`.
+      success: "border-success bg-tag-success-surface text-success",
 
-      // Text and border `--danger`: 8.91 / 9.00:1 on --surface-base, 6.26 / 8.22:1
-      // on --background.
-      danger: "border-danger text-danger",
+      // Saturated fill and border `--danger`, text `--danger-foreground`. The
+      // one tone that fills solid, matching `Button`'s danger.
+      danger: "border-danger bg-danger text-danger-foreground",
     },
 
     /*
@@ -82,8 +84,8 @@ const tagStyles = tv({
      * (about 20px and 28px) are set by the text.
      */
     size: {
-      sm: "px-(--space-2) py-0 text-label-sm",
-      md: "px-(--space-3) py-(--space-1) text-label-md",
+      sm: "px-(--space-3) py-0 text-label-md",
+      md: "px-(--space-4) py-(--space-1) text-label-lg",
     },
   },
 

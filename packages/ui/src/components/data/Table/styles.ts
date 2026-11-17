@@ -85,17 +85,19 @@ const tableStyle = tv({
      * making that depend on the `stickyHeader` variant means the day someone
      * sets the variant from a caller-supplied class instead, rows show through.
      *
-     * `border-border-strong` at 4.26:1 for the rule under the header, rather
-     * than the `border-border` used between body rows. This is the boundary
-     * that separates labels from data, so it is doing more than decoration.
+     * `border-border-strong` for the rule under the header, rather than the
+     * `border-border` used between body rows. This is the boundary that
+     * separates labels from data, so it clears the 3:1 that 1.4.11 asks of a
+     * meaningful boundary (measured ratio in `TableSpec.yaml`); it is doing
+     * more than decoration.
      */
     /*
      * The colours are side-scoped — `border-b-border-strong` rather than
      * `border-border-strong` — and that is load-bearing rather than pedantic.
      * tailwind-merge puts `border-<color>` in one group, so the `border-border`
      * the `bordered` variant adds for the vertical rule would replace this
-     * horizontal one and quietly downgrade the header's boundary from 4.26:1 to
-     * decorative. Naming the side puts the two in different groups.
+     * horizontal one and quietly downgrade the header's boundary to decorative.
+     * Naming the side puts the two in different groups.
      */
     headerCell: [
       "bg-surface-base font-medium text-foreground",
@@ -133,7 +135,11 @@ const tableStyle = tv({
      */
     sortIcon: "shrink-0 text-caption leading-none",
 
-    cell: "border-b border-b-border align-middle",
+    /*
+     * The horizontal rule under each body cell moved to the `divided` variant,
+     * which defaults on, so this slot carries only alignment. See `divided`.
+     */
+    cell: "align-middle",
 
     // The empty state occupies one cell spanning the full width, so it gets
     // generous vertical padding of its own rather than a row's.
@@ -183,6 +189,19 @@ const tableStyle = tv({
         headerCell: "text-start",
         cell: "text-start",
         sortButton: "justify-start",
+        /*
+         * The sort chevron is pushed to the column's trailing edge, rather than
+         * sitting against the label. `ms-auto` eats the free space between the
+         * label and the icon, so the label stays at the reading-start edge and
+         * the glyph lands at the end however short the header is. Logical
+         * margin, so it follows `dir="rtl"`.
+         *
+         * Only `start` does this. In `end` the button is already packed against
+         * the trailing edge by `justify-end`, so the icon is there without help;
+         * in `center` the label and glyph read as one centred cluster, and
+         * splitting them to opposite edges would fight the alignment.
+         */
+        sortIcon: "ms-auto",
       },
       center: {
         headerCell: "text-center",
@@ -207,6 +226,31 @@ const tableStyle = tv({
     },
 
     /*
+     * Horizontal rules between rows: the row-wise counterpart to `bordered`,
+     * and on by default so a plain `<Table>` looks as it always has. Set
+     * `divided={false}` for a borderless table that leans on striping or
+     * whitespace instead.
+     *
+     * The colour is side-scoped — `border-b-border`, not `border-border` — for
+     * the same tailwind-merge reason the header rule and the vertical rules are:
+     * a blanket `border-<color>` sits in one merge group, so an unscoped colour
+     * here would collide with the `bordered` variant's vertical rule and one
+     * would silently drop. Scoping the side puts the bottom rule and the right
+     * rule in different groups.
+     *
+     * `--border`, not `--border-strong`: a separator between two body rows
+     * groups nothing that position does not already group, so 1.4.11 does not
+     * apply to it (the header's `--border-strong` rule is the one boundary that
+     * means something). The last row's rule is still dropped by the `body` and
+     * `foot` slots' `:last-child` rule, which is a no-op when `divided` is off.
+     */
+    divided: {
+      true: {
+        cell: "border-b border-b-border",
+      },
+    },
+
+    /*
      * Zebra striping, applied to the row rather than to `tbody` with an
      * `:nth-child` selector. Both work, but an `:nth-child` rule on the section
      * and a plain background on the row have the same specificity, so which one
@@ -221,10 +265,11 @@ const tableStyle = tv({
     /*
      * A tint, and only a tint.
      *
-     * Over `--surface-raised-1` this composites to roughly #e7effb on light and
-     * #242d38 on dark, leaving `--foreground` at about 15.4:1 and 11.9:1. Those
-     * two are calculated rather than measured: `check:contrast` in apps/docs
-     * covers pairs of named tokens, and a composited tint is not one.
+     * Over `--surface-raised-1` this composites to a soft accent wash that keeps
+     * `--foreground` well clear of 4.5:1 in both themes. Those figures are
+     * calculated rather than measured: `check:contrast` in apps/docs covers
+     * pairs of named tokens, and a composited tint is not one. The composited
+     * colours and ratios are recorded in `TableSpec.yaml`.
      *
      * It is deliberately not enough on its own. A selected row must also carry a
      * checkbox or radio in one of its cells, which is what actually conveys
@@ -234,9 +279,9 @@ const tableStyle = tv({
      *
      * One thing to know before reading the compiled stylesheet: Tailwind emits
      * `background-color: var(--color-accent)` ahead of the `color-mix()` rule as
-     * an `@supports` fallback, and a solid accent behind `--foreground` would be
-     * about 2:1. It never applies. `color-mix()` shipped in Chrome 111, Safari
-     * 16.2 and Firefox 113, all at or below the Safari 16.4 / Chrome 111 /
+     * an `@supports` fallback (a solid accent behind `--foreground`, which would
+     * not clear 4.5:1). It never applies. `color-mix()` shipped in Chrome 111,
+     * Safari 16.2 and Firefox 113, all at or below the Safari 16.4 / Chrome 111 /
      * Firefox 128 floor Tailwind v4 itself requires — so no browser that can
      * render this file lacks it.
      */
@@ -267,6 +312,8 @@ const tableStyle = tv({
   defaultVariants: {
     size: "md",
     align: "start",
+    // On by default: a plain table keeps the row rules it has always had.
+    divided: true,
   },
 });
 

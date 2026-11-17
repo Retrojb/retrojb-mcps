@@ -44,7 +44,7 @@ api:
     size:
       values: [sm, md]
       default: sm
-      note: label-sm and label-md type roles.
+      note: label-md and label-lg type roles.
 
 accessibility:
   element: span
@@ -56,6 +56,22 @@ accessibility:
     - The text is the signal, so colour is never the only cue.
     - The border is a real border, so it survives forced-colors mode.
     - Target size (2.5.8) does not apply because a tag is not a target.
+    - >-
+      Contrast ratios, light / dark, measured with checkContrast from
+      @retrojb/wcag-a11y-scanner and gated by check:contrast. Text clears 4.5:1
+      (1.4.3); the border clears 3:1 (1.4.11), measured on the tag's own fill
+      (inner edge) and on --background (the page the outer edge touches).
+    - "neutral: fill --tag-neutral-surface (--neutral-1). Text --foreground
+      11.78 / 14.69:1 on the fill. Border --border-strong 3.69 / 4.12:1 on the
+      fill, 4.16 / 4.41:1 on --background."
+    - "info: fill --tag-info-surface (--primary-2). Text --accent-text 13.86 /
+      12.20:1 on the fill. Border --accent 7.97 / 8.18:1 on the fill, 6.19 /
+      8.87:1 on --background."
+    - "success: fill --tag-success-surface (--secondary-2). Text and border
+      --success 8.47 / 7.43:1 on the fill, 6.31 / 8.92:1 on --background."
+    - "danger: saturated fill and border --danger, text --danger-foreground 9.42
+      / 9.44:1 on the fill. Border --danger 6.26 / 8.22:1 on --background. The
+      one tone that fills solid, matching Button's danger."
 
 usage:
   standalone: true
@@ -74,16 +90,19 @@ usage:
       - Rely on tone alone to say what a tag means.
 
 tokens:
-  - surface-base
+  - tag-neutral-surface
+  - tag-info-surface
+  - tag-success-surface
   - foreground
   - border-strong
   - accent
   - accent-text
   - success
   - danger
+  - danger-foreground
   - radius-control
-  - label-sm
   - label-md
+  - label-lg
 
 figma:
   syncedWith: null

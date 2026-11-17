@@ -72,6 +72,14 @@
     --success: #6bd39a;
     --information: #32aee3;
 
+    /*
+     * SENTIMENT TINTS are not restated here. `--tag-info-surface` and
+     * `--tag-success-surface` point at step 2 of their ramp and
+     * `--tag-neutral-surface` at `--neutral-1`, all role-indexed, so each picks
+     * up the dark value through the ramp overrides above. The dark pairings
+     * (14.69 / 12.20 / 7.43:1) are measured by `check:contrast`. See light.css.
+     */
+
     /* CODE HIGHLIGHT: solved on dark --surface-sunken (#0e1012). See light.css. */
     --code-positive: #6bd39a; /* 10.35:1 on --surface-sunken */
     --code-negative: #ff9d95; /* 9.54:1 on --surface-sunken */
