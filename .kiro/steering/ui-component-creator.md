@@ -512,7 +512,7 @@ const MyComponent = (...): ReactElement => {
   lists them, and the spec of a sibling the component is often confused with.
 - The release tag follows the spec `status`: `@public` for `shipped`, `@beta`
   for `experimental`, `@public` plus `@deprecated` for `deprecated`, `@internal`
-  for anything not exported from `packages/ui/src/index.ts`.
+  for anything not exported from `../../packages/ui/src/index.ts`.
 - Do not use `@param`, `@returns`, `@description` or `@since`.
 - Parts of a compound component (`CardTitle`) need a summary and a release tag.
   The root component carries the `@remarks`.
@@ -547,7 +547,7 @@ export {
 
 ---
 
-## 11. PACKAGE BARREL (`packages/ui/src/index.ts`)
+## 11. PACKAGE BARREL (`../../packages/ui/src/index.ts`)
 
 Add an export block with a plain `/* */` comment explaining what the component
 does and any non-obvious aspect of the API:
@@ -618,7 +618,7 @@ export const WithDismiss: Story = {
 ### Component docs page
 
 Every new component also gets a docs page, `{ComponentName}.mdx`, beside its
-stories file. Start from `apps/retrojb-storybook/templates/Component.mdx` and
+stories file. Start from `../../apps/retrojb-storybook/templates/Component.mdx` and
 follow the steps in its header comment, and read
 `../../project-docs/references/STORYBOOK_DOCS.md` for how the page gets its content.
 
@@ -722,7 +722,7 @@ Measured against the default palette.
 ## 14. COMPONENT SPEC
 
 The component's record in the index is a `<Name>Spec.yaml` file in its own
-folder, validated against `packages/ui/componentSpec.schema.json`. Every
+folder, validated against `../../packages/ui/componentSpec.schema.json`. Every
 component you create or finish gets one. Read `ButtonSpec.yaml` (a single
 component) and `CardSpec.yaml` (a compound one) first and match their shape.
 
@@ -732,7 +732,7 @@ component) and `CardSpec.yaml` (a compound one) first and match their shape.
   `InteractiveCard` share a folder and have three specs. Parts such as
   `CardTitle` are listed in the root component's `exports`, not given their own
   spec.
-- **The name is the exported name**, exactly as in `packages/ui/src/index.ts`.
+- **The name is the exported name**, exactly as in `../../packages/ui/src/index.ts`.
   The file is `<name>Spec.yaml` (`TabGroupSpec.yaml`, not `TabsSpec.yaml`). `id`
   is the same name with a lower-case first letter.
 - **First line:**

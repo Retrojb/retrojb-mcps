@@ -1,0 +1,159 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Containers/Drawer/Accessibility" />
+
+# Drawer Accessibility
+
+Extracted from `packages/ui/src/components/containers/drawer/styles.ts` and the
+wiring in `Drawer.tsx`. Ratios are the measured output of
+`@retrojb/wcag-a11y-scanner`.
+
+A panel that slides in from an edge of the viewport over a scrim. Like
+`BrowserAlert`, it is a real `<dialog>` opened with `showModal()`, so the
+platform does the hard parts; unlike it, the drawer animates its close and is
+driven by a controllable `open` / `onOpenChange` pair rather than a single
+`open`.
+
+## WCAG Standard and Expectations
+
+| Criterion                    | Level | How the component meets it                                                            |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------- |
+| 1.3.1 Info and Relationships | A     | `title` renders an `<h2>`, so the name lands in the heading list and the outline      |
+| 2.1.2 No Keyboard Trap       | A     | Escape closes it (the platform), and `onOpenChange` keeps React's state in step       |
+| 2.3.3 Animation from Interactions | AAA | `motion-reduce` drops the slide; the component then closes on the next frame      |
+| 2.4.3 Focus Order            | A     | Logical translate and inset only, DOM order is content order, so tab order matches     |
+| 2.4.7 Focus Visible          | AA    | Controls inside use the package's shared 2px outline; the dialog itself is not a stop |
+| 4.1.2 Name, Role, Value      | A     | Implicit `role="dialog"`, named by `title` or `aria-label`, made modal by `showModal` |
+
+### What the platform dialog gives you
+
+Opening a real `<dialog>` with `showModal()` is the load-bearing decision, and
+the same one `BrowserAlert` makes. From the browser, with no code in the
+component:
+
+- **A focus trap.** No `keydown` handler, no sentinel nodes.
+- **The rest of the document made inert.** Nothing behind the drawer is
+  clickable or reachable by Tab, and a screen reader's virtual cursor stays
+  inside. `aria-modal` alone does not do this.
+- **Escape to close** (2.1.2).
+- **Focus restored** to the trigger, on close.
+- **The top layer**, so the drawer sits above every `z-index` on the page
+  without this package inventing a stacking scale, and cannot be clipped by an
+  ancestor's `overflow`.
+- **A `::backdrop`**, which is the scrim.
+
+Try it from the keyboard in any story: open, Tab around, press Escape, and watch
+focus return to the trigger.
+
+### What the element does not give, and is in the component
+
+Three things `showModal()` leaves to the caller, handled in `Drawer.tsx`:
+
+- **Scroll lock.** `showModal()` makes the background inert but still lets it
+  scroll behind the drawer. The component sets `overflow: hidden` on the
+  document element while open and restores the previous inline value on close,
+  so a page that set its own `overflow` gets it back.
+- **An animated close.** `dialog.close()` removes the element from the top layer
+  in the same frame, so a CSS exit transition never runs. The close request
+  instead sets `data-state="closed"` — which slides the panel off its edge and
+  fades the backdrop — and defers `.close()` until that transition ends.
+- **Reduced motion** (2.3.3). `motion-reduce:transition-none` drops both the
+  slide and the fade, and the close effect sees there is no transition to wait
+  for and closes on the next animation frame instead of listening for a
+  `transitionend` that will never fire. The drawer still appears and disappears;
+  it just does not slide.
+
+### One close path, whatever closed it
+
+The native `close` event is the single source of truth. Escape, a backdrop
+click and the deferred programmatic `.close()` all end there, and that handler
+is the one place `onOpenChange(false)` is called. So a controlled caller cannot
+get the desync where the element is shut but `open` stayed `true` and the drawer
+can never reopen.
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Drawer open={open} onOpenChange={setOpen} title="Filters" side="end">
+  <FilterForm />
+</Drawer>;
+```
+
+### The name is required, and comes from exactly one of two props
+
+A modal dialog with no accessible name is announced as just "dialog" (4.1.2).
+The drawer requires one and offers two ways to give it, as a compile-time union
+so exactly one is passed:
+
+- **`title`** renders a visible `<h2>` at the top of the panel and names the
+  drawer through `aria-labelledby` from a `useId`. Prefer it: the name is on
+  screen as well as announced, and the heading joins the document outline
+  (1.3.1). `<h2>` and not `<h1>` because the page behind keeps its `<h1>`.
+- **`aria-label`** names it when the design has no room for a heading. The name
+  is then in the accessibility tree only.
+
+Passing both, or neither, is a type error — the same call `Input` makes about
+`label` and `Table` about `caption`.
+
+### Backdrop dismissal is distinguishable from an escape hatch
+
+A click on the scrim closes the drawer by default. `dismissOnBackdropClick={false}`
+turns that off for a drawer the user must act in before leaving; Escape still
+works, so turning it off never makes a keyboard trap.
+
+## Colors
+
+The panel sits on `--surface-overlay`, the overlay fill, and carries
+`data-surface="overlay"` so a `Card` or `SearchBox` placed inside drops its own
+shadow and keeps its border — the drawer is already the top surface.
+
+### Boundaries (needs 3:1)
+
+| Role      | Pairing                               | Light  | Dark   |
+| --------- | ------------------------------------- | ------ | ------ |
+| Panel edge | `--border-strong` on the page        | varies | varies |
+
+The drawer draws no new text pairing of its own: the heading is `--foreground`
+on `--surface-overlay`, the same pairing `BrowserAlert` measures at 20.31:1
+light and 13.46:1 dark, and the body is whatever the caller puts in it. Run
+`npm run check:contrast --workspace=@retrojb/docs` for the token sources, which
+is the authority on the palette.
+
+The scrim is the `::backdrop` at `--scrim-md`, which darkens the page behind in
+both themes, and the panel has the `modal` shadow. Neither is what separates the
+drawer from the page: forced-colors mode removes the shadow, and the logical
+`--border-strong` edge on the anchored side carries the boundary.
+
+## Aria
+
+| Attribute         | On         | Value                                                        |
+| ----------------- | ---------- | ------------------------------------------------------------ |
+| `role="dialog"`   | the dialog | Implicit from `<dialog>`; not overridden                     |
+| `aria-labelledby` | the dialog | The title heading id, when `title` is used                   |
+| `aria-label`      | the dialog | The accessible name, when `aria-label` is used instead       |
+| `aria-modal`      | —          | Not set: `showModal()` makes it modal for real               |
+| `data-surface`    | the dialog | `"overlay"`, read by nested components to drop their shadow  |
+| `data-state`      | the dialog | `"open"` / `"closed"`, drives the enter and exit transitions |
+
+### `role="dialog"`, not `alertdialog`
+
+The drawer keeps the implicit `dialog` role. `alertdialog` is for a dialog that
+interrupts for a response it must have — a confirmation or an error — and
+obliges a focusable control to always be present. A drawer is a container for
+whatever the caller puts in it, which may be read-only, so `dialog` is correct.
+For a confirmation or an alert, reach for `BrowserAlert`.
+
+### `aria-modal` is absent on purpose
+
+`showModal()` puts the dialog in the top layer and makes the rest of the
+document genuinely inert. `aria-modal="true"` is the attribute for when you are
+_pretending_ to be modal with a positioned `<div>`; adding it here would
+describe something the browser has already made true, and it has a history of
+causing screen readers to hide content legitimately inside the dialog.
+
+### Logical properties, so it follows writing direction
+
+`side="start"` and `"end"` use logical `inset` and `border` and RTL-aware
+translate, so `end` anchors to the right in LTR and the left in RTL and slides
+from the matching edge. Only `flex-col` and translate are used, never a reversed
+order, so reading and tab order follow the visible order (2.4.3).

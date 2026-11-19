@@ -258,6 +258,43 @@ export {
 } from "./components/containers/dynamicContainer";
 
 /*
+ * Drawer — a panel that slides in from the start or end edge over a scrim, built
+ * on the native `<dialog>` and its `showModal()` focus trap, Escape-to-close and
+ * top layer.
+ *
+ * Name it with exactly one of `title` (a visible heading, preferred) or
+ * `aria-label`. Drive it with `open` / `onOpenChange`, or `defaultOpen` alone to
+ * let it own the state; `onOpenChange(false)` fires on every close path. The
+ * close is animated: the component holds the exit transition before the element
+ * leaves the top layer, and drops it under reduced motion.
+ */
+export {
+  Drawer,
+  drawerStyles,
+  type DrawerVariants,
+  type IDrawerProps,
+} from "./components/containers/drawer";
+
+/*
+ * Modal — a centered dialog over a scrim for capturing a small amount of input,
+ * such as a login or sign-up form, built on the native `<dialog>` and its
+ * `showModal()` focus trap, Escape-to-close and top layer.
+ *
+ * Name it with exactly one of `title` (a visible heading, preferred) or
+ * `aria-label`. Drive it with `open` / `onOpenChange`, or `defaultOpen` alone to
+ * let it own the state; `onOpenChange(false)` fires on every close path. Use
+ * `Drawer` for an edge panel and `BrowserAlert` for a confirmation; this is for
+ * a short form. The close is animated, and drops to an instant close under
+ * reduced motion.
+ */
+export {
+  Modal,
+  modalStyles,
+  type IModalProps,
+  type ModalVariants,
+} from "./components/containers/modal";
+
+/*
  * Foundations: the page grid. `PageGrid` is the root layout, `GridItem` places
  * a region on it. Both are server components.
  */

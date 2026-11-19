@@ -57,7 +57,7 @@ const drawerStyles = tv({
      * the panel.
      */
     dialog: [
-      "group/drawer fixed inset-y-0 z-50 m-0 p-0",
+      "group/drawer fixed inset-y-0 z-50 m-0 box-border h-dvh p-0",
       "flex max-h-dvh min-w-[200px] max-w-[50vw] flex-col",
       "overflow-hidden bg-surface-overlay text-foreground shadow-modal",
       "transition-transform duration-200 ease-out motion-reduce:transition-none",
@@ -73,8 +73,15 @@ const drawerStyles = tv({
      * stops a scroll chaining out to the page behind once the panel hits its
      * end.
      */
+    /*
+     * `box-border` and `min-w-0`: the package ships no preflight, so elements
+     * are `content-box` by default and a `w-full` panel with padding would be
+     * wider than the dialog by the padding. `Card` does the same. `min-w-0`
+     * lets a flex child shrink below its content width instead of forcing the
+     * panel wider.
+     */
     panel: [
-      "flex min-h-0 w-full flex-1 flex-col overflow-y-auto overscroll-contain",
+      "box-border flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-y-auto overscroll-contain",
       "p-(--space-4)",
     ],
   },
@@ -87,12 +94,12 @@ const drawerStyles = tv({
      */
     side: {
       start: [
-        "start-0 border-e border-border-strong",
+        "start-0 end-auto border-e border-border-strong",
         "rounded-e-control",
         "data-[state=closed]:-translate-x-full rtl:data-[state=closed]:translate-x-full",
       ],
       end: [
-        "end-0 border-s border-border-strong",
+        "end-0 start-auto border-s border-border-strong",
         "rounded-s-control",
         "data-[state=closed]:translate-x-full rtl:data-[state=closed]:-translate-x-full",
       ],
