@@ -14,6 +14,10 @@ under reduced motion), and backdrop-click dismissal. Name it with exactly one of
 compile-time union. Drive it with the controlled pair `open` / `onOpenChange` or
 `defaultOpen` alone; `onOpenChange(false)` fires on every close path. `side` is
 `start` or `end` (logical, so `end` is the right in LTR) and `size` is `sm`,
-`md` or `lg`, floored at 200px and capped at 50vw. Exported as experimental:
+`md` or `lg`, floored at 200px and capped at 50vw. With `resizable` a handle on
+the inner edge drags the drawer wider: `size` is the starting width and the
+minimum, and it can grow by half of it. The handle is a focusable separator, so
+arrows, Home and End resize it too; `width` / `onWidthChange` control it.
+Exported as experimental:
 `Drawer`, `drawerStyles`, `IDrawerProps` and `DrawerVariants`. Storybook gains
 the `Drawer` stories and accessibility page.

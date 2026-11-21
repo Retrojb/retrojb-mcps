@@ -33,6 +33,16 @@ exports:
     kind: type
   - name: DrawerVariants
     kind: type
+  - name: DRAWER_WIDTHS
+    kind: constant
+    internal: true
+    note: >-
+      Starting width in px of each size. Read by Drawer.tsx for the resize
+      bounds; keep in step with the w-[...] classes in styles.ts.
+  - name: DRAWER_MAX_GROWTH
+    kind: constant
+    internal: true
+    note: How far a resizable drawer may grow past its starting width, 0.5.
 
 api:
   extends: "ComponentPropsWithoutRef<'dialog'> minus open, title, children, ref"
@@ -78,6 +88,26 @@ api:
     panelClassName:
       type: string
       note: Class for the scrollable content panel. className goes to the dialog.
+    resizable:
+      type: boolean
+      default: false
+      note: >-
+        Adds a drag handle on the inner edge. size is the starting width and the
+        minimum; the drawer can grow by half of it (md runs 400 to 600px).
+    width:
+      type: number
+      note: >-
+        Controlled width in px, clamped to the range size allows. Leave it off to
+        start at the width of size and let the drawer track the drag.
+    onWidthChange:
+      type: "(width: number) => void"
+      note: >-
+        Fires with the new width on every drag or key press, controlled or not.
+        Use it to persist the width.
+    resizeLabel:
+      type: string
+      default: Resize drawer
+      note: Accessible name of the resize handle. Override it to translate it.
 
 accessibility:
   element: dialog
@@ -86,8 +116,16 @@ accessibility:
   keyboard:
     - Escape closes the drawer (the platform, via showModal).
     - Tab and Shift+Tab are trapped inside while open (the platform).
-  wcag: ["1.3.1", "2.1.2", "2.3.3", "2.4.3", "4.1.2"]
+    - >-
+      On the resize handle (resizable only): Left and Right arrows resize in 16px
+      steps, Home and End jump to the minimum and maximum.
+  wcag: ["1.3.1", "2.1.1", "2.1.2", "2.3.3", "2.4.3", "2.5.7", "4.1.2"]
   notes:
+    - >-
+      The resize handle is a focusable role="separator" with aria-orientation,
+      aria-valuenow, aria-valuemin and aria-valuemax in px. Dragging is not the
+      only way to resize (2.1.1, 2.5.7). It comes after the panel in the DOM, so
+      the caller's controls take the initial focus.
     - >-
       Built on a native dialog opened with showModal(), so the focus trap, the
       inert background, Escape-to-close (2.1.2), focus restoration on close and

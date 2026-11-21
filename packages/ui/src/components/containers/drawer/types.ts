@@ -68,6 +68,40 @@ interface IDrawerOwnProps extends Pick<DrawerVariants, "side" | "size"> {
   /** The drawer's content: your header, body and any footer controls. */
   readonly children?: ReactNode;
 
+  /**
+   * Adds a handle on the inner edge so the user can drag the drawer wider.
+   * Dragging is the pointer path; the handle is also a keyboard-focusable
+   * separator that Left and Right arrows, Home and End resize.
+   *
+   * `size` is the starting width and the narrowest it can be. It can grow by
+   * half of that: a `md` drawer (400px) resizes between 400px and 600px. The
+   * 50vw cap still applies on a narrow viewport.
+   *
+   * @default false
+   */
+  readonly resizable?: boolean;
+
+  /**
+   * The drawer's width in px. Controlled: pass it with `onWidthChange`. Leave it
+   * `undefined` to start at the width of `size` and let the drawer track the
+   * drag itself. Clamped to the range `size` allows.
+   */
+  readonly width?: number;
+
+  /**
+   * Called with the new width in px whenever a drag or a key press changes it,
+   * controlled or not. Use it to remember the width, for example in
+   * `localStorage`.
+   */
+  readonly onWidthChange?: (width: number) => void;
+
+  /**
+   * The accessible name of the resize handle. Override it to translate it.
+   *
+   * @default Resize drawer
+   */
+  readonly resizeLabel?: string;
+
   /** Class for the content panel. `className` goes to the `<dialog>`. */
   readonly panelClassName?: string;
 
@@ -84,14 +118,13 @@ interface IDrawerOwnProps extends Pick<DrawerVariants, "side" | "size"> {
  * The accessible name is required and comes from either `title` or `aria-label`,
  * never both and never neither — see {@link IDrawerNamedByTitle}.
  */
-type IDrawerProps =
-  & IDrawerOwnProps
-  & (IDrawerNamedByTitle | IDrawerNamedByLabel)
+type IDrawerProps = IDrawerOwnProps &
+  (IDrawerNamedByTitle | IDrawerNamedByLabel) &
   // The native `<dialog>` attributes, minus the ones the component owns: its
   // open state is driven through `open`/`onOpenChange`, its title is the `title`
   // prop above (a heading, not the HTML tooltip attribute), and `children` is
   // typed here.
-  & Omit<
+  Omit<
     ComponentPropsWithoutRef<"dialog">,
     "open" | "title" | "children" | "ref"
   >;

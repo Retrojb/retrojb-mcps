@@ -30,6 +30,9 @@ const meta = {
     side: { control: "inline-radio", options: ["start", "end"] },
     size: { control: "inline-radio", options: ["sm", "md", "lg"] },
     dismissOnBackdropClick: { control: "boolean" },
+    resizable: { control: "boolean" },
+    width: { table: { disable: true } },
+    onWidthChange: { table: { disable: true } },
     title: { control: "text" },
     open: { table: { disable: true } },
     onOpenChange: { table: { disable: true } },
@@ -75,6 +78,21 @@ export const Large: Story = {
  */
 export const LabelledNotTitled: Story = {
   args: { title: undefined, "aria-label": "Quick settings" },
+};
+
+/**
+ * `resizable`: drag the strip on the drawer's inner edge to widen it, or focus
+ * it with Tab and use Left and Right, Home and End. `size` is the starting width
+ * and the minimum, and the drawer can grow by half of it, so this `md` drawer
+ * runs from 400px to 600px.
+ */
+export const Resizable: Story = {
+  args: { resizable: true, title: "Filters" },
+};
+
+/** A `start` drawer resizes from its right edge, and `lg` runs 560px to 840px (capped at half the viewport). */
+export const ResizableStartLarge: Story = {
+  args: { resizable: true, side: "start", size: "lg", title: "Navigation" },
 };
 
 /**
