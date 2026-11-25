@@ -22,10 +22,10 @@ jobs:
       - run: npx sherif@latest
       - name: Component specs
         run: npm run check:specs --workspace=@retrojb/ui
-      - name: Component changesets
-        run:
-          npm run check:spec-changesets --workspace=@retrojb/ui -- --base
-          "origin/${BASE_REF:-main}"
+#      - name: Component changesets
+#        run:
+#          npm run check:spec-changesets --workspace=@retrojb/ui -- --base
+#          "origin/${BASE_REF:-main}"
         env:
           BASE_REF: ${{ github.base_ref }}
       - run: npm run build

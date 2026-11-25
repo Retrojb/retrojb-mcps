@@ -12,8 +12,6 @@ name: Deploy Sites
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 # Cancel a superseded run for the same ref, but never one that is mid-deploy on
