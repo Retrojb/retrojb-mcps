@@ -1,0 +1,186 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: drawer
+name: Drawer
+category: containers
+status: experimental
+complexity: molecule
+description: >-
+  A panel that slides in from the start or end edge of the viewport over a
+  scrim, built on the native dialog element and showModal(). Give it an
+  accessible name with exactly one of title or aria-label, never both.
+
+files:
+  component: packages/ui/src/components/containers/drawer/Drawer.tsx
+  types: packages/ui/src/components/containers/drawer/types.ts
+  styles: packages/ui/src/components/containers/drawer/styles.ts
+  barrel: packages/ui/src/components/containers/drawer/index.ts
+  story: apps/retrojb-storybook/src/stories/containers/Drawer.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/containers/accessibilityDocs/DrawerAccessibility.mdx
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Drawer
+    kind: component
+  - name: drawerStyles
+    kind: styles
+    note: >-
+      Slot recipe on the dialog and panel. Callable from a server component to
+      style a dialog this package does not own.
+  - name: IDrawerProps
+    kind: type
+  - name: DrawerVariants
+    kind: type
+  - name: DRAWER_WIDTHS
+    kind: constant
+    internal: true
+    note: >-
+      Starting width in px of each size. Read by Drawer.tsx for the resize
+      bounds; keep in step with the w-[...] classes in styles.ts.
+  - name: DRAWER_MAX_GROWTH
+    kind: constant
+    internal: true
+    note: How far a resizable drawer may grow past its starting width, 0.5.
+
+api:
+  extends: "ComponentPropsWithoutRef<'dialog'> minus open, title, children, ref"
+  required: []
+  variants:
+    side:
+      values: [start, end]
+      default: end
+      note: >-
+        Which edge it anchors to and slides from. Logical, so end is the right
+        in LTR and the left in RTL.
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: >-
+        320 / 400 / 560px resting width, floored at 200px and capped at 50vw by
+        the dialog slot whatever size is chosen.
+  props:
+    title:
+      type: ReactNode
+      note: >-
+        A visible heading and the accessible name, wired via aria-labelledby.
+        Mutually exclusive with aria-label; exactly one is required.
+    aria-label:
+      type: string
+      note: The accessible name when there is no visible heading. See title.
+    open:
+      type: boolean
+      note: Controlled open state. Pass with onOpenChange.
+    defaultOpen:
+      type: boolean
+      default: false
+      note: Open state on mount while uncontrolled.
+    onOpenChange:
+      type: "(open: boolean) => void"
+      note: >-
+        Fires on every open or close, controlled or not. The only way to observe
+        a close, and required to close a controlled drawer.
+    dismissOnBackdropClick:
+      type: boolean
+      default: true
+      note: Whether a click on the scrim closes the drawer.
+    panelClassName:
+      type: string
+      note: Class for the scrollable content panel. className goes to the dialog.
+    resizable:
+      type: boolean
+      default: false
+      note: >-
+        Adds a drag handle on the inner edge. size is the starting width and the
+        minimum; the drawer can grow by half of it (md runs 400 to 600px).
+    width:
+      type: number
+      note: >-
+        Controlled width in px, clamped to the range size allows. Leave it off to
+        start at the width of size and let the drawer track the drag.
+    onWidthChange:
+      type: "(width: number) => void"
+      note: >-
+        Fires with the new width on every drag or key press, controlled or not.
+        Use it to persist the width.
+    resizeLabel:
+      type: string
+      default: Resize drawer
+      note: Accessible name of the resize handle. Override it to translate it.
+
+accessibility:
+  element: dialog
+  role: dialog
+  pattern: Dialog (Modal)
+  keyboard:
+    - Escape closes the drawer (the platform, via showModal).
+    - Tab and Shift+Tab are trapped inside while open (the platform).
+    - >-
+      On the resize handle (resizable only): Left and Right arrows resize in 16px
+      steps, Home and End jump to the minimum and maximum.
+  wcag: ["1.3.1", "2.1.1", "2.1.2", "2.3.3", "2.4.3", "2.5.7", "4.1.2"]
+  notes:
+    - >-
+      The resize handle is a focusable role="separator" with aria-orientation,
+      aria-valuenow, aria-valuemin and aria-valuemax in px. Dragging is not the
+      only way to resize (2.1.1, 2.5.7). It comes after the panel in the DOM, so
+      the caller's controls take the initial focus.
+    - >-
+      Built on a native dialog opened with showModal(), so the focus trap, the
+      inert background, Escape-to-close (2.1.2), focus restoration on close and
+      the top layer come from the browser rather than from code here.
+    - >-
+      A modal dialog must have an accessible name (4.1.2). Exactly one of title
+      or aria-label gives it, enforced as a compile-time union rather than a
+      runtime check. title also renders a visible h2 that joins the document
+      outline (1.3.1).
+    - >-
+      The close is animated by holding data-state="closed" for the panel's
+      transform transition before the element leaves the top layer, since
+      dialog.close() would otherwise skip the exit. motion-reduce drops the
+      transition and the component closes on the next frame (2.3.3).
+    - >-
+      The native close event is the single source of truth for a close, so
+      Escape, a backdrop click and a programmatic close all report through one
+      onOpenChange(false).
+    - >-
+      Only logical translate and inset are used and DOM order is the content
+      order, so reading and tab order follow the visible order (2.4.3).
+    - >-
+      The scrim is the ::backdrop at --scrim-md. The surface draws no new text
+      pairing of its own; a Card or SearchBox inside reads
+      data-surface="overlay" to drop its shadow.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Prefer title over aria-label so the name is on screen as well as
+        announced.
+      - Drive it with open and onOpenChange, or defaultOpen alone, and handle
+        every close through onOpenChange.
+      - Set dismissOnBackdropClick false for a drawer the user must act in before
+        dismissing.
+    dont:
+      - Pass both title and aria-label, or neither. The type forbids it.
+      - Reach for this for a confirmation or an alert. Use BrowserAlert.
+
+tokens:
+  - surface-overlay
+  - foreground
+  - border-strong
+  - scrim-md
+  - shadow-modal
+  - radius-control
+  - space-3
+  - space-4
+  - heading-sm
+
+versioning:
+  introducedIn: "0.2.0"
+
+figma:
+  syncedWith: null

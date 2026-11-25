@@ -108,7 +108,7 @@ usage:
         role="dialog".
 
 tokens:
-  - surface
+  - surface-base
   - foreground
   - border-strong
   - accent
@@ -116,6 +116,9 @@ tokens:
   - success
   - danger
   - radius-control
+  - scrim-md
+  - surface-overlay
+  - elevation-modal
 
 versioning:
   introducedIn: "0.1.0"

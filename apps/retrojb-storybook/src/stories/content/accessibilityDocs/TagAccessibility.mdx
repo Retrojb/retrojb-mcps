@@ -6,18 +6,17 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 Extracted from `packages/ui/src/components/content/tag/styles.ts`, plus the
 markup in `Tag.tsx`. Ratios are measured with `checkContrast` from
-`@retrojb/wcag-a11y-scanner` against the tokens in
-`packages/ui/src/styles/tokens.css`, in the light theme and the dark theme
-(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
-values).
+`@retrojb/wcag-a11y-scanner` against the tokens in `packages/tokens`, in the
+light theme and the dark theme (`prefers-color-scheme: dark` or
+`data-theme="dark"`, which share one set of values).
 
 ## WCAG Standard and Expectations
 
 | Criterion                | Level | How the component meets it                                                                                                          |
 | ------------------------ | ----- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 1.4.1 Use of Color       | A     | The required `text` prop is the signal. `tone` only reinforces it, and the status stories use the word ("deprecated"), not just red |
-| 1.4.3 Contrast (Minimum) | AA    | Every tone's text clears 4.5:1 on `--surface` and on `--background` in both themes (6.26:1 at the lowest)                           |
-| 1.4.11 Non-text Contrast | AA    | Every tone's border clears 3:1 on `--surface` and on `--background` in both themes (4.16:1 at the lowest)                           |
+| 1.4.3 Contrast (Minimum) | AA    | Every tone's text clears 4.5:1 on `--surface-base` and on `--background` in both themes (6.26:1 at the lowest)                      |
+| 1.4.11 Non-text Contrast | AA    | Every tone's border clears 3:1 on `--surface-base` and on `--background` in both themes (4.16:1 at the lowest)                      |
 
 Not applicable to a tag:
 
@@ -46,8 +45,8 @@ meaning. This has not been checked in Windows High Contrast itself.
 
 ### Known gaps
 
-- The ratios cover `--surface` and `--background`. A tag on `--surface-raised`
-  or on a coloured fill needs its own check.
+- The ratios cover `--surface-base` and `--background`. A tag on
+  `--surface-raised-1` or on a coloured fill needs its own check.
 - A long label wraps rather than overflows, but has not been tested at 320 CSS
   px with real assistive technology.
 - Screen-reader output has not been tested with real assistive technology.
@@ -59,29 +58,29 @@ needs 3:1 (1.4.11).
 
 ### Text (needs 4.5:1)
 
-| Tone      |                           Pairing |   Light |    Dark |
-| --------- | --------------------------------: | ------: | ------: |
-| `neutral` |     `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
-| `neutral` |  `--foreground` on `--background` | 13.30:1 | 15.72:1 |
-| `info`    |    `--accent-text` on `--surface` | 15.33:1 | 14.50:1 |
-| `info`    | `--accent-text` on `--background` | 10.76:1 | 13.24:1 |
-| `success` |        `--success` on `--surface` |  8.99:1 |  9.77:1 |
-| `success` |     `--success` on `--background` |  6.31:1 |  8.92:1 |
-| `danger`  |         `--danger` on `--surface` |  8.91:1 |  9.00:1 |
-| `danger`  |      `--danger` on `--background` |  6.26:1 |  8.22:1 |
+| Tone      |                             Pairing |   Light |    Dark |
+| --------- | ----------------------------------: | ------: | ------: |
+| `neutral` |  `--foreground` on `--surface-base` | 18.95:1 | 17.21:1 |
+| `neutral` |    `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| `info`    | `--accent-text` on `--surface-base` | 15.33:1 | 14.50:1 |
+| `info`    |   `--accent-text` on `--background` | 10.76:1 | 13.24:1 |
+| `success` |     `--success` on `--surface-base` |  8.99:1 |  9.77:1 |
+| `success` |       `--success` on `--background` |  6.31:1 |  8.92:1 |
+| `danger`  |      `--danger` on `--surface-base` |  8.91:1 |  9.00:1 |
+| `danger`  |        `--danger` on `--background` |  6.26:1 |  8.22:1 |
 
 ### Border (needs 3:1)
 
-| Tone      |                             Pairing |  Light |   Dark |
-| --------- | ----------------------------------: | -----: | -----: |
-| `neutral` |    `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
-| `neutral` | `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
-| `info`    |           `--accent` on `--surface` | 8.82:1 | 9.72:1 |
-| `info`    |        `--accent` on `--background` | 6.19:1 | 8.87:1 |
-| `success` |          `--success` on `--surface` | 8.99:1 | 9.77:1 |
-| `success` |       `--success` on `--background` | 6.31:1 | 8.92:1 |
-| `danger`  |           `--danger` on `--surface` | 8.91:1 | 9.00:1 |
-| `danger`  |        `--danger` on `--background` | 6.26:1 | 8.22:1 |
+| Tone      |                               Pairing |  Light |   Dark |
+| --------- | ------------------------------------: | -----: | -----: |
+| `neutral` | `--border-strong` on `--surface-base` | 5.93:1 | 4.83:1 |
+| `neutral` |   `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| `info`    |        `--accent` on `--surface-base` | 8.82:1 | 9.72:1 |
+| `info`    |          `--accent` on `--background` | 6.19:1 | 8.87:1 |
+| `success` |       `--success` on `--surface-base` | 8.99:1 | 9.77:1 |
+| `success` |         `--success` on `--background` | 6.31:1 | 8.92:1 |
+| `danger`  |        `--danger` on `--surface-base` | 8.91:1 | 9.00:1 |
+| `danger`  |          `--danger` on `--background` | 6.26:1 | 8.22:1 |
 
 The neutral border uses `--border-strong`. `--border` is decorative only and
 fails 1.4.11 on every surface.

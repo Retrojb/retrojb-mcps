@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CodeSnippet } from "@retrojb/ui";
 import {
   Callout,
   Checklist,
@@ -329,8 +330,10 @@ export default function KeyboardPage(): React.ReactElement {
           field into view, and the sticky header covers it. The fix is one
           property:
         </p>
-        <pre>
-          <code>{`html {
+        <CodeSnippet
+          language="css"
+          label="scroll-padding-top example"
+          code={`html {
   /* Match your sticky header's height */
   scroll-padding-top: 5rem;
 }
@@ -338,8 +341,8 @@ export default function KeyboardPage(): React.ReactElement {
 /* Or per-element */
 :target, h2 {
   scroll-margin-top: 5rem;
-}`}</code>
-        </pre>
+}`}
+        />
         <p>
           2.4.12 is the AAA version, where <em>no part</em> of the focused
           component may be covered.

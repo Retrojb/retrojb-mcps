@@ -37,7 +37,7 @@
  * so it is the decorative token on purpose, and 1.4.11 does not apply to it.
  * What does have to clear 3:1 is the selected indicator, against everything it
  * touches: `--accent` measures 6.19 / 8.87:1 on `--background`, 8.82 / 9.72:1 on
- * `--surface`, 9.45 / 9.05:1 on `--surface-raised`, and 3.53 / 4.39:1 against
+ * `--surface-base`, 9.45 / 9.05:1 on `--surface-raised-1`, and 3.53 / 4.39:1 against
  * the `--border` baseline it sits directly on. Unselected tabs have no
  * boundary; their text identifies them, which 1.4.11 allows for an inactive
  * state.
@@ -90,8 +90,8 @@ const LABEL_BOX = "col-start-1 row-start-1 whitespace-nowrap";
 const tabGroupStyles = tv({
   slots: {
     root: "flex min-w-0",
-    scroller: "max-w-full p-(--spacing-10)",
-    list: "flex gap-(--spacing-10)",
+    scroller: "max-w-full p-(--space-1)",
+    list: "flex gap-(--space-1)",
     tab: [
       "relative grid shrink-0 items-center",
       /*
@@ -104,7 +104,7 @@ const tabGroupStyles = tv({
       "cursor-pointer border-transparent",
       /*
        * Unselected: `--foreground-muted`, 6.25 / 6.62:1 on `--background`,
-       * 8.91 / 7.25:1 on `--surface` and 9.55 / 6.76:1 on `--surface-raised`.
+       * 8.91 / 7.25:1 on `--surface-base` and 9.55 / 6.76:1 on `--surface-raised-1`.
        * Hovered: `--foreground`, 13.30 / 15.72:1 on `--background`.
        */
       "text-foreground-muted",
@@ -112,7 +112,7 @@ const tabGroupStyles = tv({
       /*
        * Selected: the `--accent` bar (see THE INDICATOR AND THE BASELINE) and
        * `--accent-text`, 10.76 / 13.24:1 on `--background` and 15.33 / 14.50:1
-       * on `--surface`. `font-semibold` sets `--tw-font-weight`, which the
+       * on `--surface-base`. `font-semibold` sets `--tw-font-weight`, which the
        * label role reads before its own default, so the weight survives it.
        */
       "aria-selected:border-accent aria-selected:font-semibold aria-selected:text-accent-text",
@@ -121,7 +121,7 @@ const tabGroupStyles = tv({
       /*
        * The package-wide indicator: 2px at a 2px offset, an outline so it
        * survives forced-colors mode. `--focus-ring` is 6.19 / 8.87:1 on
-       * `--background` and 8.82 / 9.72:1 on `--surface`.
+       * `--background` and 8.82 / 9.72:1 on `--surface-base`.
        */
       FOCUS_RING,
       /*
@@ -168,16 +168,16 @@ const tabGroupStyles = tv({
      */
     orientation: {
       horizontal: {
-        root: "flex-col gap-(--spacing-20)",
-        scroller: "overflow-x-auto scroll-px-(--spacing-40)",
+        root: "flex-col gap-(--space-2)",
+        scroller: "overflow-x-auto scroll-px-(--space-4)",
         // `w-max` so the baseline runs under every tab when the row scrolls;
         // `min-w-full` so it still spans the container when it does not.
         list: "w-max min-w-full border-b border-border",
         tab: "justify-items-center rounded-t-control border-b-3",
       },
       vertical: {
-        root: "flex-row items-start gap-(--spacing-30)",
-        scroller: "shrink-0 overflow-y-auto scroll-py-(--spacing-40)",
+        root: "flex-row items-start gap-(--space-3)",
+        scroller: "shrink-0 overflow-y-auto scroll-py-(--space-4)",
         list: "flex-col border-e border-border",
         tab: "justify-items-start rounded-s-control border-e-3 text-start",
         panel: "flex-1",
@@ -189,13 +189,13 @@ const tabGroupStyles = tv({
      */
     size: {
       sm: {
-        tab: "min-h-8 px-(--spacing-30) py-(--spacing-10) text-label-md",
+        tab: "min-h-(--control-height-sm) px-(--space-3) py-(--space-1) text-label-md",
       },
       md: {
-        tab: "min-h-10 px-(--spacing-40) py-(--spacing-10) text-label-md",
+        tab: "min-h-(--control-height-md) px-(--space-4) py-(--space-1) text-label-md",
       },
       lg: {
-        tab: "min-h-12 px-(--spacing-60) py-(--spacing-20) text-label-lg",
+        tab: "min-h-(--control-height-lg) px-(--space-6) py-(--space-2) text-label-lg",
       },
     },
     /*

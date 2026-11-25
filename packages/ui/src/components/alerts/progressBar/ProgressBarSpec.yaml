@@ -120,7 +120,7 @@ tokens:
   - foreground
   - foreground-muted
   - border-strong
-  - surface
+  - surface-base
   - accent
   - success
   - danger

@@ -36,7 +36,7 @@ const cardStyles = tv({
      * The box.
      *
      * `--border-strong`, not `--border`. The fill cannot carry the boundary on its
-     * own: `--surface` against `--background` measures 1.42:1 in light and 1.10:1 in
+     * own: `--surface-base` against `--background` measures 1.42:1 in light and 1.10:1 in
      * dark, which is no visible edge at all. `--border-strong` on `--background`
      * is 4.17 / 4.42:1 and clears 1.4.11; `--border` at 1.75–2.67:1 does not.
      *
@@ -48,11 +48,17 @@ const cardStyles = tv({
      * ring is an outline on a pseudo-element that sits *outside* this box, and an
      * overflow clip on the root would cut it off.
      */
+    /*
+     * `box-border`, because the root is `w-full` and `Card` puts the content
+     * padding on it. With no preflight the default is `content-box`, so the
+     * card was its container's width plus padding and border, 34px too wide
+     * at the default density, and overflowed a narrow column (1.4.10).
+     */
     root: [
-      "group/card relative @container max-w-[500px]",
+      "group/card relative @container box-border max-w-[500px]",
       "flex w-full min-w-0 h-full flex-col list-none",
       "rounded-control border border-border-strong",
-      "bg-surface text-foreground",
+      "bg-surface-base text-foreground",
     ],
     /*
      * The orientation switch, and the clip for the media corners.
@@ -76,16 +82,16 @@ const cardStyles = tv({
      * cropped to it with `object-cover`.
      */
     media: [
-      "relative shrink-0 overflow-hidden bg-surface-raised",
+      "relative shrink-0 overflow-hidden bg-surface-raised-1",
       "*:absolute *:inset-0 *:block *:size-full",
       "[&_img]:size-full [&_img]:object-cover",
       "[&_video]:size-full [&_video]:object-cover",
     ],
     content: "flex min-w-0 flex-1 flex-col",
-    header: "flex min-w-0 flex-col gap-(--spacing-10)",
+    header: "flex min-w-0 flex-col gap-(--space-1)",
     title: "m-0 min-w-0 text-foreground",
     body: "min-w-0 text-foreground-muted",
-    footer: "mt-auto flex flex-wrap items-center gap-(--spacing-20)",
+    footer: "mt-auto flex flex-wrap items-center gap-(--space-2)",
     /*
      * The one real control in an `InteractiveCard`, and its stretched overlay.
      *
@@ -121,12 +127,12 @@ const cardStyles = tv({
   variants: {
     size: {
       sm: {
-        content: "gap-(--spacing-20) p-(--spacing-30)",
+        content: "gap-(--space-2) p-(--space-3)",
         title: "text-title-md",
         body: "text-body-md",
       },
       md: {
-        content: "gap-(--spacing-30) p-(--spacing-40)",
+        content: "gap-(--space-3) p-(--space-4)",
         title: "text-title-lg",
         body: "text-body-md",
       },
@@ -135,7 +141,7 @@ const cardStyles = tv({
       vertical: { layout: "flex-col" },
       horizontal: {
         layout: "flex-col @md:flex-row",
-        media: "@md:aspect-auto @md:w-2/5 @md:min-h-(--spacing-1000)",
+        media: "@md:aspect-auto @md:w-2/5 @md:min-h-24",
       },
     },
     mediaRatio: {
@@ -152,13 +158,29 @@ const cardStyles = tv({
     disabled: {
       true: { root: "opacity-60" },
     },
+    /*
+     * Lifts the card off the surface it sits on: the `raised-1` shadow on the
+     * `raised-1` fill it pairs with. Off by default; the border already carries
+     * the boundary (1.4.11), and forced-colors mode removes the shadow and
+     * leaves that border.
+     *
+     * Inside an overlay (any ancestor with `data-surface="overlay"`: a dialog, a
+     * popover, a toast) the shadow is dropped and the border kept. An overlay is
+     * already the top surface, so a card in it has no higher level to lift to,
+     * and a shadow there would read as a second floating layer.
+     */
+    elevated: {
+      true: {
+        root: "bg-surface-raised-1 shadow-raised-1 in-data-[surface=overlay]:shadow-none",
+      },
+    },
   },
   compoundVariants: [
     {
       interactive: true,
       disabled: false,
       class: {
-        root: "hover:border-accent hover:bg-surface-raised",
+        root: "hover:border-accent hover:bg-surface-raised-1",
         title: [
           "group-hover/card:underline",
           "underline-offset-[0.15em] decoration-[0.08em]",
@@ -172,6 +194,7 @@ const cardStyles = tv({
     mediaRatio: "16/9",
     interactive: false,
     disabled: false,
+    elevated: false,
   },
 });
 

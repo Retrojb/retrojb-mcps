@@ -7,9 +7,9 @@ import { Meta } from "@storybook/addon-docs/blocks";
 Extracted from `packages/ui/src/components/forms/SegmentedControl/styles.ts`,
 plus the wiring in `SegmentedControl.tsx` and the prop contract in `types.ts`.
 Ratios are measured with `checkContrast` from `@retrojb/wcag-a11y-scanner`
-against the tokens in `packages/ui/src/styles/tokens.css`, in the light theme
-and the dark theme (`prefers-color-scheme: dark` or `data-theme="dark"`, which
-share one set of values).
+against the tokens in `packages/tokens`, in the light theme and the dark theme
+(`prefers-color-scheme: dark` or `data-theme="dark"`, which share one set of
+values).
 
 ## WCAG Standard and Expectations
 
@@ -22,7 +22,7 @@ share one set of values).
 | 2.1.1 Keyboard                    | A     | One tab stop; arrows move and select, wrapping and skipping disabled segments; Home / End jump to the ends      |
 | 2.3.3 Animation from Interactions | AAA   | Colour transitions only, with `motion-reduce:transition-none`; there is no sliding indicator                    |
 | 2.4.7 Focus Visible               | AA    | The package-wide 2px `outline` on the radio, which is the segment itself                                        |
-| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset, on the `--surface` track at 8.82 / 9.72:1                                      |
+| 2.4.13 Focus Appearance           | AAA   | 2px thickness plus a 2px offset, on the `--surface-base` track at 8.82 / 9.72:1                                 |
 | 2.5.8 Target Size (Minimum)       | AA    | Segments are 24 / 32 / 40px tall (`sm` / `md` / `lg`) and at least their label plus padding wide                |
 | 3.3.2 Labels or Instructions      | A     | `label` is a required prop; `labelHidden` hides it visually but keeps it as the name                            |
 | 4.1.2 Name, Role, Value           | A     | Native radios: role `radio`, name from the wrapping label, checked state from the platform                      |
@@ -66,7 +66,7 @@ Three cues change together:
 
 - shape — only the selected segment has a box; the others are transparent on the
   track, so in greyscale the selection is still the one filled shape;
-- fill — `--surface` to `--accent`, a luminance change of 8.82 / 9.72:1;
+- fill — `--surface-base` to `--accent`, a luminance change of 8.82 / 9.72:1;
 - weight — the text goes from 500 to 600.
 
 An invisible, `aria-hidden` copy of each label in the selected weight reserves
@@ -109,24 +109,24 @@ Measured against the default palette.
 
 ### Text (needs 4.5:1)
 
-| Role                  |                              Pairing |   Light |    Dark |
-| --------------------- | -----------------------------------: | ------: | ------: |
-| Legend                |     `--foreground` on `--background` | 13.30:1 | 15.72:1 |
-| Legend                |        `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
-| Unselected segment    |        `--foreground` on `--surface` | 18.95:1 | 17.21:1 |
-| Unselected, hovered   | `--foreground` on `--surface-raised` | 20.31:1 | 16.04:1 |
-| Selected segment text |  `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
+| Role                  |                                Pairing |   Light |    Dark |
+| --------------------- | -------------------------------------: | ------: | ------: |
+| Legend                |       `--foreground` on `--background` | 13.30:1 | 15.72:1 |
+| Legend                |     `--foreground` on `--surface-base` | 18.95:1 | 17.21:1 |
+| Unselected segment    |     `--foreground` on `--surface-base` | 18.95:1 | 17.21:1 |
+| Unselected, hovered   | `--foreground` on `--surface-raised-1` | 20.31:1 | 16.04:1 |
+| Selected segment text |    `--accent-foreground` on `--accent` |  9.32:1 | 10.19:1 |
 
 ### Track, indicator and focus (needs 3:1)
 
-| Role                    |                             Pairing |  Light |   Dark |
-| ----------------------- | ----------------------------------: | -----: | -----: |
-| Track border, outside   | `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
-| Track border, inside    |    `--border-strong` on `--surface` | 5.93:1 | 4.83:1 |
-| Selected fill           |           `--accent` on `--surface` | 8.82:1 | 9.72:1 |
-| Selected fill vs. hover |    `--accent` on `--surface-raised` | 9.45:1 | 9.05:1 |
-| Focus ring              |       `--focus-ring` on `--surface` | 8.82:1 | 9.72:1 |
-| Focus ring              |    `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
+| Role                    |                               Pairing |  Light |   Dark |
+| ----------------------- | ------------------------------------: | -----: | -----: |
+| Track border, outside   |   `--border-strong` on `--background` | 4.16:1 | 4.41:1 |
+| Track border, inside    | `--border-strong` on `--surface-base` | 5.93:1 | 4.83:1 |
+| Selected fill           |        `--accent` on `--surface-base` | 8.82:1 | 9.72:1 |
+| Selected fill vs. hover |    `--accent` on `--surface-raised-1` | 9.45:1 | 9.05:1 |
+| Focus ring              |    `--focus-ring` on `--surface-base` | 8.82:1 | 9.72:1 |
+| Focus ring              |      `--focus-ring` on `--background` | 6.19:1 | 8.87:1 |
 
 `--border` (1.75 / 2.02:1 on `--background`) is never used for the track: it
 fails 1.4.11. Unselected segments have no boundary of their own; their text

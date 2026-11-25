@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=../../../../../../componentSpec.schema.json
+specVersion: 1
+id: codeSnippet
+name: CodeSnippet
+category: typography
+subcategory: body
+status: shipped
+complexity: molecule
+description: >-
+  A code block with chrome: an optional header (file name and language), a copy
+  button, and bring-your-own syntax highlighting over a keyboard-focusable
+  scroll region. code is required because the copy button always copies it, not
+  the highlighted token text.
+
+files:
+  component: packages/ui/src/components/typography/body/code/codeSnippet/CodeSnippet.tsx
+  types: packages/ui/src/components/typography/body/code/codeSnippet/types.ts
+  styles: packages/ui/src/components/typography/body/code/codeSnippet/styles.ts
+  barrel: packages/ui/src/components/typography/body/code/codeSnippet/index.ts
+  story: null
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: CodeSnippet
+    kind: component
+  - name: codeSnippetStyles
+    kind: styles
+    note: >-
+      Slots are root (the figure), header, title, language, copyButton, pre (the
+      scroll region), code, and token. The token slot takes the sentiment
+      variant.
+  - name: CodeSnippetVariants
+    kind: type
+  - name: ICodeSnippetProps
+    kind: type
+  - name: ICodeToken
+    kind: type
+    note: "One tokenised run: text, and an optional sentiment."
+  - name: CodeSentiment
+    kind: type
+    note: positive, negative, special, emphasis, neutral.
+
+api:
+  extends: "Omit<ComponentPropsWithRef<'figure'>, 'children' | 'title' | 'onCopy'>"
+  required: [code, label]
+  props:
+    code:
+      type: string
+      note: The raw source. Copied verbatim by the copy button; rendered when no lines.
+    lines:
+      type: "readonly (readonly ICodeToken[])[]"
+      note: Pre-tokenised lines from a highlighter. Painted when present; copy still uses code.
+    label:
+      type: string
+      note: Accessible name of the focusable scroll region.
+    title:
+      type: ReactNode
+      note: Optional header label, typically a file name. Renders the header bar.
+    language:
+      type: string
+      note: Optional language badge in the header. Display only; does not drive highlighting.
+    copyLabel:
+      type: string
+      default: Copy
+    copiedLabel:
+      type: string
+      default: Copied
+    onCopy:
+      type: "(code: string) => void"
+  variants:
+    sentiment:
+      values: [none, positive, negative, special, emphasis, neutral]
+      default: none
+      note: On the token slot. Maps a run to a text-code-* colour; none inherits foreground.
+  defaults:
+    type: button
+
+accessibility:
+  element: figure
+  role: region
+  keyboard: [Tab, Arrow keys (scroll while focused), Enter/Space (copy button)]
+  wcag:
+    ["1.4.1", "1.4.3", "1.4.10", "1.4.11", "2.1.1", "2.4.7", "2.4.13", "4.1.2"]
+  notes:
+    - The code sits in a pre with role region, tabIndex 0 and an aria-label from
+      label, so a keyboard user can focus and scroll it (2.1.1, 4.1.2).
+    - The copy button is a native button with a visible text label, not an icon
+      alone, so its purpose survives greyscale and forced-colors mode (1.4.1).
+    - The copy result is announced through an aria-live polite region.
+    - Highlight sentiments reinforce the words and never replace them (1.4.1),
+      and each is solved for 4.5:1 on the code well surface-sunken (1.4.3).
+    - Scrolls sideways instead of wrapping. 1.4.10 exempts code as content that
+      needs two-dimensional layout.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: codeBlock
+      when: A plain block with no header, copy button or highlighting is enough.
+    - id: code
+      when: The code is a fragment inside a line of text.
+  guidance:
+    do:
+      - Give label a description of the contents, such as Install command.
+      - Run a highlighter, tag each run with a sentiment, and pass the result as
+        lines. Leave code as the plain source.
+    dont:
+      - Encode the highlighted markup into code. The copy button would then copy
+        the markup rather than the source.
+      - Rely on a sentiment colour alone to carry meaning the words do not.
+
+tokens:
+  - surface-sunken
+  - surface-base
+  - surface-raised-1
+  - foreground
+  - foreground-muted
+  - border
+  - border-strong
+  - focus
+  - code-positive
+  - code-negative
+  - code-special
+  - code-emphasis
+  - code-neutral
+  - radius-control
+  - code
+
+figma:
+  syncedWith: null

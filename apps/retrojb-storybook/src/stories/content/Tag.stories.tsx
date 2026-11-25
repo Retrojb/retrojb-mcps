@@ -36,7 +36,7 @@ export const Primary: Story = {
  */
 export const Tones: Story = {
   render: (args) => (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <div className="flex flex-wrap gap-(--space-3)">
       <Tag {...args} tone="neutral" text="Neutral" />
       <Tag {...args} tone="info" text="Info" />
       <Tag {...args} tone="success" text="Success" />
@@ -52,14 +52,7 @@ export const Tones: Story = {
  */
 export const Sizes: Story = {
   render: (args) => (
-    <div
-      style={{
-        display: "flex",
-        gap: "0.75rem",
-        flexWrap: "wrap",
-        alignItems: "center",
-      }}
-    >
+    <div className="flex flex-wrap items-center gap-(--space-3)">
       <Tag {...args} size="sm" text="Small" />
       <Tag {...args} size="md" text="Medium" />
     </div>
@@ -75,7 +68,7 @@ export const Sizes: Story = {
  */
 export const Statuses: Story = {
   render: (args) => (
-    <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+    <div className="flex flex-wrap gap-(--space-3)">
       <Tag {...args} tone="neutral" text="planned" />
       <Tag {...args} tone="neutral" text="stub" />
       <Tag {...args} tone="info" text="experimental" />

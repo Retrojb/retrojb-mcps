@@ -87,29 +87,29 @@ line up when they sit side by side in a row. The same AAA caveat applies: only
 
 ## Colors
 
-The control sits on `--surface-raised`, not `--background`, so its pairings are
-measured against that.
+The control sits on `--surface-raised-1`, not `--background`, so its pairings
+are measured against that.
 
 ### Text (needs 4.5:1)
 
-| Role        | Pairing                                    |  Light |   Dark |
-| ----------- | ------------------------------------------ | -----: | -----: |
-| Value       | `--foreground` on `--surface-raised`       | 17.8:1 | 14.3:1 |
-| Placeholder | `--foreground-muted` on `--surface-raised` | 6.43:1 | 7.39:1 |
-| Label       | `--foreground` on `--background`           | 17.8:1 | 16.6:1 |
-| Description | `--foreground-muted` on `--background`     | 6.43:1 | 8.59:1 |
-| Error       | `--danger` on `--background`               | 6.53:1 | 9.74:1 |
+| Role        | Pairing                                      |  Light |   Dark |
+| ----------- | -------------------------------------------- | -----: | -----: |
+| Value       | `--foreground` on `--surface-raised-1`       | 17.8:1 | 14.3:1 |
+| Placeholder | `--foreground-muted` on `--surface-raised-1` | 6.43:1 | 7.39:1 |
+| Label       | `--foreground` on `--background`             | 17.8:1 | 16.6:1 |
+| Description | `--foreground-muted` on `--background`       | 6.43:1 | 8.59:1 |
+| Error       | `--danger` on `--background`                 | 6.53:1 | 9.74:1 |
 
 The placeholder clears 4.5:1, but it is still not a label — it disappears on
 input and is not a reliable accessible name. That is why `label` is required.
 
 ### Borders and focus ring (needs 3:1)
 
-| State      | Pairing                                 |  Light |   Dark |
-| ---------- | --------------------------------------- | -----: | -----: |
-| Valid      | `--border-strong` on `--surface-raised` | 4.26:1 | 3.59:1 |
-| Invalid    | `--danger` on `--surface-raised`        | 6.53:1 | 8.38:1 |
-| Focus ring | `--focus-ring` on `--background`        | 5.98:1 | 8.81:1 |
+| State      | Pairing                                   |  Light |   Dark |
+| ---------- | ----------------------------------------- | -----: | -----: |
+| Valid      | `--border-strong` on `--surface-raised-1` | 4.26:1 | 3.59:1 |
+| Invalid    | `--danger` on `--surface-raised-1`        | 6.53:1 | 8.38:1 |
+| Focus ring | `--focus-ring` on `--background`          | 5.98:1 | 8.81:1 |
 
 1.4.11 applies to the input's boundary because the boundary is what identifies
 the control. `border-border-strong` is used rather than `border-border` for that

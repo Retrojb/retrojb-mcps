@@ -87,7 +87,7 @@ const TableRow = ({
   /*
    * Striping is dropped for a selected row, here rather than in CSS.
    *
-   * `odd:bg-surface` and `bg-accent/10` have the same specificity, so left to
+   * `odd:bg-surface-base` and `bg-accent/10` have the same specificity, so left to
    * the cascade which one paints a selected odd row depends on the order the two
    * utilities happen to appear in the compiled stylesheet — it would work, until
    * a Tailwind upgrade reordered them. Deciding it in JavaScript means only one

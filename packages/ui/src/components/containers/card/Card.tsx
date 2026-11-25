@@ -25,12 +25,13 @@ import type { ICardProps } from "./types";
 const Card = ({
   as: Root = "div",
   size,
+  elevated,
   className,
   children,
   ref,
   ...props
 }: ICardProps): ReactElement => {
-  const slots = cardStyles({ size });
+  const slots = cardStyles({ size, elevated });
 
   const Element = Root as "div";
 

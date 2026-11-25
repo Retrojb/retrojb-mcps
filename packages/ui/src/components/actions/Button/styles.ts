@@ -29,12 +29,14 @@ import { tv, type VariantProps } from "../../../lib/tv";
  */
 const buttonStyle = tv({
   base: [
-    "inline-flex items-center justify-center gap-2",
+    "inline-flex items-center justify-center gap-(--space-2)",
     "rounded-control border border-transparent",
     // Weight comes from the `label-*` type role in `size`.
     "whitespace-nowrap",
     "cursor-pointer select-none",
-    "transition-colors motion-reduce:transition-none",
+    // Colours plus `box-shadow`, so an `elevated` button's lift animates with its
+    // fill. `transition-colors` leaves the shadow out.
+    "transition-[color,background-color,border-color,outline-color,box-shadow] motion-reduce:transition-none",
 
     /*
      * One focus indicator for every intent (WCAG 2.4.7). `focus-visible` rather
@@ -64,35 +66,68 @@ const buttonStyle = tv({
       // only one of the two that clears 1.4.11 as a control boundary, and the
       // boundary is what makes this readable as a button at all.
       secondary:
-        "border-border-strong bg-surface text-foreground hover:bg-surface-raised",
+        "border-border-strong bg-surface-base text-foreground hover:bg-surface-raised-1",
 
-      ghost: "bg-transparent text-accent-text hover:bg-surface",
+      ghost: "bg-transparent text-accent-text hover:bg-surface-base",
 
       danger: "bg-danger text-danger-foreground hover:opacity-90",
     },
 
     size: {
-      // Heights are 32/40/48px. All three clear the 24px minimum in 2.5.8 (AA).
+      // Heights are 32/40/48px (`--control-height-*`), and density does not
+      // change them, only the inline padding. All three clear the 24px minimum
+      // in 2.5.8 (AA).
       // Only `lg` clears the 44px enhanced target in 2.5.5 (AAA) — `md` is 40px
       // and falls 4px short, so reach for `lg` where AAA is the bar.
-      sm: "h-8 px-3 text-label-md",
-      md: "h-10 px-4 text-label-md",
-      lg: "h-12 px-6 text-label-lg",
+      sm: "h-(--control-height-sm) px-(--space-3) text-label-md",
+      md: "h-(--control-height-md) px-(--space-4) text-label-md",
+      lg: "h-(--control-height-lg) px-(--space-6) text-label-lg",
     },
 
     fullWidth: {
       true: "w-full",
     },
+
+    /*
+     * A resting shadow that lifts on hover and drops on press, so the press
+     * reads as the button going down. Off by default: a flat button with its
+     * border is the house style, and a shadow is extra depth on top of an edge
+     * that already identifies the control (1.4.11). Forced-colors mode removes
+     * the shadow and leaves that edge.
+     *
+     * `primary` and `danger` have `border-transparent`, which forced-colors
+     * mode repaints as a visible edge, so they keep a boundary there too.
+     *
+     * `ghost` has no surface to lift and `disabled` cannot be pressed, so the
+     * compound variants below take the shadow off both.
+     */
+    elevated: {
+      true: "shadow-control hover:shadow-control-hover active:shadow-none",
+    },
   },
+
+  compoundVariants: [
+    {
+      elevated: true,
+      intent: "ghost",
+      class: "shadow-none hover:shadow-none",
+    },
+    {
+      elevated: true,
+      class: "disabled:shadow-none disabled:hover:shadow-none",
+    },
+  ],
 
   defaultVariants: {
     intent: "primary",
     size: "md",
+    elevated: false,
   },
 });
 
 /**
- * The variant props of {@link buttonStyle}: `intent`, `size` and `fullWidth`.
+ * The variant props of {@link buttonStyle}: `intent`, `size`, `fullWidth` and
+ * `elevated`.
  *
  * @remarks
  * `IButtonProps` extends this and redeclares each variant with a description,

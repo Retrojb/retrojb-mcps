@@ -138,7 +138,7 @@ const TriggerDemo = ({
   };
 
   return (
-    <div className="flex min-h-96 flex-col items-start gap-3 p-6">
+    <div className="flex min-h-96 flex-col items-start gap-(--space-3) p-(--space-6)">
       <Button
         text="Open the alert"
         onClick={() => {

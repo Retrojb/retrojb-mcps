@@ -51,13 +51,14 @@ const GraphicCard = ({
   size,
   orientation,
   mediaRatio,
+  elevated,
   className,
   contentClassName,
   children,
   ref,
   ...props
 }: IGraphicCardProps): ReactElement => {
-  const slots = cardStyles({ size, orientation, mediaRatio });
+  const slots = cardStyles({ size, orientation, mediaRatio, elevated });
   // See the note on the same cast in `Card.tsx`.
   const Element = Root as "div";
   return (

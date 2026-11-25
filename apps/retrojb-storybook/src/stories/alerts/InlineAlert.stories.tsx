@@ -111,8 +111,8 @@ const AnnouncementDemo = (args: React.ComponentProps<typeof InlineAlert>) => {
   const [message, setMessage] = useState<string>("");
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex gap-2">
+    <div className="flex flex-col gap-(--space-4)">
+      <div className="flex gap-(--space-2)">
         <Button
           text="Trigger both"
           onClick={() =>
@@ -126,8 +126,8 @@ const AnnouncementDemo = (args: React.ComponentProps<typeof InlineAlert>) => {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-(--space-4)">
+        <div className="flex flex-col gap-(--space-2)">
           <p className="text-sm font-semibold text-success">
             Announces — region always mounted
           </p>
@@ -136,7 +136,7 @@ const AnnouncementDemo = (args: React.ComponentProps<typeof InlineAlert>) => {
           </InlineAlert>
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-(--space-2)">
           <p className="text-sm font-semibold text-danger">
             Usually silent — region mounted with the text
           </p>

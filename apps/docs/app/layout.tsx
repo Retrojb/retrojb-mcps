@@ -44,8 +44,10 @@ export default function RootLayout({
   return (
     // A declared language lets screen readers pick the right pronunciation
     // rules (WCAG 3.1.1).
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+    // The font variables go on <html>, the element `--font-family-sans` is
+    // declared on in `globals.css`, so the override can see them.
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body>
         <Shell>{children}</Shell>
       </body>
     </html>

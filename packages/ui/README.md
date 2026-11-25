@@ -178,18 +178,67 @@ so overriding the token retints every component with no rebuild of this package:
 }
 ```
 
-The defaults ship in `dist/styles.css` inside `@layer theme`, and unlayered CSS
-wins over layered CSS, so an app's own `:root` block overrides them without
-`!important` or a specificity fight. `apps/docs` already declares these tokens,
-so it retints this package automatically and its `npm run check:contrast` stays
-the authority on the palette.
+The token values come from [`@retrojb/tokens`](../tokens) and are bundled into
+`dist/styles.css` inside `@layer theme`. Unlayered CSS wins over layered CSS, so
+an app's own `:root` block overrides them without `!important` or a specificity
+fight. The theme follows the OS by default; set `data-theme="light"` or
+`data-theme="dark"` on `<html>` to force one.
+`npm run check:contrast --workspace=@retrojb/docs` measures the token sources
+and is the authority on the palette.
 
-Apps running their own Tailwind build can import just the token mapping to get
-the same utilities in their own markup:
+### Using it with your own Tailwind build
+
+An app that writes Tailwind classes in its own markup runs its own Tailwind
+build. Set it up like this, which is what `apps/docs` does:
+
+```tsx
+// app/layout.tsx
+import "@retrojb/ui/styles.css"; // components and token values
+import "./globals.css"; // your Tailwind build, below
+```
 
 ```css
-@import "@retrojb/ui/theme.css";
+/* globals.css */
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@import "@retrojb/ui/theme.css"; /* bg-accent, shadow-overlay, text-body-sm… */
+
+@source "./**/*.tsx";
+@source "../node_modules/@retrojb/ui/dist"; /* the library's classes: see below */
+
+:root {
+  /* Your brand faces. Put the next/font classes on <html>. */
+  --font-family-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
 ```
+
+Why each line is there:
+
+- **`tailwindcss/theme.css` and `utilities.css`, not `@import "tailwindcss"`.**
+  That leaves out Tailwind's preflight reset, which this package does not
+  assume.
+- **`@source` on the library.** Your build is a second stylesheet after
+  `styles.css`, and between two stylesheets the later rule wins. If your markup
+  uses `border` and a component uses `border-s-4`, your `.border` lands last and
+  the component's 4px edge becomes 1px. Scanning the library regenerates its
+  classes in your stylesheet, where Tailwind sorts them correctly. Point it at
+  wherever `@retrojb/ui` is installed.
+- **`@retrojb/ui/theme.css`.** Registers the colours, type roles, shadow roles
+  and breakpoints as utilities, so your markup uses the same `bg-accent` and
+  `shadow-overlay` the components do. It also points Tailwind's `rounded-xs` to
+  `rounded-lg` at the token radii, so they match the components whatever order
+  the stylesheets load in. The token values themselves arrive with
+  `@retrojb/ui/styles.css`.
+- **`--font-family-sans` and `--font-family-mono`.** The supported way to set a
+  brand face. They must be declared on the element that holds the font
+  variables, which is why the font classes go on `<html>`.
+
+Then, on `<html>`: `data-theme` to force a theme, `data-density` for density.
+The page grid is `PageGrid` and `GridItem`; see
+`project-docs/references/LAYOUT.md`.
 
 ## Accessibility
 
@@ -224,11 +273,11 @@ call site:
 - One focus indicator across all four components: a 2px `outline` with a 2px
   offset on `:focus-visible` (2.4.7, 2.4.13). An `outline` rather than a `ring`
   box-shadow, because outlines survive forced-colors mode.
-- Contrast ratios for every token pair are recorded in `src/styles/tokens.css`,
-  and the pairings these components introduce — button labels on their fills,
-  input text, borders and focus rings — are gated by
-  `npm run check:contrast --workspace=@retrojb/docs`, which uses the engine from
-  `@retrojb/wcag-a11y-scanner`. If you change a colour, run it.
+- Contrast ratios for every token pair are recorded in
+  `packages/tokens/src/light.css`, and the pairings these components introduce —
+  button labels on their fills, input text, borders and focus rings — are gated
+  by `npm run check:contrast --workspace=@retrojb/docs`, which uses the engine
+  from `@retrojb/wcag-a11y-scanner`. If you change a colour, run it.
 
 Colour is never the only signal for a state: the invalid input changes its
 border as well as showing a message, disabled controls change cursor as well as

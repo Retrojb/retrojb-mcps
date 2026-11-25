@@ -14,7 +14,7 @@
  * pairings were invisible from here — and the script reported "All palette
  * pairings meet WCAG 2 level AA" the whole time.
  *
- * So it parses `packages/ui/src/styles/tokens.css` instead, resolves the `var()`
+ * So it parses the token sources in `packages/tokens/src` instead, resolves the `var()`
  * chains the way a browser would, and checks what it finds. There is no list of
  * colours to keep in step because there is no second copy. Add a token to the
  * ramp and it is checked; point a semantic token at a different step and the new
@@ -38,24 +38,17 @@ import { dirname, resolve as resolvePath } from "node:path";
 import { checkContrast } from "@retrojb/wcag-a11y-scanner";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const TOKENS_FILE = resolvePath(
-  HERE,
-  "../../../packages/ui/src/styles/tokens.css",
-);
-
-const css = readFileSync(TOKENS_FILE, "utf8");
+const TOKENS_SRC = resolvePath(HERE, "../../../packages/tokens/src");
+const LIGHT_FILE = resolvePath(TOKENS_SRC, "light.css");
+const DARK_FILE = resolvePath(TOKENS_SRC, "dark.css");
 
 /*
- * The dark block is a `prefers-color-scheme` media query inside the same
- * `@layer theme`, so splitting on it separates the two themes. Comments are
- * stripped first — every token in that file carries a ratio annotation, and
- * `/* 4.5:1 * /` would otherwise parse as a declaration.
+ * The palette is authored as two files: `light.css` holds every colour token,
+ * and `dark.css` holds only the values that differ in dark mode. The shipped
+ * stylesheet pairs them into `light-dark()` declarations, but the engine parses
+ * plain colours only, so the sources are what gets measured. They are also what
+ * the build reads, so there is no second copy to drift from.
  */
-const DARK_AT = css.indexOf("@media (prefers-color-scheme: dark)");
-if (DARK_AT === -1) {
-  console.error(`Could not find the dark-mode block in ${TOKENS_FILE}.`);
-  process.exit(1);
-}
 
 function declarations(block) {
   const withoutComments = block.replace(/\/\*[\s\S]*?\*\//g, "");
@@ -68,14 +61,14 @@ function declarations(block) {
   return found;
 }
 
-const LIGHT_DECLS = declarations(css.slice(0, DARK_AT));
-const DARK_DECLS = declarations(css.slice(DARK_AT));
+const LIGHT_DECLS = declarations(readFileSync(LIGHT_FILE, "utf8"));
+const DARK_DECLS = declarations(readFileSync(DARK_FILE, "utf8"));
 
 /**
  * Resolves a token to a literal colour, following `var()` chains.
  *
- * Dark shadows light rather than replacing it, which is how the cascade actually
- * behaves: the dark block restates only the ramps and the handful of values that
+ * Dark shadows light rather than replacing it, which is how the build pairs
+ * them: `dark.css` restates only the ramps and the handful of values that
  * differ, and every semantic token declared once in the light `:root` resolves
  * through to whatever is in scope.
  */
@@ -98,7 +91,7 @@ function resolveToken(name, theme, seen = new Set()) {
 const RAMPS = ["primary", "secondary", "neutral"];
 
 /**
- * The contract each contracted ramp step carries, from the table in `tokens.css`.
+ * The contract each contracted ramp step carries, from the table in `packages/tokens/src/light.css`.
  *
  * Steps 0-4 are surfaces and decorative borders and carry none: 1.4.11 governs
  * boundaries that identify a control, and a separator between two rows identifies
@@ -115,8 +108,11 @@ const RAMP_CONTRACTS = [
 /** Surfaces anything can land on. `--neutral-3` is the worst in both themes. */
 const SURFACES = [
   "background",
-  "surface",
-  "surface-raised",
+  "surface-sunken",
+  "surface-base",
+  "surface-raised-1",
+  "surface-raised-2",
+  "surface-overlay",
   "neutral-1",
   "neutral-2",
   "neutral-3",
@@ -125,7 +121,7 @@ const SURFACES = [
 /**
  * The semantic tokens this site renders, and what each is measured as.
  *
- * `code-background` is not in `tokens.css` — `app/globals.css` derives it from
+ * `code-background` is not a library token — `app/globals.css` derives it from
  * `--neutral-1`, one step off the page in either theme. Named here so the code and
  * pre blocks are covered too.
  */
@@ -150,7 +146,33 @@ const ON_FILL = [
   ["label on accent hover", "accent-foreground", "accent-hover"],
   ["label on danger", "danger-foreground", "danger"],
   ["code text", "foreground", "neutral-1"],
+  // Sentiment Tag tints: the tone's text on its soft fill, both themes. `danger`
+  // is the `label on danger` row above; it fills saturated and takes no tint.
+  ["tag neutral text on tint", "foreground", "tag-neutral-surface"],
+  ["tag info text on tint", "accent-text", "tag-info-surface"],
+  ["tag success text on tint", "success", "tag-success-surface"],
 ];
+
+/**
+ * Code-highlight sentiments, and the surfaces a code block actually fills with.
+ *
+ * Unlike the semantic text tokens, these are not measured against every surface
+ * in the app. Code lives in a well: `CodeSnippet` and `CodeBlock` fill with
+ * `--surface-sunken`, and the docs' own `pre`/`code` fill with
+ * `--surface-raised-1`. Those are the only backgrounds a highlighted run ever
+ * lands on, so measuring against `--background` or a mid-grey `--neutral-2`
+ * would hold the palette to a contract it never has to meet. `--surface-sunken`
+ * is the darker of the two in light mode and the lighter in dark, so each
+ * sentiment is solved there as the worst case (1.4.3).
+ */
+const CODE_SENTIMENTS = [
+  ["code positive", "code-positive"],
+  ["code negative", "code-negative"],
+  ["code special", "code-special"],
+  ["code emphasis", "code-emphasis"],
+  ["code neutral", "code-neutral"],
+];
+const CODE_SURFACES = ["surface-sunken", "surface-raised-1"];
 
 let failures = 0;
 let checks = 0;
@@ -237,6 +259,20 @@ for (const theme of ["light", "dark"]) {
       resolveToken(background, theme),
       "text",
     );
+  }
+
+  console.log(`\n${theme} theme — code-highlight sentiments, on the code well`);
+  console.log("-".repeat(88));
+
+  for (const [label, token] of CODE_SENTIMENTS) {
+    for (const surface of CODE_SURFACES) {
+      report(
+        `${label} on --${surface}`,
+        resolveToken(token, theme),
+        resolveToken(surface, theme),
+        "text",
+      );
+    }
   }
 }
 

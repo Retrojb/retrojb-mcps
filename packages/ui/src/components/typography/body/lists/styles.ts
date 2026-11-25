@@ -22,18 +22,19 @@ import { tv, type VariantProps } from "../../../../lib/tv";
 const listStyles = tv({
   base: [
     // No preflight, so the UA `1em` block margin is removed here. The inline
-    // padding is the marker's gutter and is restated in the token scale.
-    "m-0 min-w-0 ps-(--spacing-60)",
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface.
+    // padding is the marker's gutter. A fixed `ps-6` rather than a space
+    // token: a compact 18px gutter would clip a two-digit marker like "10.".
+    "m-0 min-w-0 ps-6",
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.22:1 on --surface-base.
     "text-foreground",
     /*
      * Markers in the muted foreground: 6.25 / 6.63:1 on --background and
-     * 8.91 / 7.26:1 on --surface, so a number in an ordered list — which is
+     * 8.91 / 7.26:1 on --surface-base, so a number in an ordered list — which is
      * content, not decoration — still clears 1.4.3.
      */
     "marker:text-foreground-muted",
     // Space between items, and above a list nested in an item.
-    "space-y-(--spacing-10) [&_ul]:mt-(--spacing-10) [&_ol]:mt-(--spacing-10)",
+    "space-y-(--space-1) [&_ul]:mt-(--space-1) [&_ol]:mt-(--space-1)",
   ],
   variants: {
     // The body roles; see `body/paragraph/styles.ts`. Items inherit the size.
@@ -55,7 +56,7 @@ const listStyles = tv({
 
 const listItemStyles = tv({
   // `ps` nudges the text off the marker; `text-pretty` as on `Paragraph`.
-  base: "min-w-0 ps-(--spacing-10) text-pretty wrap-break-word",
+  base: "min-w-0 ps-(--space-1) text-pretty wrap-break-word",
 });
 
 export { listItemStyles, listStyles };

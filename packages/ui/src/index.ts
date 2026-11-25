@@ -195,6 +195,21 @@ export {
 } from "./components/content/tag";
 
 /*
+ * Avatar — a picture or initials for a person, team or account, in a round or
+ * square frame.
+ *
+ * `name` is required: it is the accessible name and the source of the
+ * initials. A missing or broken picture falls back to the initials. Set
+ * `decorative` when the name is already written beside it.
+ */
+export {
+  Avatar,
+  avatarStyles,
+  type AvatarVariants,
+  type IAvatarProps,
+} from "./components/content/avatar";
+
+/*
  * Chip — a small toggle button for filter-style selection.
  *
  * Renders one `<button type="button">` with `aria-pressed`, and a check icon
@@ -243,6 +258,65 @@ export {
 } from "./components/containers/dynamicContainer";
 
 /*
+ * Drawer — a panel that slides in from the start or end edge over a scrim, built
+ * on the native `<dialog>` and its `showModal()` focus trap, Escape-to-close and
+ * top layer.
+ *
+ * Name it with exactly one of `title` (a visible heading, preferred) or
+ * `aria-label`. Drive it with `open` / `onOpenChange`, or `defaultOpen` alone to
+ * let it own the state; `onOpenChange(false)` fires on every close path. The
+ * close is animated: the component holds the exit transition before the element
+ * leaves the top layer, and drops it under reduced motion.
+ */
+export {
+  Drawer,
+  drawerStyles,
+  type DrawerVariants,
+  type IDrawerProps,
+} from "./components/containers/drawer";
+
+/*
+ * Modal — a centered dialog over a scrim for capturing a small amount of input,
+ * such as a login or sign-up form, built on the native `<dialog>` and its
+ * `showModal()` focus trap, Escape-to-close and top layer.
+ *
+ * Name it with exactly one of `title` (a visible heading, preferred) or
+ * `aria-label`. Drive it with `open` / `onOpenChange`, or `defaultOpen` alone to
+ * let it own the state; `onOpenChange(false)` fires on every close path. Use
+ * `Drawer` for an edge panel and `BrowserAlert` for a confirmation; this is for
+ * a short form. The close is animated, and drops to an instant close under
+ * reduced motion.
+ */
+export {
+  Modal,
+  modalStyles,
+  type IModalProps,
+  type ModalVariants,
+} from "./components/containers/modal";
+
+/*
+ * Foundations: the page grid. `PageGrid` is the root layout, `GridItem` places
+ * a region on it. Both are server components.
+ */
+export {
+  GRID_BREAKPOINTS,
+  GridItem,
+  PageGrid,
+  gridItemPlacement,
+  gridItemStyles,
+  pageGridStyles,
+  type GridBreakpoint,
+  type GridItemElement,
+  type GridItemVariants,
+  type GridResponsive,
+  type GridSpan,
+  type IGridItemProps,
+  type IPageGridProps,
+  type PageGridElement,
+  type PageGridVariants,
+} from "./components/foundations/pageGrid";
+
+/*
  * Typography — five headings and the body components, on the semantic type
  * roles.
  *
@@ -255,6 +329,7 @@ export {
 export {
   Code,
   CodeBlock,
+  CodeSnippet,
   Emphasis,
   List,
   ListItem,
@@ -267,6 +342,7 @@ export {
   SubHeading,
   TitleHeading,
   codeBlockStyles,
+  codeSnippetStyles,
   codeStyles,
   emphasisStyles,
   listItemStyles,
@@ -279,11 +355,15 @@ export {
   strongStyles,
   subHeadingStyles,
   titleHeadingStyles,
+  type CodeSentiment,
+  type CodeSnippetVariants,
   type HeadingLevel,
   type HeadingSize,
   type HeadingVariants,
   type ICodeBlockProps,
   type ICodeProps,
+  type ICodeSnippetProps,
+  type ICodeToken,
   type IEmphasisProps,
   type IHeadingProps,
   type IListItemProps,
@@ -309,5 +389,8 @@ export {
 // rules the components use, rather than a second, differently-configured copy.
 export { cn, cx, tv, type VariantProps } from "./lib/tv";
 // The semantic type roles; `text-${role}` is the utility for each. See the
-// typography section of `styles/tokens.css`.
+// typography section of `packages/tokens/src/base.css`.
 export { TYPE_ROLES, type TypeRole } from "./lib/tv";
+// The elevation roles (`shadow-${role}`) and bevels (`inset-shadow-${bevel}`).
+// See the elevation and bevel sections of `packages/tokens/src/base.css`.
+export { BEVELS, SHADOW_ROLES, type Bevel, type ShadowRole } from "./lib/tv";

@@ -86,7 +86,7 @@ tokens:
   - accent
   - accent-foreground
   - border-strong
-  - surface-raised
+  - surface-raised-1
   - foreground
   - foreground-muted
   - danger

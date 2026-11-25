@@ -25,7 +25,7 @@
  *   - shape: only the selected segment has a box at all. The others are
  *     transparent on the track, so in greyscale the selection is still the one
  *     filled shape in the row;
- *   - fill: `--surface` to `--accent`, a luminance change of 8.82 / 9.72:1, not
+ *   - fill: `--surface-base` to `--accent`, a luminance change of 8.82 / 9.72:1, not
  *     only a hue change;
  *   - weight: the text goes from the label role's 500 to 600.
  *
@@ -71,17 +71,17 @@ const segmentedControlStyles = tv({
     // The fieldset reset from `CheckboxGroup`: no UA border, padding or margin,
     // and `min-w-0` undoes `min-inline-size: min-content`.
     root: "m-0 min-w-0 border-0 p-0",
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface.
-    legend: "mb-(--spacing-20) p-0 text-label-md text-foreground",
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface-base.
+    legend: "mb-(--space-2) p-0 text-label-md text-foreground",
     /*
      * The track is a meaningful region — it is what groups the segments into
      * one control — so its edge is `--border-strong`: 4.16 / 4.41:1 against
-     * `--background` outside it and 5.93 / 4.83:1 against the `--surface` fill
+     * `--background` outside it and 5.93 / 4.83:1 against the `--surface-base` fill
      * inside. `--border` at 1.75 / 2.02:1 would fail 1.4.11.
      */
     track: [
-      "max-w-full items-stretch gap-(--spacing-10) p-(--spacing-10)",
-      "rounded-control border border-border-strong bg-surface",
+      "max-w-full items-stretch gap-(--space-1) p-(--space-1)",
+      "rounded-control border border-border-strong bg-surface-base",
     ],
     /*
      * The disabled look lives here rather than on the input so the fill and
@@ -99,18 +99,18 @@ const segmentedControlStyles = tv({
       SEGMENT_RADIUS,
       "border border-transparent bg-transparent",
       /*
-       * Selected: a solid `--accent` box, 8.82 / 9.72:1 against the `--surface`
+       * Selected: a solid `--accent` box, 8.82 / 9.72:1 against the `--surface-base`
        * track it sits on, so the indicator clears 1.4.11 as a state.
        */
       "checked:border-accent checked:bg-accent",
       // Decorative hover on unselected segments only; the text, not this fill,
       // is what identifies them.
-      "enabled:not-checked:hover:bg-surface-raised",
+      "enabled:not-checked:hover:bg-surface-raised-1",
       "cursor-pointer disabled:cursor-not-allowed",
       "transition-colors motion-reduce:transition-none",
       /*
        * The package-wide indicator: 2px at a 2px offset, an outline so it
-       * survives forced-colors mode. The offset ring sits on the `--surface`
+       * survives forced-colors mode. The offset ring sits on the `--surface-base`
        * track, 8.82 / 9.72:1, and is separated from a selected `--accent` fill
        * by a 2px band of that surface.
        */
@@ -130,8 +130,8 @@ const segmentedControlStyles = tv({
       "forced-colors:disabled:checked:border-[GrayText] forced-colors:disabled:checked:bg-[GrayText]",
     ],
     /*
-     * Unselected: `--foreground` on the `--surface` track, 18.95 / 17.21:1, and
-     * 20.31 / 16.04:1 on the `--surface-raised` hover fill. Selected:
+     * Unselected: `--foreground` on the `--surface-base` track, 18.95 / 17.21:1, and
+     * 20.31 / 16.04:1 on the `--surface-raised-1` hover fill. Selected:
      * `--accent-foreground` on `--accent`, 9.32 / 10.19:1.
      */
     text: [
@@ -154,19 +154,19 @@ const segmentedControlStyles = tv({
      */
     size: {
       sm: {
-        segment: "h-6",
-        text: "px-(--spacing-20) text-label-md",
-        sizer: "px-(--spacing-20) text-label-md",
+        segment: "h-(--control-height-xs)",
+        text: "px-(--space-2) text-label-md",
+        sizer: "px-(--space-2) text-label-md",
       },
       md: {
-        segment: "h-8",
-        text: "px-(--spacing-30) text-label-md",
-        sizer: "px-(--spacing-30) text-label-md",
+        segment: "h-(--control-height-sm)",
+        text: "px-(--space-3) text-label-md",
+        sizer: "px-(--space-3) text-label-md",
       },
       lg: {
-        segment: "h-10",
-        text: "px-(--spacing-40) text-label-lg",
-        sizer: "px-(--spacing-40) text-label-lg",
+        segment: "h-(--control-height-md)",
+        text: "px-(--space-4) text-label-lg",
+        sizer: "px-(--space-4) text-label-lg",
       },
     },
     /*

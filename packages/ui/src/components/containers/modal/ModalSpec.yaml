@@ -1,0 +1,156 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: modal
+name: Modal
+category: containers
+status: experimental
+complexity: molecule
+description: >-
+  A centered modal dialog for capturing a small amount of input, such as a login
+  or sign-up form, built on the native dialog element and showModal(). Give it an
+  accessible name with exactly one of title or aria-label, never both.
+
+files:
+  component: packages/ui/src/components/containers/modal/Modal.tsx
+  types: packages/ui/src/components/containers/modal/types.ts
+  styles: packages/ui/src/components/containers/modal/styles.ts
+  barrel: packages/ui/src/components/containers/modal/index.ts
+  story: null
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: Modal
+    kind: component
+  - name: modalStyles
+    kind: styles
+    note: >-
+      Slot recipe on the dialog and panel. Callable from a server component to
+      style a dialog this package does not own.
+  - name: IModalProps
+    kind: type
+  - name: ModalVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithoutRef<'dialog'> minus open, title, children, ref"
+  required: []
+  variants:
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: >-
+        320 / 420 / 560px max width, capped at calc(100% - 2rem) by the dialog
+        slot so it never touches the viewport edges on a narrow screen.
+  props:
+    title:
+      type: ReactNode
+      note: >-
+        A visible heading and the accessible name, wired via aria-labelledby.
+        Mutually exclusive with aria-label; exactly one is required.
+    aria-label:
+      type: string
+      note: The accessible name when there is no visible heading. See title.
+    open:
+      type: boolean
+      note: Controlled open state. Pass with onOpenChange.
+    defaultOpen:
+      type: boolean
+      default: false
+      note: Open state on mount while uncontrolled.
+    onOpenChange:
+      type: "(open: boolean) => void"
+      note: >-
+        Fires on every open or close, controlled or not. The only way to observe
+        a close, and required to close a controlled modal.
+    dismissOnBackdropClick:
+      type: boolean
+      default: true
+      note: >-
+        Whether a click on the scrim closes the modal. Set false for a form the
+        user must submit or cancel explicitly.
+    panelClassName:
+      type: string
+      note: Class for the scrollable content panel. className goes to the dialog.
+
+accessibility:
+  element: dialog
+  role: dialog
+  pattern: Dialog (Modal)
+  keyboard:
+    - Escape closes the modal (the platform, via showModal).
+    - Tab and Shift+Tab are trapped inside while open (the platform).
+  wcag: ["1.3.1", "2.1.2", "2.3.3", "2.4.3", "4.1.2"]
+  notes:
+    - >-
+      Built on a native dialog opened with showModal(), so the focus trap, the
+      inert background, Escape-to-close (2.1.2), focus restoration on close and
+      the top layer come from the browser rather than from code here.
+    - >-
+      A modal dialog must have an accessible name (4.1.2). Exactly one of title
+      or aria-label gives it, enforced as a compile-time union rather than a
+      runtime check. title also renders a visible h2 that joins the document
+      outline (1.3.1).
+    - >-
+      role="dialog" (the implicit role), not alertdialog. A form that captures
+      input is merely modal; alertdialog is for a message that interrupts for a
+      response, which is BrowserAlert's job.
+    - >-
+      The close is animated by holding data-state="closed" through the panel's
+      transform and opacity transition before the element leaves the top layer,
+      since dialog.close() would otherwise skip the exit. motion-reduce drops the
+      transition and the component closes on the next frame (2.3.3).
+    - >-
+      The native close event is the single source of truth for a close, so
+      Escape, a backdrop click and a programmatic close all report through one
+      onOpenChange(false).
+    - >-
+      DOM order is the content order and only logical properties are used, so
+      reading and tab order follow the visible order (2.4.3).
+    - >-
+      The scrim is the ::backdrop at --scrim-md. The surface draws no new text
+      pairing of its own; a Card or Input inside reads data-surface="overlay".
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  alternatives:
+    - id: drawer
+      when: The content is a long form or navigation that suits an edge panel.
+    - id: browserAlert
+      when: >-
+        The dialog is a confirmation or acknowledgement rather than a form; it
+        wants role="alertdialog".
+  guidance:
+    do:
+      - Prefer title over aria-label so the name is on screen as well as
+        announced.
+      - Drive it with open and onOpenChange, or defaultOpen alone, and handle
+        every close through onOpenChange.
+      - Keep the content short. A login or sign-up form is the intended size.
+      - Set dismissOnBackdropClick false for a form the user must submit or
+        cancel explicitly.
+    dont:
+      - Pass both title and aria-label, or neither. The type forbids it.
+      - Reach for this for a confirmation or an alert. Use BrowserAlert.
+      - Put a long, scrolling page of content in it. Use Drawer or a route.
+
+tokens:
+  - surface-overlay
+  - foreground
+  - border-strong
+  - scrim-md
+  - shadow-modal
+  - radius-control
+  - space-3
+  - space-5
+  - heading-sm
+
+versioning:
+  introducedIn: "0.2.0"
+
+figma:
+  syncedWith: null

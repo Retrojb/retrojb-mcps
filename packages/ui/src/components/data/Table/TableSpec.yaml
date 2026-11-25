@@ -92,6 +92,12 @@ api:
     bordered:
       values: [true, false]
       note: Adds vertical rules between cells.
+    divided:
+      values: [true, false]
+      default: true
+      note: >-
+        Horizontal rules between rows. On by default, so a plain table keeps the
+        separators it has always had; set false for a borderless table.
     striped:
       values: [true, false]
       note: Zebra striping on body rows.
@@ -174,12 +180,26 @@ accessibility:
       the keyboard.
     - Sorting is a real button inside the th. aria-sort carries the state, with
       "none" on sortable columns that are not sorted.
+    - The sort chevron is pushed to the column's trailing edge on start-aligned
+      columns (ms-auto); end-aligned columns keep it beside the value and
+      centre-aligned columns keep label and glyph as one cluster. The glyph is
+      decorative; aria-sort carries the direction.
     - scope on each th is col, or colgroup when the header spans several
       columns.
     - aria-selected is not used on rows, because ARIA does not support it on a
       table. A selectable table needs a checkbox in the row.
-    - The rule under the header uses border-strong; vertical rules are
-      decorative only.
+    - >-
+      The rule under the header uses --border-strong, measured at 4.26:1 against
+      the surfaces it divides, so it clears the 3:1 of 1.4.11 for a meaningful
+      boundary. Vertical rules (bordered) and the row rules (divided) use
+      --border and are decorative only.
+    - >-
+      The selected-row tint (bg-accent/10 over --surface-raised-1) composites to
+      roughly #e7effb on light and #242d38 on dark, leaving --foreground at
+      about 15.4:1 and 11.9:1. These are calculated rather than measured by
+      check:contrast, because a composited tint is not a named-token pair. The
+      tint is never the sole selection cue; a checkbox or radio in the row
+      carries selection for assistive technology.
 
 usage:
   standalone: true
@@ -196,8 +216,8 @@ usage:
 tokens:
   - border
   - border-strong
-  - surface
-  - surface-raised
+  - surface-base
+  - surface-raised-1
   - foreground
   - foreground-muted
   - accent
@@ -206,6 +226,7 @@ tokens:
   - radius-control
   - body-sm
   - body-md
+  - control-height-xs
 
 versioning:
   introducedIn: "0.1.0"

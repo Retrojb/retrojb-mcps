@@ -174,36 +174,36 @@ scales are aligned so the three line up in a toolbar.
 
 ## Colors
 
-The table sits on `--surface-raised`, so its pairings are measured against that
-rather than against `--background`.
+The table sits on `--surface-raised-1`, so its pairings are measured against
+that rather than against `--background`.
 
 ### Text (needs 4.5:1)
 
-| Role              | Pairing                                    |  Light |    Dark |
-| ----------------- | ------------------------------------------ | -----: | ------: |
-| Cell text         | `--foreground` on `--surface-raised`       | 17.8:1 |  14.3:1 |
-| Header text       | `--foreground` on `--surface`              | 16.6:1 | 15.34:1 |
-| Caption           | `--foreground-muted` on `--surface-raised` | 6.43:1 |  7.39:1 |
-| Empty state       | `--foreground-muted` on `--surface-raised` | 6.43:1 |  7.39:1 |
-| Sort button hover | `--accent-text` on `--surface`             | 5.58:1 |  8.14:1 |
+| Role              | Pairing                                      |  Light |    Dark |
+| ----------------- | -------------------------------------------- | -----: | ------: |
+| Cell text         | `--foreground` on `--surface-raised-1`       | 17.8:1 |  14.3:1 |
+| Header text       | `--foreground` on `--surface-base`           | 16.6:1 | 15.34:1 |
+| Caption           | `--foreground-muted` on `--surface-raised-1` | 6.43:1 |  7.39:1 |
+| Empty state       | `--foreground-muted` on `--surface-raised-1` | 6.43:1 |  7.39:1 |
+| Sort button hover | `--accent-text` on `--surface-base`          | 5.58:1 |  8.14:1 |
 
-Header cells are `bg-surface` unconditionally, not only when `stickyHeader` is
-set. A sticky header scrolls body rows underneath itself and has to be opaque;
-making that conditional means the day the variant is set some other way, rows
-show through.
+Header cells are `bg-surface-base` unconditionally, not only when `stickyHeader`
+is set. A sticky header scrolls body rows underneath itself and has to be
+opaque; making that conditional means the day the variant is set some other way,
+rows show through.
 
 ### Borders and focus ring (needs 3:1)
 
-| Boundary                  | Pairing                                 |  Light |   Dark |
-| ------------------------- | --------------------------------------- | -----: | -----: |
-| Header / body rule        | `--border-strong` on `--surface-raised` | 4.26:1 | 3.59:1 |
-| Row rules, vertical rules | `--border` on `--surface-raised`        |    n/a |    n/a |
-| Container edge            | `--border` on `--background`            |    n/a |    n/a |
-| Focus ring                | `--focus-ring` on `--surface-raised`    | 5.98:1 | 7.59:1 |
+| Boundary                  | Pairing                                   |  Light |   Dark |
+| ------------------------- | ----------------------------------------- | -----: | -----: |
+| Header / body rule        | `--border-strong` on `--surface-raised-1` | 4.26:1 | 3.59:1 |
+| Row rules, vertical rules | `--border` on `--surface-raised-1`        |    n/a |    n/a |
+| Container edge            | `--border` on `--background`              |    n/a |    n/a |
+| Focus ring                | `--focus-ring` on `--surface-raised-1`    | 5.98:1 | 7.59:1 |
 
-The focus ring on `--surface-raised` is a pairing the table introduced — it
+The focus ring on `--surface-raised-1` is a pairing the table introduced — it
 carries one on the scroll container and one on every sort button, and neither
-the page nor `--surface` is what sits behind them. It is checked by
+the page nor `--surface-base` is what sits behind them. It is checked by
 `check:contrast` under `focus ring on raised`, alongside the pairings the table
 shares with the other components.
 
@@ -223,16 +223,16 @@ one and silently downgrade the header boundary to decorative.
 ### The selected row tint
 
 `bg-accent/10` composites to roughly `#e7effb` on light and `#242d38` on dark
-over `--surface-raised`, leaving `--foreground` at about **15.4:1** and
+over `--surface-raised-1`, leaving `--foreground` at about **15.4:1** and
 **11.9:1**.
 
 Those two are calculated rather than measured: `check:contrast` compares pairs
 of named tokens, and a composited tint is not one.
 
 Striping is dropped for a selected row, in the component rather than in CSS.
-`odd:bg-surface` and `bg-accent/10` have the same specificity, so left to the
-cascade which one painted a selected odd row would depend on the order the two
-utilities happened to appear in the compiled stylesheet.
+`odd:bg-surface-base` and `bg-accent/10` have the same specificity, so left to
+the cascade which one painted a selected odd row would depend on the order the
+two utilities happened to appear in the compiled stylesheet.
 
 One thing to know before reading `dist/styles.css`: Tailwind emits
 `background-color: var(--color-accent)` ahead of the `color-mix()` rule as an

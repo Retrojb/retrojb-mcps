@@ -6,6 +6,7 @@ import {
   TOPIC_LABELS,
   queryCriteria,
 } from "@retrojb/wcag-a11y-scanner";
+import { CodeSnippet } from "@retrojb/ui";
 import { Callout, Intro, Section, TableFigure } from "../../_components/prose";
 
 export const metadata: Metadata = {
@@ -131,17 +132,22 @@ export default function ScannerPage(): React.ReactElement {
 
       <Section id="setup" title="Setup">
         <p>Build the server, then register it with your MCP host.</p>
-        <pre>
-          <code>{`npm install
-npx turbo build --filter=@retrojb/wcag-a11y-scanner`}</code>
-        </pre>
+        <CodeSnippet
+          language="sh"
+          label="Build the scanner"
+          code={`npm install
+npx turbo build --filter=@retrojb/wcag-a11y-scanner`}
+        />
         <p>
           In Kiro, add it to <code>.kiro/settings/mcp.json</code> in the
           workspace, or <code>~/.kiro/settings/mcp.json</code> for every
           project:
         </p>
-        <pre>
-          <code>{`{
+        <CodeSnippet
+          title="mcp.json"
+          language="json"
+          label="MCP host configuration"
+          code={`{
   "mcpServers": {
     "@retrojb/wcag-a11y-scanner": {
       "command": "node",
@@ -151,15 +157,17 @@ npx turbo build --filter=@retrojb/wcag-a11y-scanner`}</code>
       "disabled": false
     }
   }
-}`}</code>
-        </pre>
+}`}
+        />
         <p>
           The same command works for any stdio-based MCP host. To exercise the
           tools without a host, use the inspector:
         </p>
-        <pre>
-          <code>npm run inspect --workspace @retrojb/wcag-a11y-scanner</code>
-        </pre>
+        <CodeSnippet
+          language="sh"
+          label="Run the MCP inspector"
+          code="npm run inspect --workspace @retrojb/wcag-a11y-scanner"
+        />
       </Section>
 
       <Section id="limits" title="What it cannot do">

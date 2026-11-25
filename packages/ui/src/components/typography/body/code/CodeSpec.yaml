@@ -53,7 +53,7 @@ usage:
       when: The code spans more than a line or needs its whitespace preserved.
 
 tokens:
-  - surface-raised
+  - surface-raised-1
   - foreground
   - border
 

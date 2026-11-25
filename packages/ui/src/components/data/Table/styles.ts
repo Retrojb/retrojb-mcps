@@ -31,10 +31,15 @@ const tableStyle = tv({
      * that cannot be reached from the keyboard cannot be scrolled from the
      * keyboard (WCAG 2.1.1) — and once it is focusable it needs the same focus
      * indicator as every other focusable surface in this package.
+     *
+     * `relative` makes it the containing block for absolutely positioned
+     * descendants. An `sr-only` label in a cell is `position: absolute`, and
+     * without a positioned ancestor inside the scroller it escapes the
+     * overflow clip and widens the page instead (1.4.10).
      */
     root: [
-      "w-full overflow-x-auto",
-      "rounded-control border border-border bg-surface-raised",
+      "relative w-full overflow-x-auto",
+      "rounded-control border border-border bg-surface-raised-1",
       "outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus",
     ],
 
@@ -75,25 +80,27 @@ const tableStyle = tv({
     row: "transition-colors motion-reduce:transition-none",
 
     /*
-     * `bg-surface` unconditionally, not only when the header is sticky. A
+     * `bg-surface-base` unconditionally, not only when the header is sticky. A
      * sticky header scrolls body rows underneath itself, so it must be opaque;
      * making that depend on the `stickyHeader` variant means the day someone
      * sets the variant from a caller-supplied class instead, rows show through.
      *
-     * `border-border-strong` at 4.26:1 for the rule under the header, rather
-     * than the `border-border` used between body rows. This is the boundary
-     * that separates labels from data, so it is doing more than decoration.
+     * `border-border-strong` for the rule under the header, rather than the
+     * `border-border` used between body rows. This is the boundary that
+     * separates labels from data, so it clears the 3:1 that 1.4.11 asks of a
+     * meaningful boundary (measured ratio in `TableSpec.yaml`); it is doing
+     * more than decoration.
      */
     /*
      * The colours are side-scoped — `border-b-border-strong` rather than
      * `border-border-strong` — and that is load-bearing rather than pedantic.
      * tailwind-merge puts `border-<color>` in one group, so the `border-border`
      * the `bordered` variant adds for the vertical rule would replace this
-     * horizontal one and quietly downgrade the header's boundary from 4.26:1 to
-     * decorative. Naming the side puts the two in different groups.
+     * horizontal one and quietly downgrade the header's boundary to decorative.
+     * Naming the side puts the two in different groups.
      */
     headerCell: [
-      "bg-surface font-medium text-foreground",
+      "bg-surface-base font-medium text-foreground",
       "border-b border-b-border-strong",
       "whitespace-nowrap",
     ],
@@ -110,8 +117,8 @@ const tableStyle = tv({
      * cell, so the target is the full header cell rather than the text.
      */
     sortButton: [
-      "flex w-full items-center gap-1.5",
-      "min-h-6 rounded-control font-medium",
+      "flex w-full items-center gap-(--space-2)",
+      "min-h-(--control-height-xs) rounded-control font-medium",
       "cursor-pointer select-none",
       "transition-colors motion-reduce:transition-none",
       "hover:text-accent-text",
@@ -128,7 +135,11 @@ const tableStyle = tv({
      */
     sortIcon: "shrink-0 text-caption leading-none",
 
-    cell: "border-b border-b-border align-middle",
+    /*
+     * The horizontal rule under each body cell moved to the `divided` variant,
+     * which defaults on, so this slot carries only alignment. See `divided`.
+     */
+    cell: "align-middle",
 
     // The empty state occupies one cell spanning the full width, so it gets
     // generous vertical padding of its own rather than a row's.
@@ -137,32 +148,33 @@ const tableStyle = tv({
 
   variants: {
     /*
-     * Row heights work out to roughly 36/40/48px, tracking Button and Input so
-     * a table can sit in the same layout as a toolbar without the two scales
-     * disagreeing. The same target-size trade applies to the sort buttons: all
+     * Cell padding is `--space-*`, so a table inside `data-density="compact"`
+     * tightens with it; `size` and density are separate axes. At the default
+     * density rows are about 38 / 46 / 49px, close to Button and Input so a
+     * table can sit in the same layout as a toolbar. The same target-size trade applies to the sort buttons: all
      * three clear 2.5.8 (AA, 24px), only `lg` clears 2.5.5 (AAA, 44px).
      */
     size: {
       sm: {
-        caption: "px-2.5 py-2 text-body-sm",
-        headerLabel: "px-2.5 py-2 text-body-sm",
-        sortButton: "px-2.5 py-2 text-body-sm",
-        cell: "px-2.5 py-2 text-body-sm",
-        empty: "px-2.5 py-6 text-body-sm",
+        caption: "px-(--space-2) py-(--space-2) text-body-sm",
+        headerLabel: "px-(--space-2) py-(--space-2) text-body-sm",
+        sortButton: "px-(--space-2) py-(--space-2) text-body-sm",
+        cell: "px-(--space-2) py-(--space-2) text-body-sm",
+        empty: "px-(--space-2) py-(--space-6) text-body-sm",
       },
       md: {
-        caption: "px-3 py-2.5 text-body-sm",
-        headerLabel: "px-3 py-2.5 text-body-sm",
-        sortButton: "px-3 py-2.5 text-body-sm",
-        cell: "px-3 py-2.5 text-body-sm",
-        empty: "px-3 py-8 text-body-sm",
+        caption: "px-(--space-3) py-(--space-3) text-body-sm",
+        headerLabel: "px-(--space-3) py-(--space-3) text-body-sm",
+        sortButton: "px-(--space-3) py-(--space-3) text-body-sm",
+        cell: "px-(--space-3) py-(--space-3) text-body-sm",
+        empty: "px-(--space-3) py-(--space-7) text-body-sm",
       },
       lg: {
-        caption: "px-4 py-3 text-body-md",
-        headerLabel: "px-4 py-3 text-body-md",
-        sortButton: "px-4 py-3 text-body-md",
-        cell: "px-4 py-3 text-body-md",
-        empty: "px-4 py-10 text-body-md",
+        caption: "px-(--space-4) py-(--space-3) text-body-md",
+        headerLabel: "px-(--space-4) py-(--space-3) text-body-md",
+        sortButton: "px-(--space-4) py-(--space-3) text-body-md",
+        cell: "px-(--space-4) py-(--space-3) text-body-md",
+        empty: "px-(--space-4) py-(--space-8) text-body-md",
       },
     },
 
@@ -177,6 +189,19 @@ const tableStyle = tv({
         headerCell: "text-start",
         cell: "text-start",
         sortButton: "justify-start",
+        /*
+         * The sort chevron is pushed to the column's trailing edge, rather than
+         * sitting against the label. `ms-auto` eats the free space between the
+         * label and the icon, so the label stays at the reading-start edge and
+         * the glyph lands at the end however short the header is. Logical
+         * margin, so it follows `dir="rtl"`.
+         *
+         * Only `start` does this. In `end` the button is already packed against
+         * the trailing edge by `justify-end`, so the icon is there without help;
+         * in `center` the label and glyph read as one centred cluster, and
+         * splitting them to opposite edges would fight the alignment.
+         */
+        sortIcon: "ms-auto",
       },
       center: {
         headerCell: "text-center",
@@ -201,6 +226,31 @@ const tableStyle = tv({
     },
 
     /*
+     * Horizontal rules between rows: the row-wise counterpart to `bordered`,
+     * and on by default so a plain `<Table>` looks as it always has. Set
+     * `divided={false}` for a borderless table that leans on striping or
+     * whitespace instead.
+     *
+     * The colour is side-scoped — `border-b-border`, not `border-border` — for
+     * the same tailwind-merge reason the header rule and the vertical rules are:
+     * a blanket `border-<color>` sits in one merge group, so an unscoped colour
+     * here would collide with the `bordered` variant's vertical rule and one
+     * would silently drop. Scoping the side puts the bottom rule and the right
+     * rule in different groups.
+     *
+     * `--border`, not `--border-strong`: a separator between two body rows
+     * groups nothing that position does not already group, so 1.4.11 does not
+     * apply to it (the header's `--border-strong` rule is the one boundary that
+     * means something). The last row's rule is still dropped by the `body` and
+     * `foot` slots' `:last-child` rule, which is a no-op when `divided` is off.
+     */
+    divided: {
+      true: {
+        cell: "border-b border-b-border",
+      },
+    },
+
+    /*
      * Zebra striping, applied to the row rather than to `tbody` with an
      * `:nth-child` selector. Both work, but an `:nth-child` rule on the section
      * and a plain background on the row have the same specificity, so which one
@@ -209,16 +259,17 @@ const tableStyle = tv({
      * that cannot drift.
      */
     striped: {
-      true: { row: "odd:bg-surface" },
+      true: { row: "odd:bg-surface-base" },
     },
 
     /*
      * A tint, and only a tint.
      *
-     * Over `--surface-raised` this composites to roughly #e7effb on light and
-     * #242d38 on dark, leaving `--foreground` at about 15.4:1 and 11.9:1. Those
-     * two are calculated rather than measured: `check:contrast` in apps/docs
-     * covers pairs of named tokens, and a composited tint is not one.
+     * Over `--surface-raised-1` this composites to a soft accent wash that keeps
+     * `--foreground` well clear of 4.5:1 in both themes. Those figures are
+     * calculated rather than measured: `check:contrast` in apps/docs covers
+     * pairs of named tokens, and a composited tint is not one. The composited
+     * colours and ratios are recorded in `TableSpec.yaml`.
      *
      * It is deliberately not enough on its own. A selected row must also carry a
      * checkbox or radio in one of its cells, which is what actually conveys
@@ -228,9 +279,9 @@ const tableStyle = tv({
      *
      * One thing to know before reading the compiled stylesheet: Tailwind emits
      * `background-color: var(--color-accent)` ahead of the `color-mix()` rule as
-     * an `@supports` fallback, and a solid accent behind `--foreground` would be
-     * about 2:1. It never applies. `color-mix()` shipped in Chrome 111, Safari
-     * 16.2 and Firefox 113, all at or below the Safari 16.4 / Chrome 111 /
+     * an `@supports` fallback (a solid accent behind `--foreground`, which would
+     * not clear 4.5:1). It never applies. `color-mix()` shipped in Chrome 111,
+     * Safari 16.2 and Firefox 113, all at or below the Safari 16.4 / Chrome 111 /
      * Firefox 128 floor Tailwind v4 itself requires — so no browser that can
      * render this file lacks it.
      */
@@ -261,6 +312,8 @@ const tableStyle = tv({
   defaultVariants: {
     size: "md",
     align: "start",
+    // On by default: a plain table keeps the row rules it has always had.
+    divided: true,
   },
 });
 

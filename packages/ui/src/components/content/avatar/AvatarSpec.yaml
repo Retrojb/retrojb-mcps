@@ -3,22 +3,111 @@ specVersion: 1
 id: avatar
 name: Avatar
 category: content
-status: planned
+status: shipped
 complexity: atom
 description: >-
-  Meant to be a round picture or initials that stands for a person or account.
-  Not yet implemented; the folder holds empty scaffold files only.
+  A picture or initials that stands for a person, team or account, in a round or
+  square frame.
 
 files:
-  component: null
+  component: packages/ui/src/components/content/avatar/Avatar.tsx
   types: packages/ui/src/components/content/avatar/types.ts
   styles: packages/ui/src/components/content/avatar/styles.ts
   barrel: packages/ui/src/components/content/avatar/index.ts
-  story: null
-  accessibilityDoc: null
+  story: apps/retrojb-storybook/src/stories/content/Avatar.stories.tsx
+  accessibilityDoc: apps/retrojb-storybook/src/stories/content/accessibilityDocs/AvatarAccessibility.mdx
   unitTests: null
   visualTests: null
-  storybookDocComponent: null
+  storybookDocComponent: apps/retrojb-storybook/src/stories/content/Avatar.mdx
+
+exports:
+  - name: Avatar
+    kind: component
+  - name: avatarStyles
+    kind: styles
+    note: >-
+      Slots root, image, initials and glyph. Callable from a server component;
+      Avatar itself is a client component because it tracks a failed image.
+  - name: IAvatarProps
+    kind: type
+  - name: AvatarVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithRef<'span'> without children"
+  required: [name]
+  variants:
+    shape:
+      values: [round, square]
+      default: round
+      note:
+        Round for a person; square, with slightly rounded corners, for a team,
+        organisation or project.
+    size:
+      values: [sm, md, lg]
+      default: md
+      note: 24 / 40 / 64px. Fixed sizes; density does not change them.
+    elevated:
+      values: [true, false]
+      default: false
+      note:
+        raised-1 shadow, dropped inside an ancestor with data-surface="overlay".
+  props:
+    src:
+      type: string
+      note: Optional. A missing or failed picture falls back to the initials.
+    initials:
+      type: string
+      note:
+        Overrides the initials taken from name. At most two characters are
+        shown. An empty string shows a person glyph.
+    decorative:
+      values: [true, false]
+      default: false
+      note: Hides the avatar from assistive technology.
+
+accessibility:
+  element: span
+  role: img (not set when decorative)
+  keyboard: []
+  wcag: ["1.1.1", "1.4.3", "4.1.2"]
+  notes:
+    - The span is the image, named by name. The picture has empty alt and the
+      initials are aria-hidden, so the name is read once whatever is shown.
+    - decorative sets aria-hidden on the whole avatar, for an avatar beside a
+      visible name. A blank name does the same, so the avatar is never an image
+      with no name.
+    - Not interactive. It is not focusable and has no keyboard behaviour.
+    - Initials are --foreground on --surface-sunken, 16.57:1 light and 18.24:1
+      dark.
+    - The border is decorative (1.4.11 does not apply) and keeps the shape
+      visible in forced-colors mode.
+
+usage:
+  standalone: true
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Pass the person's or account's full name, even with a picture.
+      - Set decorative when the name is written next to the avatar.
+      - Use square for teams, organisations and projects.
+    dont:
+      - Make the avatar the only way to identify someone in a list. Show the
+        name too.
+      - Wrap it in a link or button without giving that control its own name.
+
+tokens:
+  - surface-sunken
+  - foreground
+  - border
+  - border-radius-circle
+  - border-radius-xs
+  - border-radius-sm
+  - elevation-raised-1
+  - label-sm
+  - label-md
+  - heading-sm
 
 figma:
   syncedWith: null

@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: pageGrid
+name: PageGrid
+category: foundations
+status: experimental
+complexity: atom
+description: >-
+  The page's column grid: twelve columns with gutters and outer margins that
+  widen at larger breakpoints, centred and capped at a maximum width. Place its
+  children with GridItem.
+
+files:
+  component: packages/ui/src/components/foundations/pageGrid/PageGrid.tsx
+  types: packages/ui/src/components/foundations/pageGrid/types.ts
+  styles: packages/ui/src/components/foundations/pageGrid/styles.ts
+  barrel: packages/ui/src/components/foundations/pageGrid/index.ts
+  story: apps/retrojb-storybook/src/stories/foundations/PageGrid.stories.tsx
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: PageGrid
+    kind: component
+  - name: pageGridStyles
+    kind: styles
+    note: >-
+      Callable from a server component. The component itself is server-safe too:
+      it has no "use client".
+  - name: IPageGridProps
+    kind: type
+  - name: PageGridElement
+    kind: type
+  - name: PageGridVariants
+    kind: type
+
+api:
+  extends: "ComponentPropsWithoutRef<'div'> with ref typed as HTMLElement"
+  required: []
+  props:
+    as:
+      values: [div, main, section, header, footer, ul, ol]
+      default: div
+      note: main, header and footer give the region its landmark.
+
+accessibility:
+  element: "div | main | section | header | footer | ul | ol"
+  role: none of its own; as picks the landmark
+  wcag: ["1.3.1", "1.3.2", "1.4.10", "2.4.3"]
+  notes:
+    - Visual order is DOM order. There is no order prop.
+    - GridItem spans the full row by default, so a page reflows to one column on
+      narrow screens unless a span is set for that width.
+    - Breakpoints are rem, so the layout narrows sooner when text is enlarged.
+    - Draws no colour, so there is no contrast to measure.
+
+usage:
+  standalone: true
+  composes: [gridItem]
+  nativeElement: true
+  guidance:
+    do:
+      - Render it once per page region in the app's root layout.
+      - Change columns, gutter, margin or max width by overriding the grid
+        tokens.
+    dont:
+      - Nest a PageGrid in a GridItem to align with the page. Use GridItem
+        subgrid.
+
+tokens:
+  - grid-columns
+  - grid-gutter
+  - grid-margin
+  - grid-max-width
+
+versioning:
+  introducedIn: "0.2.0"
+
+figma:
+  syncedWith: null

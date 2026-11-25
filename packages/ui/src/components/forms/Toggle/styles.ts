@@ -29,7 +29,7 @@
  * Three cues change together, and any one of them identifies the state:
  *
  *   - position: the thumb sits at the start when off and slides to the end;
- *   - fill: the track goes from the near-white `--surface-raised` to the solid
+ *   - fill: the track goes from the near-white `--surface-raised-1` to the solid
  *     `--accent`, a luminance change of 9.45 / 9.05:1, not just a hue change;
  *   - glyph: a check appears in the thumb when on.
  *
@@ -51,14 +51,14 @@ import { tv, type VariantProps } from "../../../lib/tv";
 
 const toggleStyles = tv({
   slots: {
-    root: "flex min-w-0 flex-col gap-(--spacing-10)",
+    root: "flex min-w-0 flex-col gap-(--space-1)",
     /*
      * The disabled look lives here rather than on the input so the track, the
      * thumb and the label dim together. `has-[input:disabled]` also matches an
      * input disabled by an ancestor `<fieldset disabled>`.
      */
     field: [
-      "flex min-h-6 items-start gap-(--spacing-20)",
+      "flex min-h-6 items-start gap-(--space-2)",
       "cursor-pointer",
       "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-60",
     ],
@@ -67,16 +67,16 @@ const toggleStyles = tv({
       // `peer` so the thumb sibling can follow the input's checked state.
       "peer col-start-1 row-start-1 m-0 appearance-none rounded-full",
       /*
-       * Off: a `--surface-raised` fill inside a 2px `--border-strong` edge. The
+       * Off: a `--surface-raised-1` fill inside a 2px `--border-strong` edge. The
        * edge is what identifies the control, so 1.4.11 applies — 4.16 / 4.41:1
-       * against `--background`, 5.93 / 4.83:1 against `--surface` and
+       * against `--background`, 5.93 / 4.83:1 against `--surface-base` and
        * 6.36 / 4.50:1 against the fill inside it. `--border` at 1.75 / 2.02:1
        * would fail.
        */
-      "border-2 border-border-strong bg-surface-raised",
+      "border-2 border-border-strong bg-surface-raised-1",
       /*
        * On: a solid `--accent` track, 6.19 / 8.87:1 on `--background` and
-       * 8.82 / 9.72:1 on `--surface`.
+       * 8.82 / 9.72:1 on `--surface-base`.
        */
       "checked:border-accent checked:bg-accent",
       "enabled:hover:border-accent",
@@ -99,7 +99,7 @@ const toggleStyles = tv({
       "forced-colors:disabled:border-[GrayText] forced-colors:disabled:checked:bg-[GrayText]",
     ],
     /*
-     * Off: a `--border-strong` disc on the `--surface-raised` track,
+     * Off: a `--border-strong` disc on the `--surface-raised-1` track,
      * 6.36 / 4.50:1. On: an `--accent-foreground` disc on the `--accent` track,
      * 9.32 / 10.19:1. Both clear 1.4.11 against the fill they sit on.
      *
@@ -110,7 +110,7 @@ const toggleStyles = tv({
      */
     thumb: [
       "pointer-events-none col-start-1 row-start-1 grid place-items-center",
-      "ms-(--spacing-10) justify-self-start rounded-full",
+      "ms-1 justify-self-start rounded-full",
       "bg-border-strong text-transparent",
       "peer-checked:bg-accent-foreground peer-checked:text-accent",
       "transition-all motion-reduce:transition-none",
@@ -128,11 +128,11 @@ const toggleStyles = tv({
     // `--accent` on the `--accent-foreground` thumb: 9.32 / 10.19:1.
     glyph: "pointer-events-none",
     // The type role is set per size, below. 13.30 / 15.72:1 on --background,
-    // 18.95 / 17.21:1 on --surface.
+    // 18.95 / 17.21:1 on --surface-base.
     label: "min-w-0 text-foreground",
-    // 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface.
+    // 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface-base.
     description: "m-0 text-body-sm text-foreground-muted",
-    // 6.26 / 8.22:1 on --background, 8.91 / 9.00:1 on --surface. Paired with
+    // 6.26 / 8.22:1 on --background, 8.91 / 9.00:1 on --surface-base. Paired with
     // `aria-invalid` and the border colour, so the error is conveyed by more
     // than red text (1.4.1).
     error: "m-0 text-body-sm font-medium text-danger",
@@ -180,7 +180,7 @@ const toggleStyles = tv({
       /*
        * The border stays red on and off, so an on switch in an invalid field
        * still reads as invalid. `--danger` is 9.56 / 8.38:1 on the
-       * `--surface-raised` fill.
+       * `--surface-raised-1` fill.
        */
       true: {
         control:
@@ -193,40 +193,43 @@ const toggleStyles = tv({
    * by the track plus the gap when the label is at the end, and kept clear of
    * it when the label is at the start.
    *
-   *   sm  36 + 8 = 44px  `--spacing-200`
-   *   md  44 + 8 = 52px  `--spacing-400`
+   *   sm  `w-9` (36px) + `--space-2`
+   *   md  `w-11` (44px) + `--space-2`
+   *
+   * Written as a `calc()` of the two parts rather than a fixed length, so the
+   * indent follows the field gap when density changes it.
    */
   compoundVariants: [
     {
       size: "sm",
       labelPosition: "end",
       class: {
-        description: "ps-(--spacing-200)",
-        error: "ps-(--spacing-200)",
+        description: "ps-[calc(--spacing(9)+var(--space-2))]",
+        error: "ps-[calc(--spacing(9)+var(--space-2))]",
       },
     },
     {
       size: "md",
       labelPosition: "end",
       class: {
-        description: "ps-(--spacing-400)",
-        error: "ps-(--spacing-400)",
+        description: "ps-[calc(--spacing(11)+var(--space-2))]",
+        error: "ps-[calc(--spacing(11)+var(--space-2))]",
       },
     },
     {
       size: "sm",
       labelPosition: "start",
       class: {
-        description: "pe-(--spacing-200)",
-        error: "pe-(--spacing-200)",
+        description: "pe-[calc(--spacing(9)+var(--space-2))]",
+        error: "pe-[calc(--spacing(9)+var(--space-2))]",
       },
     },
     {
       size: "md",
       labelPosition: "start",
       class: {
-        description: "pe-(--spacing-400)",
-        error: "pe-(--spacing-400)",
+        description: "pe-[calc(--spacing(11)+var(--space-2))]",
+        error: "pe-[calc(--spacing(11)+var(--space-2))]",
       },
     },
   ],

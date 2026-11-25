@@ -1,0 +1,12 @@
+{
+  "name": "@retrojb/typescript-config",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "eslint  --max-warnings 0"
+  }
+}

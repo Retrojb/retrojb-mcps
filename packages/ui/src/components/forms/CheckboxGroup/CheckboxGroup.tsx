@@ -204,7 +204,11 @@ const CheckboxGroup = ({
             gap={gap}
             responsiveTo={responsiveTo}
             // Indented under the parent so the hierarchy is visible.
-            className={showSelectAll ? "ps-(--spacing-80)" : undefined}
+            className={
+              showSelectAll
+                ? "ps-[calc(--spacing(6)+var(--space-2))]"
+                : undefined
+            }
           >
             {options?.map((option) => (
               <Checkbox

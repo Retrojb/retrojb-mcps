@@ -23,6 +23,7 @@ const meta = {
       options: ["div", "article", "section", "li"],
     },
     size: { control: "inline-radio", options: ["sm", "md"] },
+    elevated: { control: "boolean" },
     children: { table: { disable: true } },
   },
   args: {
@@ -90,15 +91,7 @@ export const Small: Story = {
  */
 export const AsListItems: Story = {
   render: () => (
-    <ul
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(14rem, 1fr))",
-        gap: "var(--spacing-40)",
-        margin: 0,
-        padding: 0,
-      }}
-    >
+    <ul className="m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(100%,14rem),1fr))] gap-(--space-4) p-0">
       {[
         ["Starter", "For trying things out."],
         [
@@ -118,5 +111,33 @@ export const AsListItems: Story = {
         </Card>
       ))}
     </ul>
+  ),
+};
+
+/**
+ * `elevated` lifts the card with the `raised-1` shadow on the `raised-1`
+ * surface. The border stays, and it is the only edge left in forced-colors
+ * mode, which removes box-shadows.
+ */
+export const Elevated: Story = {
+  args: { elevated: true },
+};
+
+/**
+ * An overlay is already the top surface, so an elevated card inside one drops
+ * its shadow and keeps its border. The library's overlays (`BrowserAlert`,
+ * `ToastAlert`, the `ComboBox` popup) set `data-surface="overlay"`; this
+ * stands in for one.
+ */
+export const InsideAnOverlay: Story = {
+  name: "Inside an overlay",
+  args: { elevated: true },
+  render: (args) => (
+    <div
+      data-surface="overlay"
+      className="grid max-w-lg gap-(--space-4) rounded-control border border-border-strong bg-surface-overlay p-(--space-6) shadow-modal"
+    >
+      <Card {...args} />
+    </div>
   ),
 };

@@ -87,12 +87,12 @@ usage:
       - Put the container inside a fieldset, after the legend, for form groups.
 
 tokens:
-  - spacing-0
-  - spacing-10
-  - spacing-20
-  - spacing-30
-  - spacing-40
-  - spacing-60
+  - space-0
+  - space-1
+  - space-2
+  - space-3
+  - space-4
+  - space-6
 
 versioning:
   introducedIn: "0.1.0"

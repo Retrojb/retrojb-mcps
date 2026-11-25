@@ -46,7 +46,7 @@ const INDICATOR = [
 
 const checkboxStyles = tv({
   slots: {
-    root: "flex min-w-0 flex-col gap-(--spacing-10)",
+    root: "flex min-w-0 flex-col gap-(--space-1)",
     /*
      * The disabled look lives here rather than on the input so the box, the
      * glyph and the label dim together. `has-[input:disabled]` also matches an
@@ -54,7 +54,7 @@ const checkboxStyles = tv({
      * `CheckboxGroup` disables its children.
      */
     field: [
-      "inline-flex w-fit min-h-6 items-start gap-(--spacing-20)",
+      "inline-flex w-fit min-h-6 items-start gap-(--space-2)",
       "cursor-pointer",
       "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-60",
     ],
@@ -71,14 +71,14 @@ const checkboxStyles = tv({
       "rounded-[calc(var(--radius-control)/2)]",
       /*
        * Unchecked: `--border-strong` at 2px. It identifies the control, so
-       * 1.4.11 applies — 6.36 / 4.50:1 against the `--surface-raised` fill and
+       * 1.4.11 applies — 6.36 / 4.50:1 against the `--surface-raised-1` fill and
        * 4.16 / 4.41:1 against `--background` outside it. `--border` at
        * 1.75–2.67:1 would fail.
        */
-      "border-2 border-border-strong bg-surface-raised",
+      "border-2 border-border-strong bg-surface-raised-1",
       /*
        * Checked and indeterminate: an `--accent` fill, 6.19 / 8.87:1 on
-       * `--background` and 8.82 / 9.72:1 on `--surface`.
+       * `--background` and 8.82 / 9.72:1 on `--surface-base`.
        */
       "checked:border-accent checked:bg-accent",
       "indeterminate:border-accent indeterminate:bg-accent",
@@ -112,16 +112,18 @@ const checkboxStyles = tv({
     // `text-body-sm` with `leading-6`: a 24px line, so a one-line label centres
     // on the 24px cell. `leading-6` rather than the `/6` modifier, because the
     // modifier replaces the role's weight and tracking defaults as well.
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface.
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface-base.
     label: "min-w-0 text-body-sm leading-6 text-foreground",
     /*
      * Indented by the cell plus the gap (24 + 8px) so helper text lines up under
      * the label text, not under the box. 6.25 / 6.62:1 on --background.
      */
-    description: "m-0 ps-(--spacing-80) text-body-sm text-foreground-muted",
+    description:
+      "m-0 ps-[calc(--spacing(6)+var(--space-2))] text-body-sm text-foreground-muted",
     // 6.26 / 8.22:1 on --background. Paired with `aria-invalid` and the border
     // colour, so the error is conveyed by more than red text (1.4.1).
-    error: "m-0 ps-(--spacing-80) text-body-sm font-medium text-danger",
+    error:
+      "m-0 ps-[calc(--spacing(6)+var(--space-2))] text-body-sm font-medium text-danger",
   },
   variants: {
     invalid: {
@@ -129,7 +131,7 @@ const checkboxStyles = tv({
       /*
        * The border stays red in every state, so a checked box in an invalid
        * field still reads as invalid. `--danger` is 9.56 / 8.38:1 on the
-       * `--surface-raised` fill.
+       * `--surface-raised-1` fill.
        */
       true: {
         control: [

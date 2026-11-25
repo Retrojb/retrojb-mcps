@@ -26,7 +26,7 @@ const joinIds = (
 
 interface IFrameProps extends Pick<
   CardVariants,
-  "size" | "orientation" | "mediaRatio"
+  "size" | "orientation" | "mediaRatio" | "elevated"
 > {
   readonly as: CardElement;
   readonly headingLevel: CardHeadingLevel;
@@ -54,6 +54,7 @@ const InteractiveCardFrame = ({
   size,
   orientation,
   mediaRatio,
+  elevated,
   rootClassName,
   control,
 }: IFrameProps): ReactElement => {
@@ -63,6 +64,7 @@ const InteractiveCardFrame = ({
     mediaRatio,
     interactive: true,
     disabled,
+    elevated,
   });
   const Heading = `h${headingLevel}` as const;
   // `!= null` rather than truthiness, so `0` still renders; `false` is what
@@ -104,6 +106,7 @@ const LinkCard = ({
   size,
   orientation,
   mediaRatio,
+  elevated,
   rootClassName,
   className,
   "aria-describedby": ariaDescribedBy,
@@ -124,6 +127,7 @@ const LinkCard = ({
       size={size}
       orientation={orientation}
       mediaRatio={mediaRatio}
+      elevated={elevated}
       rootClassName={rootClassName}
       control={
         <a
@@ -152,6 +156,7 @@ const ButtonCard = ({
   size,
   orientation,
   mediaRatio,
+  elevated,
   rootClassName,
   className,
   disabled,
@@ -174,6 +179,7 @@ const ButtonCard = ({
       size={size}
       orientation={orientation}
       mediaRatio={mediaRatio}
+      elevated={elevated}
       rootClassName={rootClassName}
       control={
         <button

@@ -42,6 +42,19 @@ interface IButtonProps extends ComponentPropsWithRef<"button">, ButtonVariants {
   readonly fullWidth?: ButtonVariants["fullWidth"];
 
   /**
+   * Gives the button a resting shadow (`shadow-control`) that lifts on hover
+   * and drops on press. Has no effect on `intent="ghost"` or a disabled
+   * button.
+   *
+   * @remarks
+   * Decoration only. The shadow is removed in forced-colors mode, and the
+   * button's border and fill are what identify it.
+   *
+   * @default false
+   */
+  readonly elevated?: ButtonVariants["elevated"];
+
+  /**
    * The native button type. The HTML default is `"submit"`, so `Button` changes
    * it to `"button"`; pass `"submit"` when the button should submit a form.
    *

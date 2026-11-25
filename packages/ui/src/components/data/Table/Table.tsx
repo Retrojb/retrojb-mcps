@@ -63,6 +63,7 @@ const TableRoot = <TFeatures extends TableFeatures, TData extends RowData>({
   bordered,
   striped,
   stickyHeader,
+  divided,
   className,
   rootClassName,
   captionClassName,
@@ -72,7 +73,7 @@ const TableRoot = <TFeatures extends TableFeatures, TData extends RowData>({
   const generatedId = useId();
   const captionId = `${generatedId}-caption`;
 
-  const variants = { size, bordered, striped, stickyHeader };
+  const variants = { size, bordered, striped, stickyHeader, divided };
   const slots = tableStyle({ ...variants, captionHidden });
 
   // See the note on `AnyTable` in `types.ts`. One cast, at the boundary.

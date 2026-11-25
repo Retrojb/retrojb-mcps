@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LARGE_TEXT_BOLD_PX, LARGE_TEXT_PX } from "@retrojb/wcag-a11y-scanner";
+import { CodeBlock } from "@retrojb/ui";
 import { ContrastDemo } from "../../_components/contrast-demo";
 import {
   Callout,
@@ -40,12 +41,10 @@ export default function ColorContrastPage(): React.ReactElement {
           two colours — how much light each one emits, on a scale where 0 is
           black and 1 is white. It is not a comparison of hue or saturation.
         </p>
-        <pre>
-          <code>{`ratio = (L1 + 0.05) / (L2 + 0.05)
+        <CodeBlock label="Contrast ratio formula">{`ratio = (L1 + 0.05) / (L2 + 0.05)
 
 L1 = relative luminance of the lighter colour
-L2 = relative luminance of the darker colour`}</code>
-        </pre>
+L2 = relative luminance of the darker colour`}</CodeBlock>
         <p>
           Ratios run from <strong>1:1</strong> (two identical colours) to{" "}
           <strong>21:1</strong> (black on white). The <code>0.05</code> terms

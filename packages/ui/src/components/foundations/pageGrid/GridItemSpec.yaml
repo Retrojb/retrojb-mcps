@@ -1,0 +1,98 @@
+# yaml-language-server: $schema=../../../../componentSpec.schema.json
+specVersion: 1
+id: gridItem
+name: GridItem
+category: foundations
+status: experimental
+complexity: atom
+description: >-
+  A region placed on a PageGrid: how many columns it spans and where it starts,
+  once or per breakpoint. Spans the whole row unless told otherwise.
+
+files:
+  component: packages/ui/src/components/foundations/pageGrid/GridItem.tsx
+  types: packages/ui/src/components/foundations/pageGrid/types.ts
+  styles: packages/ui/src/components/foundations/pageGrid/styles.ts
+  barrel: packages/ui/src/components/foundations/pageGrid/index.ts
+  story: apps/retrojb-storybook/src/stories/foundations/PageGrid.stories.tsx
+  accessibilityDoc: null
+  unitTests: null
+  visualTests: null
+  storybookDocComponent: null
+
+exports:
+  - name: GridItem
+    kind: component
+  - name: gridItemStyles
+    kind: styles
+    note: >-
+      Reads the custom properties gridItemPlacement returns. Use the two
+      together to place an element GridItem cannot render.
+  - name: gridItemPlacement
+    kind: utility
+  - name: GRID_BREAKPOINTS
+    kind: constant
+  - name: IGridItemProps
+    kind: type
+  - name: GridItemElement
+    kind: type
+  - name: GridItemVariants
+    kind: type
+  - name: GridBreakpoint
+    kind: type
+  - name: GridResponsive
+    kind: type
+  - name: GridSpan
+    kind: type
+
+api:
+  extends: "ComponentPropsWithoutRef<'div'> with ref typed as HTMLElement"
+  required: []
+  variants:
+    subgrid:
+      values: [true, false]
+      default: false
+      note:
+        Lays the children on the page grid's columns. A child wider than the
+        item is clamped to it.
+  props:
+    as:
+      values: [div, section, article, aside, nav, header, footer, li]
+      default: div
+    span:
+      values: ["1 to 12", full, "per breakpoint: { base, sm, md, lg, xl, 2xl }"]
+      default: full
+      note: Unset breakpoints inherit from the next smaller one.
+    offset:
+      values: ["0 to 11", "per breakpoint: { base, sm, md, lg, xl, 2xl }"]
+      note:
+        Empty columns before the item. Ignored where span is full. Keep span
+        plus offset within the column count.
+
+accessibility:
+  element: "div | section | article | aside | nav | header | footer | li"
+  role: none of its own; as picks the element
+  wcag: ["1.3.1", "1.3.2", "2.4.3"]
+  notes:
+    - No order prop, so placement never changes reading or focus order.
+    - Draws no colour, so there is no contrast to measure.
+
+usage:
+  standalone: false
+  composes: []
+  nativeElement: true
+  guidance:
+    do:
+      - Default to full width at base and widen from md or lg up.
+    dont:
+      - Reorder regions visually. Change the DOM order instead.
+
+tokens:
+  - grid-columns
+  - grid-gutter
+
+versioning:
+  introducedIn: "0.2.0"
+
+figma:
+  syncedWith: null

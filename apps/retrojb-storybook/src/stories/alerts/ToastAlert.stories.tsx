@@ -37,7 +37,7 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="min-h-96 p-6">
+      <div className="min-h-96 p-(--space-6)">
         <p className="text-sm text-foreground-muted">
           The region is pinned to the bottom-end corner of this frame.
         </p>
@@ -140,8 +140,8 @@ const StackDemo = () => {
   };
 
   return (
-    <div className="flex flex-col items-start gap-3">
-      <div className="flex gap-2">
+    <div className="flex flex-col items-start gap-(--space-3)">
+      <div className="flex gap-(--space-2)">
         <Button text="Add a toast" onClick={push} />
         <Button
           intent="secondary"
@@ -184,7 +184,7 @@ const StackDemo = () => {
  */
 Stack.decorators = [
   (Story: () => React.ReactNode) => (
-    <div className="min-h-96 p-6">
+    <div className="min-h-96 p-(--space-6)">
       <Story />
     </div>
   ),

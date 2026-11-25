@@ -32,7 +32,26 @@ type CardRootProps = Omit<ComponentPropsWithoutRef<"div">, "title"> & {
   readonly ref?: Ref<HTMLElement>;
 };
 
-interface ICardProps extends CardRootProps, Pick<CardVariants, "size"> {
+/**
+ * The `elevated` prop, shared by every card.
+ */
+interface ICardElevationProps {
+  /**
+   * Lifts the card with a `shadow-raised-1` shadow on a `surface-raised-1`
+   * fill. Inside an element with `data-surface="overlay"` (a dialog, a
+   * popover) the shadow is dropped and the border kept.
+   *
+   * @remarks
+   * Decoration only. The shadow is removed in forced-colors mode, and the
+   * border is what marks the card's edge.
+   *
+   * @default false
+   */
+  readonly elevated?: CardVariants["elevated"];
+}
+
+interface ICardProps
+  extends CardRootProps, Pick<CardVariants, "size">, ICardElevationProps {
   /** The root element. Defaults to `"div"`. See {@link CardElement}. */
   readonly as?: CardElement;
   readonly children?: ReactNode;
@@ -93,6 +112,7 @@ interface IGraphicCardProps
   extends
     CardRootProps,
     Pick<CardVariants, "size" | "orientation" | "mediaRatio">,
+    ICardElevationProps,
     Omit<ICardLayoutProps, "media" | "rootClassName"> {
   /** Required — a graphic card without a graphic is a `Card`. See {@link ICardLayoutProps.media}. */
   readonly media: ReactNode;
@@ -108,7 +128,8 @@ interface IGraphicCardProps
 interface IInteractiveCardBaseProps
   extends
     ICardLayoutProps,
-    Pick<CardVariants, "size" | "orientation" | "mediaRatio"> {
+    Pick<CardVariants, "size" | "orientation" | "mediaRatio">,
+    ICardElevationProps {
   /**
    * The card's title, rendered inside the link or button. Required, deliberately.
    *
@@ -171,6 +192,7 @@ export type {
   CardElement,
   CardHeadingLevel,
   ICardBodyProps,
+  ICardElevationProps,
   ICardContextValue,
   ICardFooterProps,
   ICardHeaderProps,

@@ -96,7 +96,7 @@ usage:
 
 tokens:
   - border-strong
-  - surface-raised
+  - surface-raised-1
   - accent
   - accent-foreground
   - danger
@@ -105,10 +105,8 @@ tokens:
   - focus
   - body-sm
   - body-md
-  - spacing-10
-  - spacing-20
-  - spacing-200
-  - spacing-400
+  - space-1
+  - space-2
 
 versioning: {}
 

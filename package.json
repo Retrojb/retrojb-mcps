@@ -38,7 +38,15 @@
     "prettier": "3.9.6",
     "tsup": "^8.5.1",
     "turbo": "~2.10.12",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  },
+  "overrides": {
+    "vitest": "5.1.0",
+    "@vitest/browser": "5.1.0",
+    "@vitest/browser-playwright": "5.1.0",
+    "@vitest/coverage-v8": "5.1.0",
+    "@vitest/ui": "5.1.0"
   },
   "engines": {
     "node": ">=24"
@@ -46,6 +54,8 @@
   "packageManager": "npm@11.6.0",
   "workspaces": [
     "apps/*",
+    "packages/configs/*",
+    "packages/plugins/*",
     "packages/*"
   ]
 }

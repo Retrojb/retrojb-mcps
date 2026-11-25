@@ -20,7 +20,7 @@ Most of the family is an ordinary box. The part worth reading is
 | 1.1.1 Non-text Content            | A     | `media` is the caller's markup, so alt text is too. Meaningful images need `alt` that says what they show; decorative ones take `alt=""` |
 | 1.3.1 Info and Relationships      | A     | `CardTitle` and the `InteractiveCard` title are real headings (`level` / `headingLevel`); `as="li"` lets a set of cards be a real list   |
 | 1.3.2 Meaningful Sequence         | A     | Media comes first in the DOM and on screen in both orientations, so reading order and visual order agree                                 |
-| 1.4.3 Contrast (Minimum)          | AA    | Title 18.95 / 17.22:1, body 8.91 / 7.26:1 on `--surface`; both stay above 4.5:1 on the hover fill                                        |
+| 1.4.3 Contrast (Minimum)          | AA    | Title 18.95 / 17.22:1, body 8.91 / 7.26:1 on `--surface-base`; both stay above 4.5:1 on the hover fill                                   |
 | 1.4.6 Contrast (Enhanced)         | AAA   | The muted body still clears 7:1 in both themes                                                                                           |
 | 1.4.10 Reflow                     | AA    | Every card fills its container (`w-full min-w-0`); horizontal stacks below 28rem of card width; media is cropped, never overflowing      |
 | 1.4.11 Non-text Contrast          | AA    | The edge is `--border-strong`, 4.17 / 4.42:1 on `--background`. The fill alone is 1.42 / 1.10:1 and could not carry the boundary         |
@@ -129,18 +129,18 @@ card.
 
 ## Colors
 
-Measured against the default palette. The card sets `--surface` on itself, so
-text is measured there; the edge sits on the page, so it is measured on
+Measured against the default palette. The card sets `--surface-base` on itself,
+so text is measured there; the edge sits on the page, so it is measured on
 `--background`.
 
 ### Text (needs 4.5:1)
 
-| Role           | Pairing                                    |   Light |    Dark |
-| -------------- | ------------------------------------------ | ------: | ------: |
-| Title          | `--foreground` on `--surface`              | 18.95:1 | 17.22:1 |
-| Title, hovered | `--foreground` on `--surface-raised`       | 20.31:1 | 16.04:1 |
-| Body           | `--foreground-muted` on `--surface`        |  8.91:1 |  7.26:1 |
-| Body, hovered  | `--foreground-muted` on `--surface-raised` |  9.55:1 |  6.76:1 |
+| Role           | Pairing                                      |   Light |    Dark |
+| -------------- | -------------------------------------------- | ------: | ------: |
+| Title          | `--foreground` on `--surface-base`           | 18.95:1 | 17.22:1 |
+| Title, hovered | `--foreground` on `--surface-raised-1`       | 20.31:1 | 16.04:1 |
+| Body           | `--foreground-muted` on `--surface-base`     |  8.91:1 |  7.26:1 |
+| Body, hovered  | `--foreground-muted` on `--surface-raised-1` |  9.55:1 |  6.76:1 |
 
 The hovered body in dark mode drops just under the 7:1 AAA bar; it is well above
 the 4.5:1 AA requirement.
@@ -152,7 +152,7 @@ the 4.5:1 AA requirement.
 | Card edge          | `--border-strong` on `--background` | 4.17:1 | 4.42:1 |
 | Card edge, hovered | `--accent` on `--background`        | 6.19:1 | 8.88:1 |
 | Focus ring         | `--focus` on `--background`         | 6.19:1 | 8.88:1 |
-| Fill vs page       | `--surface` on `--background`       | 1.42:1 | 1.10:1 |
+| Fill vs page       | `--surface-base` on `--background`  | 1.42:1 | 1.10:1 |
 
 The last row is why the edge is `--border-strong` and not `--border`. At 1.10:1
 the fill is indistinguishable from the page in dark mode, so the edge is the
@@ -160,9 +160,9 @@ only thing that makes the card read as a region. `--border` measures 1.75–2.67
 in light and 2.02–2.21:1 in dark and misses 1.4.11 on every surface.
 
 The hover state changes the edge colour as well as the fill, and underlines the
-title. `--surface-raised` against `--surface` is barely a step, so the fill
-alone would be a weak cue; the edge and the underline are the ones that carry
-it.
+title. `--surface-raised-1` against `--surface-base` is barely a step, so the
+fill alone would be a weak cue; the edge and the underline are the ones that
+carry it.
 
 ## Aria
 

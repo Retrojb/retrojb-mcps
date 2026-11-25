@@ -8,19 +8,20 @@ import type { Decorator, Preview } from "@storybook/react-vite";
  * This also brings in the default token layer, so the a11y addon is checking
  * contrast against the palette the package actually ships.
  */
-import "@retrojb/ui/styles.css";
+import "@retrojb/tokens/index.css";
 import "./preview.css";
 import { docsMdxComponents } from "../src/components/docsMdx";
 import { LightDocsContainer } from "./LightDocsContainer";
 
 type Theme = "system" | "light" | "dark";
+type Density = "compact" | "comfort" | "spacious";
 
 /*
  * THEME TOOLBAR
  *
  * The tokens follow `prefers-color-scheme` by default and honour a
- * `data-theme` attribute on `<html>` as an override (see "THEME SELECTION" in
- * `packages/ui/src/styles/tokens.css`). The toolbar drives that attribute:
+ * `data-theme` attribute on `<html>` as an override (see the theme selection notes in
+ * `packages/tokens/build.mjs`). The toolbar drives that attribute:
  * "System" removes it, so the OS setting applies; "Light" and "Dark" force one.
  *
  * It is set on `document.documentElement` rather than on a wrapper `<div>`,
@@ -44,6 +45,26 @@ const withTheme: Decorator = (Story, context) => {
   return <Story />;
 };
 
+/*
+ * DENSITY TOOLBAR
+ *
+ * Sets `data-density` on `<html>`, which switches the `--space-*` scale for
+ * every component (see `packages/tokens/src/density.css`). Comfort is the
+ * default, so it removes the attribute rather than setting it. Unlike the
+ * theme, density also applies on docs pages: it changes no colours, so it
+ * cannot fight Storybook's light docs chrome.
+ */
+const withDensity: Decorator = (Story, context) => {
+  const density = (context.globals.density ?? "comfort") as Density;
+  const root = document.documentElement;
+  if (density === "comfort") {
+    root.removeAttribute("data-density");
+  } else {
+    root.setAttribute("data-density", density);
+  }
+  return <Story />;
+};
+
 const preview: Preview = {
   globalTypes: {
     theme: {
@@ -59,11 +80,25 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    density: {
+      description: "Spacing density for the components",
+      toolbar: {
+        title: "Density",
+        icon: "component",
+        items: [
+          { value: "compact", title: "Compact" },
+          { value: "comfort", title: "Comfort" },
+          { value: "spacious", title: "Spacious" },
+        ],
+        dynamicTitle: true,
+      },
+    },
   },
   initialGlobals: {
     theme: "system",
+    density: "comfort",
   },
-  decorators: [withTheme],
+  decorators: [withTheme, withDensity],
   parameters: {
     // The background comes from the theme's `--background` token (see
     // `preview.css`); the backgrounds addon would paint over it.

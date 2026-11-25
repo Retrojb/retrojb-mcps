@@ -2,7 +2,10 @@
   "mcpServers": {
     "figma": {
       "command": "node",
-      "args": ["--env-file-if-exists=.env", "./packages/kiro-figma-bridge/dist/server/bin.js"],
+      "args": [
+        "--env-file-if-exists=.env",
+        "./packages/plugins/kiro-figma-bridge/dist/server/bin.js"
+      ],
       "disabled": false
     }
   }

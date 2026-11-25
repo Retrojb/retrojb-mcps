@@ -1,0 +1,24 @@
+/*
+ * Oswald, the display face for the Storybook preview.
+ *
+ * This file is how an app loads a font: a `@font-face` rule, then an override
+ * of `--font-family-display` (in `preview.css`). The library never ships or
+ * downloads a font; it only exposes the three family tokens. A different
+ * foundry is the same two steps with a different `src`. See the Phase 2 plan.
+ *
+ * One variable file covers weights 200 to 700, which is Oswald's whole axis, so
+ * every heading role draws from it. `font-display: swap` shows the fallback
+ * until it loads rather than invisible text (a flash of unstyled text, not of
+ * invisible text). `swap` can shift layout when the real font arrives; a
+ * fallback with size adjustments to stop that is Phase 2.
+ *
+ * Served from `public/fonts/oswald` via `staticDirs` in `main.ts`. The file is
+ * the variable WOFF2 from `assets/fonts/Oswald`; the licence sits beside it.
+ */
+@font-face {
+  font-family: "Oswald";
+  src: url("/fonts/oswald/Oswald-variable.woff2") format("woff2");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}

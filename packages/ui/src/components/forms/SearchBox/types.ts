@@ -6,20 +6,20 @@ import type { ComboBoxVariants } from "../ComboBox/styles";
 import type { IComboBoxOptionState } from "../ComboBox/types";
 
 interface ISearchBoxProps<TOption>
+  /*
+   * The omissions are the component.
+   *
+   * `value`, `defaultValue`, `onValueChange` and `name` all belong to the idea
+   * of a *committed selection*, and a search box has none — the query is the
+   * outcome, and a suggestion is a shortcut to it rather than a value to hold.
+   * Leaving them on the type would invite the combobox mental model back in,
+   * along with a hidden input that submits something the user never chose.
+   *
+   * `onSubmitQuery` and `blurBehaviour` are set by this component rather than
+   * by the caller, because they are what makes it a search box: Enter submits,
+   * and the query survives a blur.
+   */
   extends
-    /*
-     * The omissions are the component.
-     *
-     * `value`, `defaultValue`, `onValueChange` and `name` all belong to the idea
-     * of a *committed selection*, and a search box has none — the query is the
-     * outcome, and a suggestion is a shortcut to it rather than a value to hold.
-     * Leaving them on the type would invite the combobox mental model back in,
-     * along with a hidden input that submits something the user never chose.
-     *
-     * `onSubmitQuery` and `blurBehaviour` are set by this component rather than
-     * by the caller, because they are what makes it a search box: Enter submits,
-     * and the query survives a blur.
-     */
     Omit<
       IUseComboBoxOptions<TOption>,
       | "inputRef"

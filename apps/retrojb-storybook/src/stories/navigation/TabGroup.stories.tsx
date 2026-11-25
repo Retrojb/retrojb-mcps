@@ -192,7 +192,7 @@ const manySections = [
 export const Overflow: Story = {
   args: { children: tabsFor(manySections) },
   render: (args) => (
-    <div style={{ maxWidth: "28rem" }}>
+    <div className="max-w-md">
       <TabGroup {...args} />
     </div>
   ),

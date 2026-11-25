@@ -69,7 +69,7 @@ usage:
         instead.
 
 tokens:
-  - surface-raised
+  - surface-raised-1
   - foreground
   - border-strong
   - focus

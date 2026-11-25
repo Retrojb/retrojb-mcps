@@ -1,4 +1,5 @@
 # retro-mcps
+
 [![Pull Request](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml/badge.svg?branch=main)](https://github.com/Retrojb/retrojb-mcps/actions/workflows/pr.yml)
 
 A monorepo for MCP servers and other AI tooling, built on
@@ -26,7 +27,7 @@ runs in the host application and relays between it and a harness.
   per-harness connectivity status, errors surfaced in the plugin window, live
   selection detail, and in-canvas highlighting of whichever node a command
   references.
-- **[`@retrojb/plugin-kit`](packages/plugin-kit)** — the transport primitives
+- **[`@retrojb/plugin-kit`](packages/plugins/plugin-kit)** — the transport primitives
   bridge plugins share: request correlation, polling, backoff, and a bounded
   diagnostics buffer.
 
@@ -38,6 +39,7 @@ runs in the host application and relays between it and a harness.
 ### Shared packages
 
 - `@retrojb/ui` — React component library shared by the apps
+- `@retrojb/tokens` — design tokens as CSS custom properties, light and dark
 - `@retrojb/eslint-config` — shared ESLint configuration
 - `@retrojb/typescript-config` — shared `tsconfig.json` bases
 

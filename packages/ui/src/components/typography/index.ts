@@ -1,6 +1,6 @@
 /*
  * The typography group: five headings and six body components, all built on
- * the semantic type roles in `styles/tokens.css` (`text-heading-md`,
+ * the semantic type roles in `@retrojb/tokens` (`text-heading-md`,
  * `text-body-sm`, …), never on Tailwind's `text-sm` scale.
  *
  * None of them has `"use client"`. They use no hooks, state or context, so they
@@ -30,7 +30,7 @@ export { ProductHeading } from "./headings/productHeading";
 export { SectionHeading } from "./headings/sectionHeading";
 export { SubHeading } from "./headings/subHeading";
 export { TitleHeading } from "./headings/titleHeading";
-export { Code, CodeBlock } from "./body/code";
+export { Code, CodeBlock, CodeSnippet } from "./body/code";
 export { Emphasis } from "./body/emphasis";
 export { List, ListItem } from "./body/lists";
 export { Paragraph } from "./body/paragraph";
@@ -47,6 +47,11 @@ export type { ISectionHeadingProps } from "./headings/sectionHeading";
 export type { ISubHeadingProps } from "./headings/subHeading";
 export type { ITitleHeadingProps } from "./headings/titleHeading";
 export type { ICodeBlockProps, ICodeProps } from "./body/code";
+export type {
+  CodeSentiment,
+  ICodeSnippetProps,
+  ICodeToken,
+} from "./body/code";
 export type { IEmphasisProps } from "./body/emphasis";
 export type { IListItemProps, IListProps } from "./body/lists";
 export type { IParagraphProps } from "./body/paragraph";
@@ -74,6 +79,10 @@ export {
   type TitleHeadingVariants,
 } from "./headings/titleHeading";
 export { codeBlockStyles, codeStyles } from "./body/code";
+export {
+  codeSnippetStyles,
+  type CodeSnippetVariants,
+} from "./body/code";
 export { emphasisStyles } from "./body/emphasis";
 export { listItemStyles, listStyles, type ListVariants } from "./body/lists";
 export { paragraphStyles, type ParagraphVariants } from "./body/paragraph";

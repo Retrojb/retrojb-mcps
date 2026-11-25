@@ -38,25 +38,25 @@ const chipStyles = tv({
     "cursor-pointer select-none whitespace-nowrap",
     "transition-colors motion-reduce:transition-none",
     /*
-     * Unselected: `bg-surface`, `text-foreground` and `border-border-strong`.
+     * Unselected: `bg-surface-base`, `text-foreground` and `border-border-strong`.
      * Ratios are `checkContrast` from `@retrojb/wcag-a11y-scanner`, light / dark.
      * Text needs 4.5:1 (1.4.3); the border and the focus outline need 3:1
      * (1.4.11, 2.4.7).
      *
      *   Text `--foreground`
-     *     on --surface            18.95 / 17.21:1
+     *     on --surface-base            18.95 / 17.21:1
      *     on --background         13.30 / 15.72:1
-     *     on --surface-raised     20.31 / 16.04:1  (hover fill)
+     *     on --surface-raised-1     20.31 / 16.04:1  (hover fill)
      *   Border `--border-strong`
-     *     on --surface             5.93 /  4.83:1
+     *     on --surface-base             5.93 /  4.83:1
      *     on --background          4.16 /  4.41:1
-     *     on --surface-raised      6.36 /  4.50:1
+     *     on --surface-raised-1      6.36 /  4.50:1
      *
      * `--border` would fail 1.4.11 on every surface, so it is not used. The
      * border is what shows where an unselected chip begins.
      */
-    "border-border-strong bg-surface text-foreground",
-    "enabled:hover:bg-surface-raised",
+    "border-border-strong bg-surface-base text-foreground",
+    "enabled:hover:bg-surface-raised-1",
     /*
      * Selected: `bg-accent` with `text-accent-foreground`, as Button's primary,
      * and a border in the same `--accent` so the box does not change size.
@@ -64,10 +64,10 @@ const chipStyles = tv({
      *   Text `--accent-foreground` on --accent        9.32 / 10.19:1
      *   Text `--accent-foreground` on --accent-hover 16.21 / 15.21:1
      *   Fill and border `--accent`
-     *     on --surface                                 8.82 /  9.72:1
+     *     on --surface-base                                 8.82 /  9.72:1
      *     on --background                              6.19 /  8.87:1
      *   Hover fill `--accent-hover`
-     *     on --surface                                15.33 / 14.50:1
+     *     on --surface-base                                15.33 / 14.50:1
      *     on --background                             10.76 / 13.24:1
      *
      * The fill is not the only cue (1.4.1): `Chip` also draws a check icon when
@@ -79,7 +79,7 @@ const chipStyles = tv({
     /*
      * One focus indicator for every control (2.4.7, 2.4.13). `--focus-ring` is
      * `--primary-8`, so the outline is the same 6.19 / 8.87:1 on --background
-     * and 8.82 / 9.72:1 on --surface as the `--accent` row above. It sits two
+     * and 8.82 / 9.72:1 on --surface-base as the `--accent` row above. It sits two
      * pixels outside the border, on the page, so a selected chip's accent
      * fill never has to be told apart from it.
      */
@@ -100,8 +100,8 @@ const chipStyles = tv({
      * larger hit area from the caller. `label-*` type roles carry the weight.
      */
     size: {
-      sm: "h-6 gap-(--spacing-10) px-(--spacing-20) text-label-sm",
-      md: "h-8 gap-(--spacing-20) px-(--spacing-30) text-label-md",
+      sm: "h-(--control-height-xs) gap-(--space-1) px-(--space-2) text-label-sm",
+      md: "h-(--control-height-sm) gap-(--space-2) px-(--space-3) text-label-md",
     },
   },
   defaultVariants: {

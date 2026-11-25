@@ -13,13 +13,13 @@
  * In a determinate bar the reader judges "how far along" by comparing the fill
  * with the space left over, so the track's extent is information, not
  * decoration. It needs an edge that clears 3:1 against what the bar sits on,
- * and its fill cannot provide one: `--surface` on `--background` is 1.42 /
+ * and its fill cannot provide one: `--surface-base` on `--background` is 1.42 /
  * 1.09:1. So the edge is `--border-strong`: 4.16 / 4.41:1 on `--background`,
- * 5.93 / 4.83:1 on `--surface` and 6.36 / 4.50:1 on `--surface-raised`.
+ * 5.93 / 4.83:1 on `--surface-base` and 6.36 / 4.50:1 on `--surface-raised-1`.
  * `--border` at 1.75 / 2.02:1 on `--background` would fail.
  *
  * The edge that carries the *value* is where the fill ends and the empty
- * track begins. Every tone's fill clears 3:1 against the `--surface` track by a
+ * track begins. Every tone's fill clears 3:1 against the `--surface-base` track by a
  * wide margin; the measured ratios are on the `tone` variant below.
  *
  * The fill meets the track border at the ends, and that pairing is low
@@ -49,7 +49,7 @@
  * determinate state: a solid full bar would read as "done", and an empty one
  * as "not started". Stripes are the conventional "working, amount unknown"
  * pattern, and they read that way without motion. The stripes are the tone
- * colour on the `--surface` track, so the same ratios apply.
+ * colour on the `--surface-base` track, so the same ratios apply.
  *
  *
  * RIGHT-TO-LEFT
@@ -72,8 +72,8 @@
  *
  * THICKNESS
  *
- * The track is 8 / 12 / 16px (`sm` / `md` / `lg`), `--spacing-20` to
- * `--spacing-40`, border included (`box-border`). It is not a control, so
+ * The track is 8 / 12 / 16px (`sm` / `md` / `lg`), `h-2` to `h-4`, border
+ * included (`box-border`). A size, so density does not change it. It is not a control, so
  * 2.5.8 does not apply to it.
  *
  * Slot names, top down: `root`, `header`, `label`, `value`, `track`,
@@ -85,7 +85,7 @@ import type { AlertTone } from "../tone";
 /*
  * The fill colour per tone, set as `color` so `bg-current` and the reduced-
  * motion stripes (`currentColor`) both pick it up from one class. Ratios are
- * against the `--surface` track, light / dark, from `checkContrast`.
+ * against the `--surface-base` track, light / dark, from `checkContrast`.
  *
  * The same three tones as the alerts, for the same reason: there is no
  * `--warning` token. See the note on `ALERT_TONE` in `../tone.ts`.
@@ -102,18 +102,18 @@ const PROGRESS_TONE = {
 const progressBarStyles = tv({
   slots: {
     root: "min-w-0 flex-col",
-    header: "flex min-w-0 items-baseline gap-(--spacing-20)",
-    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface.
+    header: "flex min-w-0 items-baseline gap-(--space-2)",
+    // 13.30 / 15.72:1 on --background, 18.95 / 17.21:1 on --surface-base.
     label: "min-w-0 text-foreground",
     /*
-     * 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface.
+     * 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface-base.
      * `tabular-nums` so the readout does not jitter as the digits change, and
      * `ms-auto` keeps it at the inline end when the label is hidden.
      */
     value: "ms-auto shrink-0 text-foreground-muted tabular-nums",
     track: [
       "relative box-border w-full overflow-hidden",
-      "rounded-control border border-border-strong bg-surface",
+      "rounded-control border border-border-strong bg-surface-base",
       "forced-colors:forced-color-adjust-none",
       "forced-colors:border-[CanvasText] forced-colors:bg-[Canvas]",
     ],
@@ -121,29 +121,29 @@ const progressBarStyles = tv({
       "block h-full bg-current",
       "forced-colors:forced-color-adjust-none forced-colors:text-[Highlight]",
     ],
-    // 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface.
+    // 6.25 / 6.62:1 on --background, 8.91 / 7.25:1 on --surface-base.
     description: "m-0 text-body-sm text-foreground-muted",
   },
   variants: {
     // Track 8 / 12 / 16px — see THICKNESS above.
     size: {
       sm: {
-        root: "gap-(--spacing-10)",
+        root: "gap-(--space-1)",
         label: "text-label-sm",
         value: "text-label-sm",
-        track: "h-(--spacing-20)",
+        track: "h-2",
       },
       md: {
-        root: "gap-(--spacing-20)",
+        root: "gap-(--space-2)",
         label: "text-label-md",
         value: "text-label-md",
-        track: "h-(--spacing-30)",
+        track: "h-3",
       },
       lg: {
-        root: "gap-(--spacing-20)",
+        root: "gap-(--space-2)",
         label: "text-label-lg",
         value: "text-label-lg",
-        track: "h-(--spacing-40)",
+        track: "h-4",
       },
     },
     tone: PROGRESS_TONE,
