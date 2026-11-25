@@ -1,0 +1,303 @@
+# Quick start
+
+How to install `@retrojb/ui` and `@retrojb/tokens` in a new project, import the
+styles, render a component and theme it. The steps were run against packed
+tarballs of both packages in an empty project: the stylesheet compiled, the
+sample below type-checked, and the package imported.
+
+## Contents
+
+- [What you are installing](#what-you-are-installing)
+- [Requirements](#requirements)
+- [Install the components](#install-the-components)
+- [Import the stylesheet](#import-the-stylesheet)
+- [Render a component](#render-a-component)
+- [Set up the document](#set-up-the-document)
+- [Use your own Tailwind classes](#use-your-own-tailwind-classes)
+- [Use the tokens without the components](#use-the-tokens-without-the-components)
+- [Theme it](#theme-it)
+- [Server components](#server-components)
+- [Icons](#icons)
+- [Troubleshooting](#troubleshooting)
+- [Where to go next](#where-to-go-next)
+
+## What you are installing
+
+| Package           | Holds                                                                      |
+| ----------------- | -------------------------------------------------------------------------- |
+| `@retrojb/ui`     | React components, their variant functions, and a compiled `styles.css`     |
+| `@retrojb/tokens` | Design tokens as CSS custom properties: colour, space, radii, type, themes |
+
+`@retrojb/ui` depends on `@retrojb/tokens` and bundles it into `styles.css`. If
+you use the components, install `@retrojb/ui` only. Install `@retrojb/tokens`
+alone when you want the tokens without the components.
+
+## Requirements
+
+- Node 24 or later. Both packages declare `engines.node >=24`.
+- React and React DOM at exactly `19.2.8`. The peer dependencies are pinned with
+  no range, so another React version fails to resolve.
+- `@tanstack/react-table` at exactly `9.2.4`. It is a peer dependency of
+  `@retrojb/ui` even if you never render a `Table`.
+- A bundler that resolves package `exports` and handles CSS imports (Next.js,
+  Vite and similar). The packages are ESM only.
+- Tailwind CSS 4.3 only if you write Tailwind classes in your own markup. See
+  [Use your own Tailwind classes](#use-your-own-tailwind-classes).
+
+The version on npm can trail the `main` branch. This guide describes `main`. If
+a component below is missing from your install, check the installed version
+against the [changelog][ui-changelog].
+
+## Install the components
+
+```sh
+npm install @retrojb/ui react@19.2.8 react-dom@19.2.8 @tanstack/react-table@9.2.4
+```
+
+## Import the stylesheet
+
+Import `styles.css` once, at the entry point of the app. Do not rely on a JS
+import to pull the CSS in, because bundlers differ on that.
+
+Next.js App Router:
+
+```tsx
+// app/layout.tsx
+import "@retrojb/ui/styles.css";
+```
+
+Vite:
+
+```tsx
+// src/main.tsx
+import "@retrojb/ui/styles.css";
+```
+
+This one file carries the token values and every utility the components use. You
+do not need Tailwind installed for the components to render.
+
+## Render a component
+
+```tsx
+import { Button, Input, Link } from "@retrojb/ui";
+
+export const SignupForm = () => (
+  <form>
+    <Input label="Email" type="email" description="We never share it." />
+    <Button text="Sign up" type="submit" />
+    <Link href="/privacy">Privacy policy</Link>
+  </form>
+);
+```
+
+Three details trip people up:
+
+- `Button` takes its label as the `text` prop, not as children.
+- `Input` requires `label`. An unlabelled input is a WCAG failure, so the type
+  checker rejects it. Use `labelHidden` when the design has no room for the
+  text.
+- `Button` defaults to `type="button"`. Pass `type="submit"` to submit a form.
+
+The full list of components is in the [component quick
+reference][component-reference]. Each component's props are documented in TSDoc
+and shown in Storybook.
+
+## Set up the document
+
+Set a language on `<html>`. Optionally force a theme or a density there too:
+
+```html
+<html lang="en" data-theme="dark" data-density="compact"></html>
+```
+
+| Attribute      | Values                           | Default                        |
+| -------------- | -------------------------------- | ------------------------------ |
+| `data-theme`   | `light`, `dark`                  | Follows `prefers-color-scheme` |
+| `data-density` | `compact`, `comfort`, `spacious` | `comfort`                      |
+
+`data-density` also works on a nested element, and the nearest ancestor wins.
+See [SPACING.md][spacing-doc].
+
+## Use your own Tailwind classes
+
+Skip this section if you only render library components.
+
+If your own markup uses utilities such as `bg-accent`, `text-foreground` or
+`p-8`, your app needs its own Tailwind build. Install Tailwind and the plugin
+for your bundler (this example is Next.js):
+
+```sh
+npm install -D tailwindcss@4.3.3 @tailwindcss/postcss@4.3.3
+```
+
+```js
+// postcss.config.mjs
+export default { plugins: { "@tailwindcss/postcss": {} } };
+```
+
+```css
+/* app/globals.css */
+@layer theme, base, components;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+@import "@retrojb/ui/theme.css";
+
+@source "./**/*.tsx";
+@source "../node_modules/@retrojb/ui/dist";
+```
+
+Import both stylesheets, `styles.css` first:
+
+```tsx
+// app/layout.tsx
+import "@retrojb/ui/styles.css";
+import "./globals.css";
+```
+
+What each line does:
+
+- `tailwindcss/theme.css` and `utilities.css` are imported instead of
+  `tailwindcss`, which leaves out Tailwind's preflight reset. The library does
+  not assume a reset.
+- `@retrojb/ui/theme.css` registers the palette, type roles, shadows and
+  breakpoints as utilities, so `bg-accent` and `text-body-sm` work in your
+  markup.
+- `@source ".../@retrojb/ui/dist"` makes your build regenerate the library's
+  classes. Without it, a utility your markup uses (`border`) can land after the
+  one a component uses (`border-s-4`) and override it. Adjust the path to where
+  `@retrojb/ui` is installed, for example `./node_modules/...` when the CSS file
+  sits in the project root.
+
+Use semantic utilities, not ramp steps: `bg-accent`, not `bg-primary-8`. The
+semantic ones follow the theme and your overrides.
+
+## Use the tokens without the components
+
+For an app with its own components, or a non-React project:
+
+```sh
+npm install @retrojb/tokens
+```
+
+```css
+@import "@retrojb/tokens";
+
+.card {
+  background: var(--surface-raised-1);
+  color: var(--foreground);
+  border: 1px solid var(--border-strong);
+}
+```
+
+| Import                      | What you get                                         |
+| --------------------------- | ---------------------------------------------------- |
+| `@retrojb/tokens`           | Both themes. Follows the OS, `data-theme` forces one |
+| `@retrojb/tokens/light.css` | Light only                                           |
+| `@retrojb/tokens/dark.css`  | Dark only                                            |
+
+Pick one. Each is complete on its own. Do not import a token file next to
+`@retrojb/ui/styles.css`, which already includes them.
+
+Themed colours use `light-dark()`, supported in Chrome 123, Firefox 120 and
+Safari 17.5 and later. Tailwind's and Next.js's CSS pipelines can transpile it
+for older browsers.
+
+Token names and layers are documented in [TOKENS.md][tokens-doc].
+
+## Theme it
+
+Every token sits inside `@layer theme`, and your own unlayered CSS beats layered
+CSS. A plain `:root` rule overrides a token without `!important`:
+
+```css
+:root {
+  --accent: #6d28d9;
+}
+```
+
+Override a ramp step (`--primary-8`) to retint everything built on it in both
+themes. Override a semantic token (`--accent`) to change one role. No rebuild of
+the library is needed, because the utilities read the variables at paint time.
+
+If you change a colour, check contrast again. The components' pairings are
+designed to meet WCAG 2 AA, and an arbitrary override can break them.
+
+For a brand font, declare `--font-family-sans` and `--font-family-mono` on the
+element that holds your font variables. With `next/font`, put the font classes
+on `<html>`:
+
+```css
+:root {
+  --font-family-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-family-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+```
+
+## Server components
+
+Components are client modules. The variant functions are not, so you can call
+them from a server component to style an element the library does not own:
+
+```tsx
+import NextLink from "next/link";
+import { linkStyle } from "@retrojb/ui";
+
+<NextLink href="/docs" className={linkStyle({ intent: "standalone" })}>
+  Docs
+</NextLink>;
+```
+
+Each component exports its function (`buttonStyle`, `inputStyle`, `tableStyle`
+and so on).
+
+## Icons
+
+Icons are Lucide, exported from a subpath so their names cannot collide with
+component names such as `Link` and `Table`:
+
+```tsx
+import { Icon } from "@retrojb/ui";
+import { Search } from "@retrojb/ui/icons";
+
+<Icon icon={Search} />;
+```
+
+## Troubleshooting
+
+| Symptom                                            | Cause and fix                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Components render unstyled                         | `@retrojb/ui/styles.css` is not imported at the app's entry point.                                                               |
+| `ERESOLVE` on install                              | React, React DOM or `@tanstack/react-table` is not at the pinned version. Install the versions in [Requirements](#requirements). |
+| A 4px edge on a component renders as 1px           | Your Tailwind build does not scan the library. Add the `@source` line for `@retrojb/ui/dist`.                                    |
+| `bg-accent` does nothing in your markup            | `@retrojb/ui/theme.css` is not imported in your Tailwind CSS.                                                                    |
+| Two stylesheets fight over a rule                  | Import `styles.css` before your own `globals.css`.                                                                               |
+| Colours are wrong in dark mode                     | A hard-coded colour or a ramp step is bypassing the semantic tokens. Use `bg-surface-base`, `text-foreground` and so on.         |
+| `Failed to resolve import` for a file under `dist` | The installed package is incomplete. Reinstall, and report it if it persists.                                                    |
+
+## Where to go next
+
+- [Component quick reference][component-reference]: every component, by
+  category.
+- [TOKENS.md][tokens-doc], [SPACING.md][spacing-doc], [LAYOUT.md][layout-doc]
+  and [TAILWIND.md][tailwind-doc]: how the foundations work.
+- [`packages/ui/README.md`][ui-readme]: the package's build and accessibility
+  decisions.
+- `apps/docs/public/llms.txt`: a condensed version of this guide for AI agents,
+  served at `/llms.txt` on the docs site.
+
+---
+
+author: John Baltes
+
+updated: 2026-11-25
+
+---
+
+[ui-changelog]: ../../packages/ui/CHANGELOG.md
+[ui-readme]: ../../packages/ui/README.md
+[component-reference]: ../references/COMPONENT_QUICK_REFERENCE.md
+[tokens-doc]: ../references/TOKENS.md
+[spacing-doc]: ../references/SPACING.md
+[layout-doc]: ../references/LAYOUT.md
+[tailwind-doc]: ../references/TAILWIND.md

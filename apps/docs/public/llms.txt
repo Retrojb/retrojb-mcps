@@ -1,0 +1,165 @@
+# @retrojb/ui and @retrojb/tokens
+
+> A React component library (`@retrojb/ui`) and its design tokens
+> (`@retrojb/tokens`). Tailwind CSS 4 styling, WCAG 2 accessibility built in,
+> light and dark themes, ESM only. Source: https://github.com/Retrojb/retrojb-mcps
+
+This file is for AI coding agents working in a project that uses these
+packages. Follow it instead of guessing from other design systems.
+
+## Install
+
+    npm install @retrojb/ui react@19.2.8 react-dom@19.2.8 @tanstack/react-table@9.2.4
+
+- Node >=24. React, React DOM and @tanstack/react-table are peer dependencies
+  pinned to those exact versions, with no range.
+- `@retrojb/tokens` is a dependency of `@retrojb/ui` and is bundled into its
+  stylesheet. Do not install it separately unless the project wants tokens
+  without components.
+- Tailwind is not needed to render the components.
+
+## Import the stylesheet once, at the app entry point
+
+    import "@retrojb/ui/styles.css"; // app/layout.tsx (Next.js) or src/main.tsx (Vite)
+
+Do this in the entry point, not inside a component module. Without it every
+component renders unstyled.
+
+## Use components
+
+    import { Button, Input, Link } from "@retrojb/ui";
+
+    <Input label="Email" type="email" description="We never share it." />
+    <Button text="Sign up" type="submit" />
+    <Link href="/privacy">Privacy policy</Link>
+
+Rules that differ from most libraries:
+
+- `Button` takes its label as the `text` prop. Children are not the label.
+- `Button` defaults to `type="button"`. Pass `type="submit"` to submit a form.
+- `Input` requires `label`. Use `labelHidden` to hide it visually. Pass `error`
+  to show an invalid state; there is no separate invalid prop.
+- `Table` requires `caption` and takes a TanStack Table v9 instance as `table`.
+  It does not build one.
+- Every component is a named export from `@retrojb/ui`. Props interfaces are
+  `I<Name>Props` (`IButtonProps`). Variant functions are exported too
+  (`buttonStyle`, `linkStyle`, `inputStyle`, `tableStyle`).
+- Variants are props: `<Button intent="secondary" size="lg" fullWidth />`. Read
+  the component's TSDoc or types for the allowed values.
+
+Exported components: Avatar, BrowserAlert, Button, Card (CardHeader, CardTitle,
+CardBody, CardFooter), Checkbox, CheckboxGroup, Chip, Code, CodeBlock,
+CodeSnippet, ComboBox, Drawer, DynamicContainer, Emphasis, GraphicCard,
+GridItem, Icon, InlineAlert, Input, InteractiveCard, Link, List, ListItem,
+Modal, PageGrid, PageHeading, Paragraph, ProductHeading, ProgressBar, Radio,
+RadioGroup, Reference, SearchBox, SectionHeading, SegmentedControl, Strong,
+SubHeading, Tab, TabGroup, TabList, TabPanel, Table (TableHead, TableBody,
+TableRow, TableHeaderCell, TableCell, TableFoot, TableEmpty), Tag, TitleHeading,
+ToastAlert, ToastRegion, Toggle.
+
+The npm release can trail the main branch. If an import is missing, check the
+installed version.
+
+## Icons
+
+Lucide icons come from a subpath, not the main entry:
+
+    import { Icon } from "@retrojb/ui";
+    import { Search } from "@retrojb/ui/icons";
+    <Icon icon={Search} />
+
+## Using Tailwind classes in the app's own markup
+
+Only needed if the app writes utilities such as `bg-accent` itself.
+
+    npm install -D tailwindcss@4.3.3 @tailwindcss/postcss@4.3.3
+
+PostCSS config: `export default { plugins: { "@tailwindcss/postcss": {} } };`
+
+    /* app/globals.css */
+    @layer theme, base, components;
+    @import "tailwindcss/theme.css" layer(theme);
+    @import "tailwindcss/utilities.css";
+    @import "@retrojb/ui/theme.css";
+    @source "./**/*.tsx";
+    @source "../node_modules/@retrojb/ui/dist";
+
+Import `@retrojb/ui/styles.css` first, then `./globals.css`.
+
+- Do not `@import "tailwindcss"`. That adds a preflight reset the library does
+  not assume.
+- Keep the `@source` line for `@retrojb/ui/dist`. Without it, app utilities can
+  override component utilities (a 4px `border-s-4` becomes 1px).
+- There is no `tailwind.config.js`. Tailwind 4 is configured in CSS.
+- Do not use `dark:`. Themes switch through tokens, so one class works in both.
+
+## Styling rules for code you write
+
+- Use semantic colour utilities: `bg-background`, `bg-surface-base`,
+  `bg-surface-raised-1`, `text-foreground`, `text-foreground-muted`,
+  `bg-accent`, `text-accent-foreground`, `text-accent-text`, `bg-danger`,
+  `text-success`. Do not use ramp steps such as `bg-primary-8`; they ignore
+  theme overrides.
+- Use `border-border-strong` for the border of a control or a meaningful box.
+  `border-border` is decorative only and fails WCAG 1.4.11 contrast.
+- Type roles set size, line height, weight and tracking together: `text-body-md`,
+  `text-body-sm`, `text-heading-md`, `text-caption` and similar.
+- Radius: `rounded-control` for interactive surfaces.
+- Focus: `outline-offset-2 focus-visible:outline-2 focus-visible:outline-focus`.
+  Use an outline, not a ring, so it survives forced-colors mode.
+- Pair every `transition-*` class with `motion-reduce:transition-none`.
+- Spacing tokens are `--space-*`. Write `p-(--space-4)`. Do not write `p-4`.
+
+## Tokens only
+
+    npm install @retrojb/tokens
+
+    @import "@retrojb/tokens";   /* both themes */
+
+Also `@retrojb/tokens/light.css` and `@retrojb/tokens/dark.css`. Use one. Do not
+import a token file next to `@retrojb/ui/styles.css`, which includes them.
+Properties include `--background`, `--foreground`, `--accent`, `--border-strong`,
+`--focus-ring`, the ramps `--primary-0` to `--primary-9` (also `--secondary-*`
+and `--neutral-*`), and `--space-*`. Themed colours use `light-dark()`.
+
+## Theme and density
+
+- The theme follows `prefers-color-scheme`. Force one with
+  `<html data-theme="light">` or `<html data-theme="dark">`.
+- Density: `data-density="compact" | "comfort" | "spacious"` on `<html>` or any
+  element. The nearest ancestor wins.
+- Override tokens with an unlayered rule. No `!important` needed:
+
+      :root { --accent: #6d28d9; }
+
+- Brand fonts: set `--font-family-sans` and `--font-family-mono` on the element
+  that holds the font variables (put `next/font` classes on `<html>`).
+- Re-check contrast after changing a colour.
+
+## Next.js notes
+
+- Components are client modules. Variant functions are not, so call
+  `linkStyle()` and the others from server components:
+
+      <NextLink href="/docs" className={linkStyle({ intent: "standalone" })}>Docs</NextLink>
+
+- Put `lang` on `<html>`.
+
+## Common failures
+
+- Unstyled components: `@retrojb/ui/styles.css` is not imported.
+- `ERESOLVE` on install: React, React DOM or @tanstack/react-table is not at the
+  pinned version.
+- `bg-accent` has no effect in app markup: `@retrojb/ui/theme.css` is not
+  imported in the app's Tailwind CSS.
+- A TypeScript error on `<Input>`: the required `label` prop is missing.
+
+## More
+
+- Quick start guide: project-docs/processes/QUICK-START.md in the repository
+- Component list: project-docs/references/COMPONENT_QUICK_REFERENCE.md
+- Tokens: project-docs/references/TOKENS.md
+- Layout and PageGrid: project-docs/references/LAYOUT.md
+- Spacing and density: project-docs/references/SPACING.md
+- Each component has a `<Name>Spec.yaml` beside its source in
+  packages/ui/src/components/<category>/<name>/.
